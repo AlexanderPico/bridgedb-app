@@ -1,45 +1,27 @@
-/*
- Copyright (c) 2006, 2007, The Cytoscape Consortium (www.cytoscape.org)
-
- The Cytoscape Consortium is:
- - Institute for Systems Biology
- - University of California San Diego
- - Memorial Sloan-Kettering Cancer Center
- - Institut Pasteur
- - Agilent Technologies
-
- This library is free software; you can redistribute it and/or modify it
- under the terms of the GNU Lesser General Public License as published
- by the Free Software Foundation; either version 2.1 of the License, or
- any later version.
-
- This library is distributed in the hope that it will be useful, but
- WITHOUT ANY WARRANTY, WITHOUT EVEN THE IMPLIED WARRANTY OF
- MERCHANTABILITY OR FITNESS FOR A PARTICULAR PURPOSE.  The software and
- documentation provided hereunder is on an "as is" basis, and the
- Institute for Systems Biology and the Whitehead Institute
- have no obligations to provide maintenance, support,
- updates, enhancements or modifications.  In no event shall the
- Institute for Systems Biology and the Whitehead Institute
- be liable to any party for direct, indirect, special,
- incidental or consequential damages, including lost profits, arising
- out of the use of this software and its documentation, even if the
- Institute for Systems Biology and the Whitehead Institute
- have been advised of the possibility of such damage.  See
- the GNU Lesser General Public License for more details.
-
- You should have received a copy of the GNU Lesser General Public License
- along with this library; if not, write to the Free Software Foundation,
- Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA.
-*/
-
 package org.nrnb.avalon.cythesaurus.internal.ui;
+
+/*******************************************************************************
+ * Copyright 2010-2013 CyThesaurus developing team
+ * 
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ ******************************************************************************/
 
 import org.nrnb.avalon.cythesaurus.internal.AttributeBasedIDMappingImpl;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 
-import cytoscape.task.Task;
-import cytoscape.task.TaskMonitor;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskMonitor;
 
 import org.cytoscape.model.CyNetwork;
 
@@ -48,15 +30,15 @@ import java.util.Map;
 /**
  *
  */
-public class AttributeBasedIDMappingTask implements Task {
-	private final Set<CyNetwork> networks;
+public class AttributeBasedIDMappingTask extends AbstractTask {
+	private final CyNetwork network;
     private final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
     private final Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
     private final AttributeBasedIDMappingImpl service;
     private final Map<String,Byte> mapTgtAttrNameAttrType;
     
-	private TaskMonitor taskMonitor;
-        private boolean success;
+//	private TaskMonitor taskMonitor;
+    private boolean success;
 
 	/**
          * 
@@ -64,70 +46,67 @@ public class AttributeBasedIDMappingTask implements Task {
          * @param mapSrcAttrIDTypes
          * @param mapTgtAttrNameIDType
          */
-	public AttributeBasedIDMappingTask(final Set<CyNetwork> networks,
+	public AttributeBasedIDMappingTask(final CyNetwork network,
                                        final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
                                        final Map<String, DataSourceWrapper> mapTgtAttrNameIDType,
                                        Map<String,Byte> mapTgtAttrNameAttrType) {
-		this.networks = networks;
-                this.mapSrcAttrIDTypes = mapSrcAttrIDTypes;
-                this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
-                this.mapTgtAttrNameAttrType = mapTgtAttrNameAttrType;
-                service = new AttributeBasedIDMappingImpl();
-                success = false;
+		this.network = network;
+        this.mapSrcAttrIDTypes = mapSrcAttrIDTypes;
+        this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
+        this.mapTgtAttrNameAttrType = mapTgtAttrNameAttrType;
+        service = new AttributeBasedIDMappingImpl();
+        success = false;
 	}
 
 	/**
 	 * Executes Task.
 	 */
-        //@Override
-	public void run() {
-                try {
-                        service.setTaskMonitor(taskMonitor);
-                        service.suggestTgtAttrType(mapTgtAttrNameAttrType);
-                        service.map(networks, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
-
-
-                } catch (Exception e) {
-                        taskMonitor.setPercentCompleted(100);
-                        taskMonitor.setStatus("ID mapping failed.\n");
-                        e.printStackTrace();
-                }
-
-                success = true;
-
+    //@Override
+	public void run(final TaskMonitor taskMonitor) {
+		 taskMonitor.setTitle("ID mapping");
+		 try {
+			 service.setTaskMonitor(taskMonitor);
+			 service.suggestTgtAttrType(network, mapTgtAttrNameAttrType);
+			 service.map(mapSrcAttrIDTypes, mapTgtAttrNameIDType);
+		 } catch (Exception e) {
+			 taskMonitor.setProgress(1.00);
+			 taskMonitor.setStatusMessage("ID mapping failed.\n");
+			 e.printStackTrace();
+		 }
+		 success = true;
 	}
 
-        public boolean success() {
-            return success;
-        }
-
-
-	/**
-	 * Halts the Task: Not Currently Implemented.
-	 */
-        //@Override
-	public void halt() {
-            service.interrupt();
+	public boolean success() {
+		return success;
 	}
 
-	/**
-	 * Sets the Task Monitor.
-	 *
-	 * @param taskMonitor
-	 *            TaskMonitor Object.
-	 */
-        //@Override
-	public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
-		this.taskMonitor = taskMonitor;
-	}
 
-	/**
-	 * Gets the Task Title.
-	 *
-	 * @return Task Title.
-	 */
-        //@Override
-	public String getTitle() {
-		return new String("ID mapping");
-	}
+//	/**
+//	 * Halts the Task: Not Currently Implemented.
+//	 */
+//        //@Override
+//	public void halt() {
+//            service.interrupt();
+//	}
+//
+//	/**
+//	 * Sets the Task Monitor.
+//	 *
+//	 * @param taskMonitor
+//	 *            TaskMonitor Object.
+//	 */
+//        //@Override
+//	public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
+//		this.taskMonitor = taskMonitor;
+//	}
+//
+//	/**
+//	 * Gets the Task Title.
+//	 *
+//	 * @return Task Title.
+//	 */
+//        //@Override
+//	public String getTitle() {
+//		return new String("ID mapping");
+//	}
 }
