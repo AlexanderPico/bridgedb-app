@@ -5,12 +5,9 @@
 
 package org.nrnb.avalon.cythesaurus.internal;
 
-import cytoscape.CytoscapeInit;
-
+import org.cytoscape.property.AbstractConfigDirPropsReader;
+import org.cytoscape.property.CyProperty.SavePolicy;
 import org.cytoscape.work.Tunable;
-import cytoscape.layout.TunableListener;
-
-import cytoscape.util.ModulePropertiesImpl;
 
 import java.util.Enumeration;
 import java.util.Properties;
@@ -19,7 +16,8 @@ import java.util.Properties;
  *
  * @author gjj
  */
-public class IDMapperClientProperties extends ModulePropertiesImpl 
+
+public class IDMapperClientProperties extends AbstractConfigDirPropsReader 
         //implements TunableListener
 {
     /**
@@ -30,12 +28,12 @@ public class IDMapperClientProperties extends ModulePropertiesImpl
      *                       list.
      */
     public IDMapperClientProperties(String propertyPrefix) {
-        super(propertyPrefix, FinalStaticValues.CLIENT_SESSION_PROPS);
+        super(propertyPrefix, FinalStaticValues.CLIENT_SESSION_PROPS, SavePolicy.CONFIG_DIR);
     }
 
     public IDMapperClientProperties(String propertyPrefix,
             IDMapperClientProperties idMapperProps) {
-        super(propertyPrefix, FinalStaticValues.CLIENT_SESSION_PROPS);
+        this(propertyPrefix);
 
         for (Tunable tunable : idMapperProps.getTunables()) {
             add(tunable);
@@ -66,14 +64,14 @@ public class IDMapperClientProperties extends ModulePropertiesImpl
     public void saveProperties(Tunable tunable) {
         if (!getTunables().contains(tunable)) return;
 
-        String prefix = getPrefix();
-        Properties props = CytoscapeInit.getProperties();
+        String prefix = getName();
+        Properties props = getProperties();
         props.setProperty(prefix + tunable.getName(), tunable.getValue().toString());
     }
 
     public void release() {
-        String prefix = getPrefix();
-        Properties props = CytoscapeInit.getProperties();
+        String prefix = getName();
+        Properties props = getProperties();
 
         // Find all properties with this prefix
         Enumeration iter = props.propertyNames();

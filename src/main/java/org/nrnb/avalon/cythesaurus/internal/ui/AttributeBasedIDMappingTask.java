@@ -31,11 +31,11 @@ import java.util.Map;
  *
  */
 public class AttributeBasedIDMappingTask extends AbstractTask {
-	private final CyNetwork network;
+    private final CyNetwork network;
     private final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
     private final Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
     private final AttributeBasedIDMappingImpl service;
-    private final Map<String,Byte> mapTgtAttrNameAttrType;
+    private final Map<String,Class> mapTgtAttrNameAttrType;
     
 //	private TaskMonitor taskMonitor;
     private boolean success;
@@ -49,13 +49,13 @@ public class AttributeBasedIDMappingTask extends AbstractTask {
 	public AttributeBasedIDMappingTask(final CyNetwork network,
                                        final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
                                        final Map<String, DataSourceWrapper> mapTgtAttrNameIDType,
-                                       Map<String,Byte> mapTgtAttrNameAttrType) {
-		this.network = network;
-        this.mapSrcAttrIDTypes = mapSrcAttrIDTypes;
-        this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
-        this.mapTgtAttrNameAttrType = mapTgtAttrNameAttrType;
-        service = new AttributeBasedIDMappingImpl();
-        success = false;
+                                       Map<String,Class> mapTgtAttrNameAttrType) {
+            this.network = network;
+            this.mapSrcAttrIDTypes = mapSrcAttrIDTypes;
+            this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
+            this.mapTgtAttrNameAttrType = mapTgtAttrNameAttrType;
+            service = new AttributeBasedIDMappingImpl();
+            success = false;
 	}
 
 	/**
@@ -66,8 +66,8 @@ public class AttributeBasedIDMappingTask extends AbstractTask {
 		 taskMonitor.setTitle("ID mapping");
 		 try {
 			 service.setTaskMonitor(taskMonitor);
-			 service.suggestTgtAttrType(network, mapTgtAttrNameAttrType);
-			 service.map(mapSrcAttrIDTypes, mapTgtAttrNameIDType);
+			 service.defineTgtAttrs(network, mapTgtAttrNameAttrType);
+			 service.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
 		 } catch (Exception e) {
 			 taskMonitor.setProgress(1.00);
 			 taskMonitor.setStatusMessage("ID mapping failed.\n");

@@ -49,10 +49,10 @@ import java.util.Map;
 public interface AttributeBasedIDMapping {
 
     /**
-     * For each node in each network, given its attribute and the corresponding
+     * For each node in a network, given its attribute and the corresponding
      * source id types, create new attributes of the destination type.
      *
-     * @param networks
+     * @param network
      * @param mapSrcAttrIDTypes
      *      key: source attribute
      *      value: corresponding ID types
@@ -60,7 +60,7 @@ public interface AttributeBasedIDMapping {
      *      key: attribute name
      *      value: target ID type
      */
-    public void map(Set<CyNetwork> networks, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
+    public void map(CyNetwork network, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
             Map<String, DataSourceWrapper> mapTgtAttrNameIDType);
 
     public String getReport();
