@@ -101,7 +101,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     /**
      * {@inheritDoc}
      */
-    public void map(Set<CyNetwork> networks, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
+    public void map(Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
             Map<String, DataSourceWrapper> mapTgtAttrNameIDType) {
 
         // prepare source xrefs
