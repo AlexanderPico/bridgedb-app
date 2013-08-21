@@ -168,6 +168,18 @@ public class IDMapperClientImplTunables implements IDMapperClient {
         clientNo++;
     }
 
+    /**
+     * the private constructor
+     * <br>
+     * 2013-8-21:12:20:42 PM<br>
+     * <br>
+     * @param connectionString
+     * @param classString
+     * @param displayName
+     * @param id
+     * @param selected
+     * @param clientType
+     */
     private void initilizeTunables(String connectionString, String classString,
             String displayName, String id, boolean selected, ClientType clientType) {
         this.id = new Tunable(CLIENT_ID, "ID for client", Tunable.STRING, id);
