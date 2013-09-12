@@ -49,11 +49,11 @@ import org.cytoscape.work.TaskManager;
  */
     class IDMappingAction extends AbstractCyAction {
         private final CySwingApplication swingApp;
-	private final CyNetworkManager cnm;
-	private final TaskManager taskManager;
+        private final CyNetworkManager cnm;
+        private final TaskManager taskManager;
 
         private static final String APP_MENU_TITLE ="ID Mapping";
-	private static final String PARENT_MENU ="Tools";
+        private static final String PARENT_MENU ="Tools";
         
         public IDMappingAction(CySwingApplication swingApp, CyNetworkManager cnm,
                 TaskManager taskManager) {
@@ -69,7 +69,7 @@ import org.cytoscape.work.TaskManager;
          */
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            final CyThesaurusDialog dialog = new CyThesaurusDialog(swingApp.getJFrame(), true);
+            final CyThesaurusDialog dialog = new CyThesaurusDialog(swingApp.getJFrame(), cnm, taskManager, true);
                         dialog.setLocationRelativeTo(swingApp.getJFrame());
                         dialog.setMapSrcAttrIDTypes(mapSrcAttrIDTypes);
             dialog.setVisible(true);

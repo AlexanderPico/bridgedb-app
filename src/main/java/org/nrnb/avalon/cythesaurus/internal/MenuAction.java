@@ -6,6 +6,8 @@ import javax.swing.JOptionPane;
 
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyNetworkManager;
 
 
 /**
@@ -13,18 +15,21 @@ import org.cytoscape.application.swing.AbstractCyAction;
  *
  */
 public class MenuAction extends AbstractCyAction {
-
-	public MenuAction(CyApplicationManager cyApplicationManager, final String menuTitle) {
+	private final CyNetworkManager cnm;
+	private final CyApplicationManager swingApp;
+	public MenuAction(CyApplicationManager swingApp, CyNetworkManager cnm, final String menuTitle) {
 		
-		super(menuTitle, cyApplicationManager, null, null);
+		super(menuTitle, swingApp, null, null);
 		setPreferredMenu("Apps");
-		
+		this.cnm = cnm;
+		this.swingApp = swingApp;
 	}
 
 	public void actionPerformed(ActionEvent e) {
 
 		// Write your own function here.
-		JOptionPane.showMessageDialog(null, "Hello Cytoscape World!");
+		//swingApp.getCurrentNetwork();
+		JOptionPane.showMessageDialog(null, swingApp.getCurrentNetwork().getDefaultNetworkTable().getTitle());
 		
 	}
 }

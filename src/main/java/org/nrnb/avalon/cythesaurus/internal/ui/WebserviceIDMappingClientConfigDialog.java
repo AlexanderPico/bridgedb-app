@@ -38,13 +38,14 @@ package org.nrnb.avalon.cythesaurus.internal.ui;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClient;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientImpl;
 import org.nrnb.avalon.cythesaurus.internal.util.BridgeRestUtil;
+import org.cytoscape.work.Task;
+import org.cytoscape.work.TaskMonitor;
 
-import cytoscape.task.Task;
-import cytoscape.task.TaskMonitor;
-import cytoscape.task.ui.JTaskConfig;
-import cytoscape.task.util.TaskManager;
+//import cytoscape.task.ui.JTaskConfig;
 
-import cytoscape.util.OpenBrowser;
+import org.cytoscape.work.TaskManager;
+
+import org.cytoscape.util.swing.OpenBrowser;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.webservice.biomart.BiomartStub;
@@ -737,17 +738,18 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
 
     private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoButtonActionPerformed
         ClientType type = (ClientType)typeComboBox.getSelectedItem();
-        if (type==ClientType.BRIDGEDB) {
-            OpenBrowser.openURL("http://webservice.bridgedb.org/ ");
-        } else if (type==ClientType.BIOMART) {
-            OpenBrowser.openURL("http://www.biomart.org/");
-        } else if (type==ClientType.PICR) {
-            OpenBrowser.openURL("http://www.ebi.ac.uk/Tools/picr/");
-        } else if (type==ClientType.SYNERGIZER) {
-            OpenBrowser.openURL("http://llama.med.harvard.edu/synergizer/translate/");
-        } else if (type==ClientType.CRONOS) {
-            OpenBrowser.openURL("http://mips.helmholtz-muenchen.de/genre/proj/cronos/index.html");
-        }
+        
+//        if (type==ClientType.BRIDGEDB) {
+//        	openBrowser.openURL("http://webservice.bridgedb.org/ ");
+//        } else if (type==ClientType.BIOMART) {
+//            OpenBrowser.openURL("http://www.biomart.org/");
+//        } else if (type==ClientType.PICR) {
+//            OpenBrowser.openURL("http://www.ebi.ac.uk/Tools/picr/");
+//        } else if (type==ClientType.SYNERGIZER) {
+//            OpenBrowser.openURL("http://llama.med.harvard.edu/synergizer/translate/");
+//        } else if (type==ClientType.CRONOS) {
+//            OpenBrowser.openURL("http://mips.helmholtz-muenchen.de/genre/proj/cronos/index.html");
+//        }
     }//GEN-LAST:event_infoButtonActionPerformed
 
     private void bioMartBaseUrlComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bioMartBaseUrlComboBoxActionPerformed
@@ -914,16 +916,16 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     }
 
     private void setDatasetsCombo() {
-        final JTaskConfig jTaskConfig = new JTaskConfig();
-        jTaskConfig.setOwner(cytoscape.Cytoscape.getDesktop());
-        jTaskConfig.displayCloseButton(true);
-        jTaskConfig.displayCancelButton(false);
-        jTaskConfig.displayStatus(true);
-        jTaskConfig.setAutoDispose(true);
-        jTaskConfig.setMillisToPopup(100);
+//        final JTaskConfig jTaskConfig = new JTaskConfig();
+//        jTaskConfig.setOwner(cytoscape.Cytoscape.getDesktop());
+//        jTaskConfig.displayCloseButton(true);
+//        jTaskConfig.displayCancelButton(false);
+//        jTaskConfig.displayStatus(true);
+//        jTaskConfig.setAutoDispose(true);
+//        jTaskConfig.setMillisToPopup(100);
 
         SetDataSetsTask task = new SetDataSetsTask();
-        TaskManager.executeTask(task, jTaskConfig);
+//        TaskManager.executeTask(task, jTaskConfig);
 
         if (task.success()) {
             Vector<String> dss = new Vector(mapDatasetDisplayName.keySet());
@@ -1177,14 +1179,14 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
 
         public void run() {
                 try {
-                        taskMonitor.setStatus("Loading...");
-                        taskMonitor.setPercentCompleted(-1);
+                        taskMonitor.setStatusMessage("Loading...");
+                        taskMonitor.setProgress(0.00);
                         success = setDatasets();
-                        taskMonitor.setStatus("Done");
-                        taskMonitor.setPercentCompleted(100);
+                        taskMonitor.setStatusMessage("Done");
+                        taskMonitor.setProgress(1.00);
                 } catch (Exception e) {
-                        taskMonitor.setPercentCompleted(100);
-                        taskMonitor.setStatus("failed.\n");
+                        taskMonitor.setProgress(1.00);
+                        taskMonitor.setStatusMessage("failed.\n");
                         e.printStackTrace();
                 }
 
@@ -1204,6 +1206,18 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         public String getTitle() {
 		return new String("Load biomart");
 	}
+
+		@Override
+		public void cancel() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void run(TaskMonitor arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     private class TextComboBoxEditor implements javax.swing.ComboBoxEditor {

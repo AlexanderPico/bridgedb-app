@@ -38,11 +38,10 @@ package org.nrnb.avalon.cythesaurus.internal.ui;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClient;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceUtil;
-
-import cytoscape.task.Task;
-import cytoscape.task.TaskMonitor;
-import cytoscape.task.ui.JTaskConfig;
-import cytoscape.task.util.TaskManager;
+import org.cytoscape.work.Task;
+import org.cytoscape.work.TaskMonitor;
+//import cytoscape.task.ui.JTaskConfig;
+import org.cytoscape.work.TaskManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -93,16 +92,16 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
                         if (clientObj instanceof IDMapperClient) {
                             IDMapperClient client = (IDMapperClient)clientObj;
 
-                            final JTaskConfig jTaskConfig = new JTaskConfig();
-                            jTaskConfig.setOwner(cytoscape.Cytoscape.getDesktop());
-                            jTaskConfig.displayCloseButton(true);
-                            jTaskConfig.displayCancelButton(false);
-                            jTaskConfig.displayStatus(true);
-                            jTaskConfig.setAutoDispose(true);
-                            jTaskConfig.setMillisToPopup(100);
-
+//                            final JTaskConfig jTaskConfig = new JTaskConfig();
+//                            jTaskConfig.setOwner(cytoscape.Cytoscape.getDesktop());
+//                            jTaskConfig.displayCloseButton(true);
+//                            jTaskConfig.displayCancelButton(false);
+//                            jTaskConfig.displayStatus(true);
+//                            jTaskConfig.setAutoDispose(true);
+//                            jTaskConfig.setMillisToPopup(100);
+//
                             LoadClientDescTask task = new LoadClientDescTask(client);
-                            TaskManager.executeTask(task, jTaskConfig);
+//                            TaskManager.executeTask(task, jTaskConfig);
 
                             String desc;
                             if (task.success()) {
@@ -244,8 +243,8 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
         setVisible(false);
         this.dispose();
         try {
-            if (srcTree.isModified())
-                IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
+//            if (srcTree.isModified())
+//                IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to save the current resources.");
@@ -259,7 +258,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
             return;
 
         try {
-            IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
+//            IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "Failed to save the current resources.");
@@ -274,7 +273,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
         if (ret==JOptionPane.NO_OPTION)
             return;
         
-        IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
+//        IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
 
         srcTree.reset();
         JOptionPane.showMessageDialog(this, "The default resources has been loaded.");
@@ -309,15 +308,15 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 
         public void run() {
                 try {
-                        taskMonitor.setStatus("Connecting to "+client.getDisplayName()+"...");
-                        taskMonitor.setPercentCompleted(-1);
+                        taskMonitor.setStatusMessage("Connecting to "+client.getDisplayName()+"...");
+                        taskMonitor.setProgress(0.00);
                         description = getDescription();
-                        taskMonitor.setStatus("Done");
-                        taskMonitor.setPercentCompleted(100);
+                        taskMonitor.setStatusMessage("Done");
+                        taskMonitor.setProgress(1.00);
                         success = true;
                 } catch (Exception e) {
-                        taskMonitor.setPercentCompleted(100);
-                        taskMonitor.setStatus("failed.\n");
+                        taskMonitor.setProgress(1.00);
+                        taskMonitor.setStatusMessage("failed.\n");
                         e.printStackTrace();
                 }
 
@@ -390,7 +389,9 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
     //        desc.append("\n");
 
             // TODO: remove next line after the problem of AttributeMapper in BridgeRest is solved.
-            if (!(idMapper instanceof org.bridgedb.webservice.bridgerest.BridgeRest))
+            // TODO: temporally comment the next line, I don't know that it is useful in 3.0, or not?
+            //       Chao Zhang 2013-09-06
+            //if (!(idMapper instanceof org.bridgedb.webservice.bridgerest.BridgeRest))
             if (idMapper instanceof AttributeMapper) {
                 desc.append(">>Supported Attributes\n");
                 Set<String> attrs = ((AttributeMapper)idMapper).getAttributeSet();
@@ -440,5 +441,17 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 
             return desc.toString();
         }
+
+		@Override
+		public void cancel() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void run(TaskMonitor arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }

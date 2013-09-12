@@ -395,10 +395,10 @@ public class IDMapperClientManager {
         clientConnectionStringMap.remove(client.getConnectionString());
         selectedClients.remove(client);
 
-        if (removeSessionProps &&
-                client instanceof IDMapperClientImplTunables) {
-            ((IDMapperClientImplTunables)client).close();
-        }
+//        if (removeSessionProps &&
+//                client instanceof IDMapperClientImplTunables) {
+//            ((IDMapperClientImplTunables)client).close();
+//        }
 
         fireIDMapperChange();
         

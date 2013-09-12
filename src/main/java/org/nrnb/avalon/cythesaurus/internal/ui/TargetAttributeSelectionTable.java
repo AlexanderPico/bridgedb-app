@@ -37,10 +37,6 @@ package org.nrnb.avalon.cythesaurus.internal.ui;
 
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
-
-import cytoscape.Cytoscape;
-import cytoscape.data.CyAttributes;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -224,8 +220,8 @@ public class TargetAttributeSelectionTable extends JTable{
     public List<String> getTgtAttrNames() {
         Set<String> usedName = new HashSet();
         usedName.add("ID"); //TODO: remove Cy3
-        usedName.addAll(Arrays.asList(Cytoscape.getNodeAttributes()
-                    .getAttributeNames()));
+        //Temp comment
+        //usedName.addAll(Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames()));
         usedName.addAll(destinationAttributes);
 
         List<String> ret = new ArrayList();
@@ -260,8 +256,9 @@ public class TargetAttributeSelectionTable extends JTable{
         for (int i=0; i<rowCount; i++) {
             boolean oneId = oneIDOnly.compareTo((String)oneIDOnlyComboBoxes
                         .get(i).getSelectedItem())==0;
-            byte attrType = oneId ?
-                CyAttributes.TYPE_STRING : CyAttributes.TYPE_SIMPLE_LIST;
+            byte attrType = oneId ? 
+            	new Byte("0") : new Byte("1");
+                //CyAttributes.TYPE_STRING : CyAttributes.TYPE_SIMPLE_LIST;
 
             ret.add(attrType);
         }
@@ -284,14 +281,15 @@ public class TargetAttributeSelectionTable extends JTable{
     }
 
     // cytoscape attr
-    public Map<String,Byte> getMapAttrNameAttrType() {
-        Map<String,Byte> ret = new HashMap();
+    public Map<String,Class> getMapAttrNameAttrType() {
+        Map<String,Class> ret = new HashMap();
         for (int i=0; i<rowCount; i++) {
             String name = getAttrName(i);
             boolean oneId = oneIDOnly.compareTo((String)oneIDOnlyComboBoxes
                         .get(i).getSelectedItem())==0;
-            byte attrType = oneId ?
-                CyAttributes.TYPE_STRING : CyAttributes.TYPE_SIMPLE_LIST;
+            Class attrType = oneId ?
+            	String.class : List.class;
+                //CyAttributes.TYPE_STRING : CyAttributes.TYPE_SIMPLE_LIST;
             
             ret.put(name, attrType);
         }
@@ -572,7 +570,8 @@ public class TargetAttributeSelectionTable extends JTable{
             if (colName.compareTo(headerAttrName)==0) {
                 Set<String> usedName = new HashSet();
                 usedName.add("ID"); //TODO remove in Cy3
-                usedName.addAll(Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames()));
+                //Temp comment
+                //usedName.addAll(Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames()));
                 usedName.addAll(destinationAttributes);
                 String str = (String)value;
                 if (usedName.contains(str)) {

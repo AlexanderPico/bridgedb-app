@@ -42,8 +42,8 @@ import org.bridgedb.IDMapperException;
 import org.bridgedb.rdb.IDMapperRdb;
 import org.bridgedb.rdb.SimpleGdb;
 
-import cytoscape.util.FileUtil;
-import cytoscape.util.CyFileFilter;
+import org.cytoscape.util.swing.FileUtil;
+import org.cytoscape.io.CyFileFilter;
 
 import java.io.File;
 import javax.swing.DefaultComboBoxModel;
@@ -191,13 +191,13 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void pgdbButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pgdbButtonActionPerformed
-        File source = FileUtil.getFile("Select a BridgeDb file", FileUtil.LOAD,
-                new CyFileFilter[] { new CyFileFilter(new String[]{"bridge","pgdb"}, "BridgeDb Derby file") });
-        if (source==null) {
-            return;
-        }
-
-        pgdbTextField.setText(source.getPath());
+//        File source = FileUtil.getFile("Select a BridgeDb file", FileUtil.LOAD,
+//                new CyFileFilter[] { new CyFileFilter(new String[]{"bridge","pgdb"}, "BridgeDb Derby file") });
+//        if (source==null) {
+//            return;
+//        }
+//
+//        pgdbTextField.setText(source.getPath());
 }//GEN-LAST:event_pgdbButtonActionPerformed
 
     private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelButtonActionPerformed

@@ -38,9 +38,11 @@ package org.nrnb.avalon.cythesaurus.internal.ui;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClient;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientImpl;
 
-import cytoscape.util.CyFileFilter;
-import cytoscape.util.FileUtil;
-import cytoscape.util.URLUtil;
+import org.cytoscape.io.CyFileFilter;
+import org.cytoscape.util.swing.FileUtil;
+
+// TODO: I didn't find this class in 3.0, just comment it
+//import org.cytoscape.util.swing.URLUtil;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.file.IDMapperText;
@@ -496,33 +498,33 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
     private void textFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFileButtonActionPerformed
         URL url;
         String strURL;
-        try {
-            if (isLocal) {
-                File source = FileUtil.getFile("Select a ID mapping file", FileUtil.LOAD,
-                        new CyFileFilter[] {  });
-                if (source==null) {
-                    return;
-                }
-                url = source.toURI().toURL();
-                strURL = url.toString();
-                textFileTextField.setText(strURL);
-            } else {
-                strURL =  textFileTextField.getText();
-                if (strURL==null || strURL.length()==0) {
-                    return;
-                }
-                url = new URL(strURL);
-            }
-
-            if (URLUtil.getURLConnection(url)==null) {
-                JOptionPane.showMessageDialog(this, "Error: failed to connect to the file.");
-                return;
-            }
-
-        } catch(Exception e) {
-            JOptionPane.showMessageDialog(this, "Error: unable to open the file.");
-            e.printStackTrace();
-        }
+//        try {
+//            if (isLocal) {
+//                File source = FileUtil.getFile("Select a ID mapping file", FileUtil.LOAD,
+//                        new CyFileFilter[] {  });
+//                if (source==null) {
+//                    return;
+//                }
+//                url = source.toURI().toURL();
+//                strURL = url.toString();
+//                textFileTextField.setText(strURL);
+//            } else {
+//                strURL =  textFileTextField.getText();
+//                if (strURL==null || strURL.length()==0) {
+//                    return;
+//                }
+//                url = new URL(strURL);
+//            }
+//
+//            if (URLUtil.getURLConnection(url)==null) {
+//                JOptionPane.showMessageDialog(this, "Error: failed to connect to the file.");
+//                return;
+//            }
+//
+//        } catch(Exception e) {
+//            JOptionPane.showMessageDialog(this, "Error: unable to open the file.");
+//            e.printStackTrace();
+//        }
 
         setPreviewTableData();
 }//GEN-LAST:event_textFileButtonActionPerformed
@@ -623,10 +625,10 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
         
         try {
             URL url = new URL(strURL);
-            if (URLUtil.getURLConnection(url)==null) {
-                JOptionPane.showMessageDialog(this, "Error: failed to connect to the file.");
-                return false;
-            }
+//            if (URLUtil.getURLConnection(url)==null) {
+//                JOptionPane.showMessageDialog(this, "Error: failed to connect to the file.");
+//                return false;
+//            }
         } catch(Exception ex) {
             JOptionPane.showMessageDialog(this, "Error: unable to open the file.");
             ex.printStackTrace();
@@ -785,33 +787,33 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
                 return;
             }
 
-            InputStream inputStream = URLUtil.getInputStream(url);
-            Reader fin = new InputStreamReader(inputStream);
-            BufferedReader bufRd = new BufferedReader(fin);
-
-            // add data sources
-            String line = bufRd.readLine();
-            if (line==null) {
-                    previewTableModel.setDataVector((Vector)null, null);
-                    return;
-            }
-
-            String[] types = line.split(regExDel);
-            int nCol = types.length;
-
-            String[][] data = new String[previewLimit][nCol];
-
-            int lineCount = 0;
-            while ((line=bufRd.readLine())!=null && lineCount<previewLimit) {
-                String[] strs = line.split(regExDel);
-                int n = Math.min(strs.length, types.length);
-                for (int i=0; i<n; i++) {
-                    data[lineCount][i] = strs[i];
-                }
-                lineCount++;
-            }
-
-            previewTableModel.setDataVector(data, types);
+//            InputStream inputStream = URLUtil.getInputStream(url);
+//            Reader fin = new InputStreamReader(inputStream);
+//            BufferedReader bufRd = new BufferedReader(fin);
+//
+//            // add data sources
+//            String line = bufRd.readLine();
+//            if (line==null) {
+//                    previewTableModel.setDataVector((Vector)null, null);
+//                    return;
+//            }
+//
+//            String[] types = line.split(regExDel);
+//            int nCol = types.length;
+//
+//            String[][] data = new String[previewLimit][nCol];
+//
+//            int lineCount = 0;
+//            while ((line=bufRd.readLine())!=null && lineCount<previewLimit) {
+//                String[] strs = line.split(regExDel);
+//                int n = Math.min(strs.length, types.length);
+//                for (int i=0; i<n; i++) {
+//                    data[lineCount][i] = strs[i];
+//                }
+//                lineCount++;
+//            }
+//
+//            previewTableModel.setDataVector(data, types);
         } catch(IOException ex) {
             previewTableModel.setDataVector((Vector)null, null);
         }

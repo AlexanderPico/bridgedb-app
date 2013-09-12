@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<properties>
-						<bundle.symbolicName>CyThesaurus</bundle.symbolicName>
+		<bundle.symbolicName>CyThesaurus</bundle.symbolicName>
 		<bundle.namespace>org.nrnb.avalon.cythesaurus</bundle.namespace>
 		<cytoscape.api.version>3.0.1</cytoscape.api.version>
 	</properties>
@@ -11,9 +11,7 @@
 	<groupId>org.nrnb.avalon</groupId>
 	<artifactId>CyThesaurus</artifactId>
 	<version>3.0.0</version>
-
-			<name>${bundle.symbolicName}</name>
-	
+	<name>${bundle.symbolicName}</name>
 	<packaging>bundle</packaging>
 
 	<build>
@@ -72,12 +70,14 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-												<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
+						<Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
 						<Bundle-Version>${project.version}</Bundle-Version>
 						<Export-Package>${bundle.namespace}</Export-Package>
 						<Private-Package>${bundle.namespace}.internal.*</Private-Package>
-						<Bundle-Activator>${bundle.namespace}.internal.CyActivator</Bundle-Activator>
-											</instructions>
+						<Bundle-Activator>${bundle.namespace}.internal.CyThesaurusPlugin</Bundle-Activator>
+						<Embed-Dependency>groupId=org.bridgedb;scope=compile|runtime;inline=true</Embed-Dependency>
+<!-- 						<Embed-Dependency>synergizer-client,org.bridgedb,org.bridgedb.bio,org.bridgedb.rdb,org.bridgedb.webservice.biomart,org.bridgedb.webservice.synergizer;scope=compile|runtime;inline=true</Embed-Dependency> -->
+					</instructions>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -105,6 +105,17 @@
 			<name>Cytoscape Releases</name>
 			<url>http://code.cytoscape.org/nexus/content/repositories/releases/</url>
 		</repository>
+<!-- 		<repository> -->
+<!-- 		    <id>repo</id> -->
+<!-- 		    <releases> -->
+<!-- 		        <enabled>true</enabled> -->
+<!-- 		        <checksumPolicy>ignore</checksumPolicy> -->
+<!-- 		    </releases> -->
+<!-- 		    <snapshots> -->
+<!-- 		        <enabled>false</enabled> -->
+<!-- 		    </snapshots> -->
+<!-- 		    <url>file://${project.basedir}/repo</url> -->
+<!-- 		</repository> -->
 	</repositories>
 
 	<!-- Dependencies needed to compile this project. -->
@@ -130,6 +141,16 @@
 			<artifactId>session-api</artifactId>
 			<version>${cytoscape.api.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>swing-util-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.cytoscape</groupId>
+			<artifactId>io-api</artifactId>
+			<version>${cytoscape.api.version}</version>
+		</dependency>
 
 		<!-- Logging -->
 		<dependency>
@@ -143,31 +164,31 @@
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.bio</artifactId>
 			<version>1.1.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb</artifactId>
 			<version>1.1.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.rdb</artifactId>
 			<version>1.1.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.webservice.biomart</artifactId>
 			<version>1.1.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.webservice.synergizer</artifactId>
 			<version>1.1.0</version>
-			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
+			<artifactId>synergizer-client</artifactId>
+			<version>1.1.0</version>
 		</dependency>
 	</dependencies>
 

@@ -36,16 +36,12 @@
 package org.nrnb.avalon.cythesaurus.internal.ui;
 
 import org.cytoscape.model.CyNetwork;
-import cytoscape.Cytoscape;
-
-import cytoscape.data.CyAttributes;
-
+import org.cytoscape.model.CyNode;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceUtil;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 
-import giny.model.Node;
-
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -112,7 +108,7 @@ public class SourceAttributeSelectionTable extends JTable{
 
     private Vector<String> attributes;
 
-    private Set<Node> nodesForTypeGuessing;
+    private Set<String> nodesForTypeGuessing;
 
     public SourceAttributeSelectionTable() {
         super();
@@ -177,7 +173,8 @@ public class SourceAttributeSelectionTable extends JTable{
         attributes.add("ID");
         //TODO: modify if local attribute implemented
 
-        List<String> list = Arrays.asList(cytoscape.Cytoscape.getNodeAttributes().getAttributeNames());
+        List<String> list = new ArrayList<String>();
+        //Arrays.asList(cytoscape.Cytoscape.getNodeAttributes().getAttributeNames());
         Collections.sort(list);
 
         attributes.addAll(list);
@@ -188,16 +185,14 @@ public class SourceAttributeSelectionTable extends JTable{
         this.idTypeSelectionChangedListener = idTypeSelectionChangedListener;
     }
 
-    public void setSelectedNetworks(final Collection<CyNetwork> selectedNetworks) {
+    public void setSelectedNetworks(final CyNetwork selectedNetwork) {
         nodesForTypeGuessing.clear();
-        if (selectedNetworks!=null) {
-            for (CyNetwork net : selectedNetworks) {
-                Iterator<Node> it = net.nodesIterator();
-                int count = 0;
-                // only using 100 or less for guessing
-                while (it.hasNext() && count++<100) {
-                    nodesForTypeGuessing.add(it.next());
-                }
+        if (selectedNetwork!=null) {
+            List<CyNode> it = selectedNetwork.getNodeList();
+            int count = 0;
+            // only using 100 or less for guessing
+            for(CyNode cyN : it) {
+                nodesForTypeGuessing.add(cyN.getSUID().toString());
             }
         }
 
@@ -253,25 +248,26 @@ public class SourceAttributeSelectionTable extends JTable{
     private Set<String> getSrcIDsForTypeGuessing(int row) {
         Set<String> result = new HashSet();
         String attr = selectedAttribute.get(row);
-        CyAttributes cyAttributes = Cytoscape.getNodeAttributes();
-        for (Node node : nodesForTypeGuessing) {
-            String nodeId = node.getIdentifier();
-            if (attr.equals("ID")) {
-                result.add(nodeId);
-            } else {
-                byte type = cyAttributes.getType(attr);
-                if (type == CyAttributes.TYPE_SIMPLE_LIST) {
-                    List list = cyAttributes.getListAttribute(nodeId, attr);
-                    for (Object obj : list) {
-                        result.add(obj.toString());
-                    }
-                } else {
-                    Object obj = cyAttributes.getAttribute(nodeId, attr);
-                    if (obj!=null)
-                        result.add(obj.toString());
-                }
-            }
-        }
+        //Temp comment
+//        CyAttributes cyAttributes = Cytoscape.getNodeAttributes();
+//        for (Node node : nodesForTypeGuessing) {
+//            String nodeId = node.getIdentifier();
+//            if (attr.equals("ID")) {
+//                result.add(nodeId);
+//            } else {
+//                byte type = cyAttributes.getType(attr);
+//                if (type == CyAttributes.TYPE_SIMPLE_LIST) {
+//                    List list = cyAttributes.getListAttribute(nodeId, attr);
+//                    for (Object obj : list) {
+//                        result.add(obj.toString());
+//                    }
+//                } else {
+//                    Object obj = cyAttributes.getAttribute(nodeId, attr);
+//                    if (obj!=null)
+//                        result.add(obj.toString());
+//                }
+//            }
+//        }
         return result;
     }
 
@@ -422,8 +418,9 @@ public class SourceAttributeSelectionTable extends JTable{
 
     private void addRow(String attr, Set<DataSourceWrapper> dss) {
         if (rowCount>=attributes.size()) {
-            JOptionPane.showMessageDialog(cytoscape.Cytoscape.getDesktop(),
-                    "All attributes have been used. Cannot add more.");
+        	//Temp comment
+//            JOptionPane.showMessageDialog(cytoscape.Cytoscape.getDesktop(),
+//                    "All attributes have been used. Cannot add more.");
             return;
         }
         
@@ -441,10 +438,11 @@ public class SourceAttributeSelectionTable extends JTable{
                 if (selected.compareTo(selectedAttribute.get(i))==0)
                     return;
                 if (selectedAttribute.contains(selected)) {
-                    JOptionPane.showMessageDialog(cytoscape.Cytoscape.getDesktop(),
-                            "This attribute has already been selected.\n" +
-                            "Please selecte another one.");
-                    cb.setSelectedItem(selectedAttribute.get(i));
+                	//Temp commet
+//                    JOptionPane.showMessageDialog(cytoscape.Cytoscape.getDesktop(),
+//                            "This attribute has already been selected.\n" +
+//                            "Please selecte another one.");
+//                    cb.setSelectedItem(selectedAttribute.get(i));
                 } else {
                     selectedAttribute.set(i, selected);
 

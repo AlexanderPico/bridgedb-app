@@ -136,195 +136,250 @@ public class IDMapperClientImplTunables implements IDMapperClient {
 
         props = new IDMapperClientProperties(defId);
 
-        initilizeTunables(builder.connectionString,
-                builder.classString,
-                builder.displayName==null?builder.connectionString:builder.displayName,
-                defId,
-                builder.selected,
-                defClientType);
-
-        props.saveProperties();
+//        initilizeTunables(builder.connectionString,
+//                builder.classString,
+//                builder.displayName==null?builder.connectionString:builder.displayName,
+//                defId,
+//                builder.selected,
+//                defClientType);
+//
+//        props.saveProperties();
         
         clientNo++;
     }
 
-    public IDMapperClientImplTunables(IDMapperClientProperties props, String newPropsId) {
-        this.props = props;
+	@Override
+	public String getId() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        String defId = ""+clientNo+"-"+System.currentTimeMillis();
-        this.initilizeTunables("", "", defId, defId, true, ClientType.OTHER);
+	@Override
+	public String getDisplayName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        if (newPropsId!=null) {
-            this.props = new IDMapperClientProperties(newPropsId, props);
-            this.props.initializeProperties();
-            props.release(); // release the old
-        }
+	@Override
+	public String getConnectionString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        //Class.forName(getClassString());
-        //mapper = BridgeDb.connect(getConnectionString());
+	@Override
+	public void setConnectionString(String connectionString)
+			throws IDMapperException {
+		// TODO Auto-generated method stub
+		
+	}
 
-        props.saveProperties();
+	@Override
+	public IDMapper getIDMapper() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        clientNo++;
-    }
+	@Override
+	public String getClassString() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    /**
-     * the private constructor
-     * <br>
-     * 2013-8-21:12:20:42 PM<br>
-     * <br>
-     * @param connectionString
-     * @param classString
-     * @param displayName
-     * @param id
-     * @param selected
-     * @param clientType
-     */
-    private void initilizeTunables(String connectionString, String classString,
-            String displayName, String id, boolean selected, ClientType clientType) {
-        this.id = new Tunable(CLIENT_ID, "ID for client", Tunable.STRING, id);
-        props.add(this.id);
+	@Override
+	public ClientType getClientType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        this.displayName = new Tunable(CLIENT_DISPLAYNAME,
-                    "Display name for client", Tunable.STRING, displayName);
-        props.add(this.displayName);
+	@Override
+	public boolean isSelected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-        this.classString = new Tunable(CLASS_STRING,
-                    "ID mapper class name", Tunable.STRING, classString);
-        props.add(this.classString);
+	@Override
+	public void setSelected(boolean selected) {
+		// TODO Auto-generated method stub
+		
+	}
 
-        this.connectionString = new Tunable(CONNECTION_STRING,
-                    "Connection string of ID mapper", Tunable.STRING,
-                    connectionString);
-        props.add(this.connectionString);
-
-        this.selected = new Tunable(SELECTED,
-                    "Is this client selected", Tunable.BOOLEAN,
-                    selected);
-        props.add(this.selected);
-
-        this.clientType = new Tunable(CLIENT_TYPE,
-                    "Client type", Tunable.STRING|Tunable.NOINPUT, clientType.name());
-        props.add(this.clientType);
-
-        props.initializeProperties(); // save to props or set to tunables
-    }
-
-    public String getId() {
-        return (String)id.getValue();
-    }
-
-    public String getDisplayName() {
-        return (String)displayName.getValue();
-    }
-
-    public ClientType getClientType() {
-        return ClientType.valueOf((String)clientType.getValue());
-    }
-
-    public IDMapper getIDMapper() {
-        if (mapper==null) {
-            try {
-                Class.forName(getClassString());
-
-                ExecutorService executor = Executors.newSingleThreadExecutor();
-                executor.execute(new Runnable() {
-                    public void run() {
-                        try {
-                            mapper = BridgeDb.connect(getConnectionString());
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                //TODO: how to set waiting time?
-                if (executor.awaitTermination(5, TimeUnit.SECONDS)) {
-                    executor.shutdown();
-                }
-
-                if (mapper == null) {
-                    System.err.println("Failed to connect to " + this.toString());
-                    return null;
-                }
-
-                preprocess(mapper);
-
-                // in case the current type is wrong, update it.
-                ClientType type = ClientType.getClientType(mapper);
-                if (type!=getClientType()) {
-                    clientType.setValue(type.name());
-                    props.saveProperties(clientType);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return mapper;
-    }
-
-    /**
-     * set fullname of datasource as syscode if it is null
-     * in this plugin, fullname represents the datasource
-     * @param mapper
-     */
-    private static void preprocess(final IDMapper mapper) {
-        if (mapper==null)
-            return;
-
-        IDMapperCapabilities caps = mapper.getCapabilities();
-        Set<DataSource> dss = new HashSet();
-        try {
-            dss.addAll(caps.getSupportedSrcDataSources());
-            dss.addAll(caps.getSupportedTgtDataSources());
-        } catch (Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-//        for (DataSource ds : dss) {
-//            if (ds.getFullName()==null) {
-//                String sysCode = ds.getSystemCode();
-//                DataSource.register(sysCode, sysCode);
+//    public IDMapperClientImplTunables(IDMapperClientProperties props, String newPropsId) {
+//        this.props = props;
+//
+//        String defId = ""+clientNo+"-"+System.currentTimeMillis();
+//        this.initilizeTunables("", "", defId, defId, true, ClientType.OTHER);
+//
+//        if (newPropsId!=null) {
+//            this.props = new IDMapperClientProperties(newPropsId, props);
+//            this.props.initializeProperties();
+//            props.release(); // release the old
+//        }
+//
+//        //Class.forName(getClassString());
+//        //mapper = BridgeDb.connect(getConnectionString());
+//
+//        props.saveProperties();
+//
+//        clientNo++;
+//    }
+//
+//    /**
+//     * the private constructor
+//     * <br>
+//     * 2013-8-21:12:20:42 PM<br>
+//     * <br>
+//     * @param connectionString
+//     * @param classString
+//     * @param displayName
+//     * @param id
+//     * @param selected
+//     * @param clientType
+//     */
+//    private void initilizeTunables(String connectionString, String classString,
+//            String displayName, String id, boolean selected, ClientType clientType) {
+//        this.id = new Tunable(CLIENT_ID, "ID for client", Tunable.STRING, id);
+//        props.add(this.id);
+//
+//        this.displayName = new Tunable(CLIENT_DISPLAYNAME,
+//                    "Display name for client", Tunable.STRING, displayName);
+//        props.add(this.displayName);
+//
+//        this.classString = new Tunable(CLASS_STRING,
+//                    "ID mapper class name", Tunable.STRING, classString);
+//        props.add(this.classString);
+//
+//        this.connectionString = new Tunable(CONNECTION_STRING,
+//                    "Connection string of ID mapper", Tunable.STRING,
+//                    connectionString);
+//        props.add(this.connectionString);
+//
+//        this.selected = new Tunable(SELECTED,
+//                    "Is this client selected", Tunable.BOOLEAN,
+//                    selected);
+//        props.add(this.selected);
+//
+//        this.clientType = new Tunable(CLIENT_TYPE,
+//                    "Client type", Tunable.STRING|Tunable.NOINPUT, clientType.name());
+//        props.add(this.clientType);
+//
+//        props.initializeProperties(); // save to props or set to tunables
+//    }
+//
+//    public String getId() {
+//        return (String)id.getValue();
+//    }
+//
+//    public String getDisplayName() {
+//        return (String)displayName.getValue();
+//    }
+//
+//    public ClientType getClientType() {
+//        return ClientType.valueOf((String)clientType.getValue());
+//    }
+//
+//    public IDMapper getIDMapper() {
+//        if (mapper==null) {
+//            try {
+//                Class.forName(getClassString());
+//
+//                ExecutorService executor = Executors.newSingleThreadExecutor();
+//                executor.execute(new Runnable() {
+//                    public void run() {
+//                        try {
+//                            mapper = BridgeDb.connect(getConnectionString());
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                });
+//
+//                //TODO: how to set waiting time?
+//                if (executor.awaitTermination(5, TimeUnit.SECONDS)) {
+//                    executor.shutdown();
+//                }
+//
+//                if (mapper == null) {
+//                    System.err.println("Failed to connect to " + this.toString());
+//                    return null;
+//                }
+//
+//                preprocess(mapper);
+//
+//                // in case the current type is wrong, update it.
+//                ClientType type = ClientType.getClientType(mapper);
+//                if (type!=getClientType()) {
+//                    clientType.setValue(type.name());
+//                    props.saveProperties(clientType);
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//                return null;
 //            }
 //        }
-    }
-    
-    public String getConnectionString() {
-        return (String)connectionString.getValue();
-    }
-
-    public void setConnectionString(String connectionString)
-            throws IDMapperException {
-        this.connectionString.setValue(connectionString);
-        mapper = null;
-        props.saveProperties(this.connectionString);
-    }
-    
-    public String getClassString() {
-        return (String)classString.getValue();
-    }
-
-    @Override
-    public String toString() {
-        return this.getDisplayName();
-    }
-
-    public IDMapperClientProperties getProps() {
-        return props;
-    }
-
-    public boolean isSelected() {
-        return (Boolean)selected.getValue();
-    }
-
-    public void setSelected(boolean selected) {
-        this.selected.setValue(selected);
-        props.saveProperties(this.selected);
-    }
-
-    public void close() {
-        props.release();
-    }
+//        return mapper;
+//    }
+//
+//    /**
+//     * set fullname of datasource as syscode if it is null
+//     * in this plugin, fullname represents the datasource
+//     * @param mapper
+//     */
+//    private static void preprocess(final IDMapper mapper) {
+//        if (mapper==null)
+//            return;
+//
+//        IDMapperCapabilities caps = mapper.getCapabilities();
+//        Set<DataSource> dss = new HashSet();
+//        try {
+//            dss.addAll(caps.getSupportedSrcDataSources());
+//            dss.addAll(caps.getSupportedTgtDataSources());
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            return;
+//        }
+//
+////        for (DataSource ds : dss) {
+////            if (ds.getFullName()==null) {
+////                String sysCode = ds.getSystemCode();
+////                DataSource.register(sysCode, sysCode);
+////            }
+////        }
+//    }
+//    
+//    public String getConnectionString() {
+//        return (String)connectionString.getValue();
+//    }
+//
+//    public void setConnectionString(String connectionString)
+//            throws IDMapperException {
+//        this.connectionString.setValue(connectionString);
+//        mapper = null;
+//        props.saveProperties(this.connectionString);
+//    }
+//    
+//    public String getClassString() {
+//        return (String)classString.getValue();
+//    }
+//
+//    @Override
+//    public String toString() {
+//        return this.getDisplayName();
+//    }
+//
+//    public IDMapperClientProperties getProps() {
+//        return props;
+//    }
+//
+//    public boolean isSelected() {
+//        return (Boolean)selected.getValue();
+//    }
+//
+//    public void setSelected(boolean selected) {
+//        this.selected.setValue(selected);
+//        props.saveProperties(this.selected);
+//    }
+//
+//    public void close() {
+//        props.release();
+//    }
 }

@@ -36,11 +36,11 @@
 package org.nrnb.avalon.cythesaurus.internal;
 
 import org.bridgedb.bio.BioDataSource;
-
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.service.util.AbstractCyActivator;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 
@@ -77,6 +77,7 @@ public final class CyThesaurusPlugin extends AbstractCyActivator {
                     cyNetworkManagerServiceRef, taskManagerServiceRef);
             
             registerService(bc, idMappingAction, CyAction.class, new Properties());
+            OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -37,14 +37,15 @@ package org.nrnb.avalon.cythesaurus.internal.ui;
 
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
-
-import cytoscape.Cytoscape;
+import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
-import cytoscape.data.CyAttributes;
-import cytoscape.task.Task;
-import cytoscape.task.TaskMonitor;
-import cytoscape.task.ui.JTaskConfig;
-import cytoscape.task.util.TaskManager;
+import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.model.CyTable;
+import org.cytoscape.work.Task;
+import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskManager;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ListCellRenderer;
@@ -55,7 +56,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.JOptionPane;
 
 import java.awt.Component;
-
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -65,16 +66,21 @@ import java.util.TreeMap;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collections;
+import java.awt.Insets;
 
 /**
  *
  * @author gjj
  */
 public class CyThesaurusDialog extends javax.swing.JDialog {
-
+	private CyNetworkManager cnm;
+	private TaskManager taskManager;
+	
     /** Creates new form CyThesaurusDialog */
-    public CyThesaurusDialog(java.awt.Frame parent, boolean modal) {
+    public CyThesaurusDialog(java.awt.Frame parent, CyNetworkManager cnm, TaskManager taskManager, boolean modal) {
         super(parent, modal);
+        this.cnm = cnm;
+        this.taskManager = taskManager;
         initComponents();
         postInit();
     }
@@ -119,16 +125,6 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         javax.swing.JPanel OKPanel = new javax.swing.JPanel();
         OKBtn = new javax.swing.JButton();
         javax.swing.JButton cancelBtn = new javax.swing.JButton();
-        javax.swing.JPanel selectNetworkPanel = new javax.swing.JPanel();
-        javax.swing.JScrollPane unselectedNetworkScrollPane = new javax.swing.JScrollPane();
-        unselectedNetworkData = new SortedNetworkListModel();
-        unselectedNetworkList = new javax.swing.JList(unselectedNetworkData);
-        javax.swing.JPanel lrButtonPanel = new javax.swing.JPanel();
-        rightButton = new javax.swing.JButton();
-        leftButton = new javax.swing.JButton();
-        javax.swing.JScrollPane selectedNetworkScrollPane = new javax.swing.JScrollPane();
-        selectedNetworkData = new SortedNetworkListModel();
-        selectedNetworkList = new javax.swing.JList(selectedNetworkData);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("CyThesaurus plugin");
@@ -163,11 +159,11 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(sourcePanel, gridBagConstraints);
 
         destinationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select destination attribute/IDType(s)"));
@@ -178,7 +174,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         destinationScrollPane.setMinimumSize(new java.awt.Dimension(300, 100));
         destinationScrollPane.setPreferredSize(new java.awt.Dimension(300, 100));
 
-        targetAttributeSelectionTable = new csplugins.id.mapping.ui.TargetAttributeSelectionTable();
+        targetAttributeSelectionTable = new TargetAttributeSelectionTable();
         destinationScrollPane.setViewportView(targetAttributeSelectionTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -200,11 +196,11 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.5;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(destinationPanel, gridBagConstraints);
 
         srcConfBtn.setText("ID Mapping Resources Configuration");
@@ -217,9 +213,9 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.insets = new Insets(5, 5, 0, 0);
         getContentPane().add(typeSourceConfPanel, gridBagConstraints);
 
         OKBtn.setText("   OK   ");
@@ -241,190 +237,11 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        gridBagConstraints.insets = new Insets(5, 5, 0, 0);
         getContentPane().add(OKPanel, gridBagConstraints);
-
-        selectNetworkPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Please select networks"));
-        selectNetworkPanel.setMinimumSize(new java.awt.Dimension(490, 100));
-        selectNetworkPanel.setPreferredSize(new java.awt.Dimension(800, 120));
-        selectNetworkPanel.setLayout(new java.awt.GridBagLayout());
-
-        unselectedNetworkScrollPane.setPreferredSize(new java.awt.Dimension(200, 100));
-
-        unselectedNetworkList.setBorder(javax.swing.BorderFactory.createTitledBorder("Availabe networks"));
-        for (Iterator<CyNetwork> it = Cytoscape.getNetworkSet().iterator(); it.hasNext(); ) {
-            CyNetwork network = it.next();
-            if (network != Cytoscape.getCurrentNetwork())
-            unselectedNetworkData.add(network);
-        }
-
-        unselectedNetworkList.setCellRenderer(new ListCellRenderer() {
-            private DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
-            public Component getListCellRendererComponent(
-                JList list,
-                Object value,
-                int index,
-                boolean isSelected,
-                boolean cellHasFocus) {
-                JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                renderer.setText(((CyNetwork)value).getTitle());
-                return renderer;
-            }
-        });
-
-        unselectedNetworkList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                int index = unselectedNetworkList.getMinSelectionIndex();
-                if (index>-1) {
-                    selectedNetworkList.getSelectionModel().clearSelection();
-                    rightButton.setEnabled(true);
-                } else {
-                    rightButton.setEnabled(false);
-                }
-            }
-        });
-        unselectedNetworkScrollPane.setViewportView(unselectedNetworkList);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        selectNetworkPanel.add(unselectedNetworkScrollPane, gridBagConstraints);
-
-        lrButtonPanel.setLayout(new java.awt.GridLayout(0, 1, 0, 2));
-
-        rightButton.setText(">");
-        rightButton.setEnabled(false);
-        rightButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                int [] indices = unselectedNetworkList.getSelectedIndices();
-                if (indices == null || indices.length == 0) {
-                    return;
-                }
-
-                for (int i= indices.length-1; i>=0; i--) {
-                    CyNetwork removed = unselectedNetworkData.removeElement(indices[i]);
-                    selectedNetworkData.add(removed);
-                }
-
-                if (unselectedNetworkData.getSize()==0) {
-                    unselectedNetworkList.clearSelection();
-                    rightButton.setEnabled(false);
-                } else {
-                    int minindex = unselectedNetworkList.getMinSelectionIndex();
-                    if (minindex>= unselectedNetworkData.getSize()) {
-                        minindex = 0;
-                    }
-                    unselectedNetworkList.setSelectedIndex(minindex);
-                }
-
-                selectedNetworkList.repaint();
-                unselectedNetworkList.repaint();
-
-                updateOKButtonEnable();
-
-                setSelectedNetworkInSrcTable();
-            }
-        });
-        lrButtonPanel.add(rightButton);
-
-        leftButton.setText("<");
-        leftButton.setEnabled(false);
-        leftButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                int [] indices = selectedNetworkList.getSelectedIndices();
-                if (indices == null || indices.length == 0) {
-                    return;
-                }
-
-                for (int i= indices.length-1; i>=0; i--) {
-                    CyNetwork removed = selectedNetworkData.removeElement(indices[i]);
-                    unselectedNetworkData.add(removed);
-                }
-
-                if (selectedNetworkData.getSize()==0) {
-                    selectedNetworkList.clearSelection();
-                    leftButton.setEnabled(false);
-                } else {
-                    int minindex = selectedNetworkList.getMinSelectionIndex();
-                    if (minindex>= selectedNetworkData.getSize()) {
-                        minindex = 0;
-                    }
-                    selectedNetworkList.setSelectedIndex(minindex);
-                }
-
-                selectedNetworkList.repaint();
-                unselectedNetworkList.repaint();
-                updateOKButtonEnable();
-
-                setSelectedNetworkInSrcTable();
-            }
-        });
-        lrButtonPanel.add(leftButton);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        selectNetworkPanel.add(lrButtonPanel, gridBagConstraints);
-
-        selectedNetworkScrollPane.setPreferredSize(new java.awt.Dimension(200, 100));
-
-        selectedNetworkList.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        selectedNetworkList.setBorder(javax.swing.BorderFactory.createTitledBorder("Selected Networks"));
-        CyNetwork currNet = Cytoscape.getCurrentNetwork();
-        if (currNet!=Cytoscape.getNullNetwork()) {
-            selectedNetworkData.add(currNet);
-        }
-        selectedNetworkList.setCellRenderer(new ListCellRenderer() {
-            private DefaultListCellRenderer defaultRenderer = new DefaultListCellRenderer();
-            public Component getListCellRendererComponent(
-                JList list,
-                Object value,
-                int index,
-                boolean isSelected,
-                boolean cellHasFocus) {
-                JLabel renderer = (JLabel) defaultRenderer.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-                renderer.setText(((CyNetwork)value).getTitle());
-                return renderer;
-            }
-        });
-        selectedNetworkList.addListSelectionListener(new javax.swing.event.ListSelectionListener() {
-            public void valueChanged(javax.swing.event.ListSelectionEvent evt) {
-                int index = selectedNetworkList.getMinSelectionIndex();
-                if (index>-1) {
-                    unselectedNetworkList.getSelectionModel().clearSelection();
-                    leftButton.setEnabled(true);
-                } else {
-                    leftButton.setEnabled(false);
-                }
-            }
-        });
-        selectedNetworkScrollPane.setViewportView(selectedNetworkList);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 0.5;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(3, 3, 3, 3);
-        selectNetworkPanel.add(selectedNetworkScrollPane, gridBagConstraints);
-
-        gridBagConstraints = new java.awt.GridBagConstraints();
-        gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
-        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-        gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
-        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-        getContentPane().add(selectNetworkPanel, gridBagConstraints);
-
+        
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
@@ -439,44 +256,47 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         srcConfDialog.setVisible(true);
 
         if (srcConfDialog.isModified()) {
-            final JTaskConfig jTaskConfig = new JTaskConfig();
-            jTaskConfig.setOwner(Cytoscape.getDesktop());
-            jTaskConfig.displayCloseButton(false);
-            jTaskConfig.displayCancelButton(false);
-            jTaskConfig.displayStatus(true);
-            jTaskConfig.setAutoDispose(true);
-            jTaskConfig.setMillisToPopup(100); // always pop the task
+//            final JTaskConfig jTaskConfig = new JTaskConfig();
+//            jTaskConfig.setOwner(Cytoscape.getDesktop());
+//            jTaskConfig.displayCloseButton(false);
+//            jTaskConfig.displayCancelButton(false);
+//            jTaskConfig.displayStatus(true);
+//            jTaskConfig.setAutoDispose(true);
+//            jTaskConfig.setMillisToPopup(100); // always pop the task
 
             // Execute Task in New Thread; pop open JTask Dialog Box.
-            TaskManager.executeTask(new ApplySourceChangeTask(), jTaskConfig);
+        	taskManager.execute((new TaskIterator(new ApplySourceChangeTask())));
         }
     }//GEN-LAST:event_srcConfBtnActionPerformed
 
     private void OKBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OKBtnActionPerformed
         if (!verifyUserInput()) return;
 
-        Set<CyNetwork> networks = new HashSet(selectedNetworkData.getNetworks());
+        //Set<CyNetwork> networks = new HashSet(selectedNetworkData.getNetworks());
+        CyNetwork network = cnm.getNetwork(0);
         Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes = sourceAttributeSelectionTable.getSourceAttrType();
         Map<String, DataSourceWrapper> mapTgtAttrNameIDType = targetAttributeSelectionTable.getMapAttrNameIDType();
-        Map<String,Byte> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
+        Map<String,Class> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
 
 //        // define target attributes
 //        defineTgtAttributes(mapTgtAttrNameAttrType);
 
         // execute task
         AttributeBasedIDMappingTask task
-                = new AttributeBasedIDMappingTask(networks, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
-        // Configure JTask Dialog Pop-Up Box
-        final JTaskConfig jTaskConfig = new JTaskConfig();
-        jTaskConfig.setOwner(Cytoscape.getDesktop());
-        jTaskConfig.displayCloseButton(true);
-        jTaskConfig.displayCancelButton(false);
-        jTaskConfig.displayStatus(true);
-        jTaskConfig.setAutoDispose(false);
-        jTaskConfig.setMillisToPopup(0); // always pop the task
+                = new AttributeBasedIDMappingTask(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
+//        // Configure JTask Dialog Pop-Up Box
+//        final JTaskConfig jTaskConfig = new JTaskConfig();
+//        jTaskConfig.setOwner(Cytoscape.getDesktop());
+//        jTaskConfig.displayCloseButton(true);
+//        jTaskConfig.displayCancelButton(false);
+//        jTaskConfig.displayStatus(true);
+//        jTaskConfig.setAutoDispose(false);
+//        jTaskConfig.setMillisToPopup(0); // always pop the task
 
         // Execute Task in New Thread; pop open JTask Dialog Box.
-        TaskManager.executeTask(task, jTaskConfig);
+        //Temp solution, need create taskfactory for AttributeBasedIDMappingTask
+        //http://chianti.ucsd.edu/svn/core3/network-merge-impl/trunk/src/main/java/org/cytoscape/network/merge/internal/task/NetworkMergeTaskFactory.java
+        taskManager.execute(new TaskIterator(task));
         boolean succ = task.success();
 
         if (succ) {
@@ -485,18 +305,19 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
             cancelled = false;
         } else {
             //Delete the new attributes
-            CyAttributes nodeAttributes = Cytoscape.getNodeAttributes();
-            for (String attrName : mapTgtAttrNameAttrType.keySet()) {
-                nodeAttributes.deleteAttribute(attrName);
-            }
+        	//Temp comments 
+//            CyAttributes nodeAttributes = Cytoscape.getNodeAttributes();
+//            for (String attrName : mapTgtAttrNameAttrType.keySet()) {
+//                nodeAttributes.deleteAttribute(attrName);
+//            }
         }
     }//GEN-LAST:event_OKBtnActionPerformed
 
     private boolean verifyUserInput() {
-        if (selectedNetworkData.getNetworks().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Please select at least one network.");
-            return false;
-        }
+//        if (selectedNetworkData.getNetworks().isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Please select at least one network.");
+//            return false;
+//        }
 
         if (IDMapperClientManager.countClients()==0) {
             JOptionPane.showMessageDialog(this, "No source ID type available. Please configure the sources of ID mapping first.");
@@ -515,9 +336,13 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
                 return false;
             }
         }
-
-        CyAttributes nodeAttributes = Cytoscape.getNodeAttributes();
-        List<String> existAttrNames = Arrays.asList(nodeAttributes.getAttributeNames());
+        
+        CyNetwork network = cnm.getNetwork(0);
+        CyTable table = network.getDefaultNodeTable();
+        List<String> existAttrNames = new ArrayList<String>();
+        for(CyColumn cyCol : table.getColumns()) {
+        	existAttrNames.add(cyCol.getName());
+        }
         List<String> attrNames = targetAttributeSelectionTable.getTgtAttrNames();
         if (!Collections.disjoint(attrNames, existAttrNames)) { // overlap between new and existing attribute
             JOptionPane.showMessageDialog(this, "Target attributes must have new names.");
@@ -550,7 +375,8 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     }
     
     private void updateOKButtonEnable() {
-        if (selectedNetworkData.getSize()==0) {
+    	CyNetwork network = cnm.getNetwork(0);
+        if (network.getNodeCount()==0) {
             OKBtn.setEnabled(false);
             OKBtn.setToolTipText("None of the networks was selected!");
         }
@@ -571,8 +397,8 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     }
 
     private void setSelectedNetworkInSrcTable() {
-        Collection networks = selectedNetworkData.getNetworks();
-        sourceAttributeSelectionTable.setSelectedNetworks(networks);
+    	CyNetwork network = cnm.getNetwork(0);
+        sourceAttributeSelectionTable.setSelectedNetworks(network);
     }
 
 //    private Set<DataSource>[] getSupportedType() {
@@ -634,51 +460,6 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton OKBtn;
-    private javax.swing.JButton leftButton;
-    private javax.swing.JButton rightButton;
-    private javax.swing.JList selectedNetworkList;
-    private SortedNetworkListModel selectedNetworkData;
-    private javax.swing.JList unselectedNetworkList;
-    private SortedNetworkListModel unselectedNetworkData;
-    // End of variables declaration//GEN-END:variables
-
-    private class SortedNetworkListModel extends AbstractListModel {
-        // Using a SortedMap from String to network
-        TreeMap<String,CyNetwork> model;
-
-        public SortedNetworkListModel() {
-            model= new TreeMap<String,CyNetwork>();
-        }
-
-        //@Override
-        public int getSize() {
-            return model.size();
-        }
-
-        //@Override
-        public CyNetwork getElementAt(int index) {
-            return (CyNetwork) model.values().toArray()[index];
-        }
-
-        public void add(CyNetwork network) {
-            String title = network.getTitle();
-            model.put(title.toUpperCase(),network);
-            fireContentsChanged(this, 0, getSize());
-        }
-
-        public CyNetwork removeElement(int index) {
-            CyNetwork removed = model.remove(getElementAt(index).getTitle().toUpperCase());
-            if (removed!=null) {
-                fireContentsChanged(this, 0, getSize());
-            }
-            return removed;
-        }
-
-        public Collection<CyNetwork> getNetworks() {
-            return model.values();
-        }
-    }
-
 
     private class ApplySourceChangeTask implements Task {
         private TaskMonitor taskMonitor;
@@ -692,14 +473,14 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         //@Override
         public void run() {
                 try {
-                        taskMonitor.setStatus("Applying...");
+                        taskMonitor.setStatusMessage("Applying...");
                         setSupportedSrcTypesInTable();
                         setSupportedTgtTypesInTable();
                         setSelectedNetworkInSrcTable();
-                        taskMonitor.setPercentCompleted(100);
+                        taskMonitor.setProgress(1.00);
                 } catch (Exception e) {
-                        taskMonitor.setPercentCompleted(100);
-                        taskMonitor.setStatus("Failed.\n");
+                        taskMonitor.setProgress(1.00);
+                        taskMonitor.setStatusMessage("Failed.\n");
                         e.printStackTrace();
                 }
         }
@@ -732,6 +513,18 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         public String getTitle() {
                 return "Apply changes";
         }
+
+		@Override
+		public void cancel() {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		public void run(TaskMonitor arg0) throws Exception {
+			// TODO Auto-generated method stub
+			
+		}
     }
 }
 

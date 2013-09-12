@@ -34,15 +34,44 @@ public class IDMapperClientProperties extends AbstractConfigDirPropsReader
     public IDMapperClientProperties(String propertyPrefix,
             IDMapperClientProperties idMapperProps) {
         this(propertyPrefix);
-
-        for (Tunable tunable : idMapperProps.getTunables()) {
-            add(tunable);
-        }
-
-        initializeProperties(); // save to props or set to tunables
-
-//        String prefix = idMapperProps.getPrefix();
-//        Properties props = CytoscapeInit.getProperties();
+//
+//        for (Tunable tunable : idMapperProps.getTunables()) {
+//            add(tunable);
+//        }
+//
+//        initializeProperties(); // save to props or set to tunables
+//
+////        String prefix = idMapperProps.getPrefix();
+////        Properties props = CytoscapeInit.getProperties();
+////
+////        // Find all properties with this prefix
+////        Enumeration iter = props.propertyNames();
+////
+////        while (iter.hasMoreElements()) {
+////            String property = (String) iter.nextElement();
+////
+////            if (property.startsWith(prefix)) {
+////                props.remove(property);
+////            }
+////        }
+    }
+//
+//    /**
+//     * saveProperties is used to add modified properties to the Cytoscape
+//     * properties so they can be saved in the properties file.
+//     *
+//     */
+//    public void saveProperties(Tunable tunable) {
+//        if (!getTunables().contains(tunable)) return;
+//
+//        String prefix = getName();
+//        Properties props = getProperties();
+//        props.setProperty(prefix + tunable.getName(), tunable.getValue().toString());
+//    }
+//
+//    public void release() {
+//        String prefix = getName();
+//        Properties props = getProperties();
 //
 //        // Find all properties with this prefix
 //        Enumeration iter = props.propertyNames();
@@ -54,40 +83,11 @@ public class IDMapperClientProperties extends AbstractConfigDirPropsReader
 //                props.remove(property);
 //            }
 //        }
-    }
-
-    /**
-     * saveProperties is used to add modified properties to the Cytoscape
-     * properties so they can be saved in the properties file.
-     *
-     */
-    public void saveProperties(Tunable tunable) {
-        if (!getTunables().contains(tunable)) return;
-
-        String prefix = getName();
-        Properties props = getProperties();
-        props.setProperty(prefix + tunable.getName(), tunable.getValue().toString());
-    }
-
-    public void release() {
-        String prefix = getName();
-        Properties props = getProperties();
-
-        // Find all properties with this prefix
-        Enumeration iter = props.propertyNames();
-
-        while (iter.hasMoreElements()) {
-            String property = (String) iter.nextElement();
-
-            if (property.startsWith(prefix)) {
-                props.remove(property);
-            }
-        }
-    }
-
-//    public void tunableChanged(Tunable tunable) {
-//        setProperty(tunable.getName(), tunable.getValue().toString());
-//        //saveProperties();
 //    }
+//
+////    public void tunableChanged(Tunable tunable) {
+////        setProperty(tunable.getName(), tunable.getValue().toString());
+////        //saveProperties();
+////    }
 
 }
