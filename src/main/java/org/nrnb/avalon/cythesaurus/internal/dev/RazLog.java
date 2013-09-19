@@ -38,13 +38,14 @@ public final class RazLog {
 	 * 2013-9-19:下午9:57:35<br>
 	 * <br>
 	 * 
-	 * @param o print statements
+	 * @param o
+	 *          print statements
 	 */
 	public static final void print(Object o) {
 		if (DebugKey.isDebug) {
-			if (o==null) {
+			if (o == null) {
 				System.out.println("RazLog -- null");
-				return ;
+				return;
 			}
 			System.out.println("RazLog -- " + o.toString());
 		}
@@ -57,16 +58,53 @@ public final class RazLog {
 	 * 2013-9-19:下午9:58:25<br>
 	 * <br>
 	 * 
-	 * @param o print statements
-	 * @param mark debug mark 
+	 * @param o
+	 *          print statements
+	 * @param mark
+	 *          debug mark
 	 */
 	public static final void print(Object o, String mark) {
 		if (DebugKey.isDebug) {
-			if (o==null) {
+			if (o == null) {
 				System.out.println("RazLog -- " + mark + " -- null");
-				return ;
+				return;
 			}
 			System.out.println("RazLog -- " + mark + " -- " + o.toString());
 		}
+	}
+
+	/**
+	 * ignore the debugKey.Print to the error stream <br>
+	 * 
+	 * 2013-9-19:下午10:41:04<br>
+	 * <br>
+	 * 
+	 * @param o
+	 *          print statements
+	 */
+	public static final void error(Object o) {
+		if (o == null) {
+			System.err.println("RazLog ERROR -- null");
+			return;
+		}
+		System.err.println("RazLog ERROR -- " + o.toString());
+	}
+
+	/**
+	 * ignore the debugKey.Print to the error stream <br>
+	 * 2013-9-19:下午10:43:09<br>
+	 * <br>
+	 * 
+	 * @param o
+	 *          print statements
+	 * @param mark
+	 *          debug mark
+	 */
+	public static final void error(Object o, String mark) {
+		if (o == null) {
+			System.err.println("RazLog ERROR -- " + mark + " -- null");
+			return;
+		}
+		System.err.println("RazLog ERROR -- " + mark + " -- " + o.toString());
 	}
 }
