@@ -36,6 +36,8 @@
 package org.nrnb.avalon.cythesaurus.internal.ui;
 
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
+import org.nrnb.avalon.cythesaurus.internal.dev.DebugKey;
+import org.nrnb.avalon.cythesaurus.internal.dev.RazLog;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.model.CyColumn;
@@ -374,9 +376,17 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         return true;
     }
     
+    /**
+     * update the button of OK to enbale
+     * <br>
+     * 2013-9-19:下午9:34:14<br>
+     * <br>
+     */
     private void updateOKButtonEnable() {
     	CyNetwork network = cnm.getNetwork(0);
-        if (network.getNodeCount()==0) {
+    		// FIXME network is null
+    		RazLog.print(network);
+        if (network.getNodeCount() == 0) {
             OKBtn.setEnabled(false);
             OKBtn.setToolTipText("None of the networks was selected!");
         }
