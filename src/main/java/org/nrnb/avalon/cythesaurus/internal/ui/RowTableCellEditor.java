@@ -47,81 +47,89 @@ import javax.swing.JTextField;
 import javax.swing.event.CellEditorListener;
 
 class RowTableCellEditor implements TableCellEditor {
-  protected HashMap editors;
+	protected HashMap<Integer, TableCellEditor> editors;
 
-  protected TableCellEditor editor, defaultEditor;
+	protected TableCellEditor editor, defaultEditor;
 
-  JTable table;
+	// FIXME this table need private or not?
+	JTable table;
 
-  /**
-   * Constructs a EachRowEditor. create default editor
-   *
-   * @see TableCellEditor
-   * @see DefaultCellEditor
-   */
-  public RowTableCellEditor(JTable table) {
-    this.table = table;
-    editors = new HashMap();
-    defaultEditor = new DefaultCellEditor(new JTextField());
-  }
+	/**
+	 * for using window builder
+	 */
+	public RowTableCellEditor() {
+		editors = new HashMap<Integer, TableCellEditor>();
+		defaultEditor = new DefaultCellEditor(new JTextField());
+	}
 
-  /**
-   * @param row
-   *            table row
-   * @param editor
-   *            table cell editor
-   */
-  public void setEditorAt(int row, TableCellEditor editor) {
-    editors.put(new Integer(row), editor);
-  }
+	/**
+	 * Constructs a EachRowEditor. create default editor
+	 * 
+	 * @see TableCellEditor
+	 * @see DefaultCellEditor
+	 */
+	public RowTableCellEditor(JTable table) {
+		this.table = table;
+		editors = new HashMap<Integer, TableCellEditor>();
+		defaultEditor = new DefaultCellEditor(new JTextField());
+	}
 
-  public Component getTableCellEditorComponent(JTable table, Object value,
-      boolean isSelected, int row, int column) {
-    return editor.getTableCellEditorComponent(table, value, isSelected,
-        row, column);
-  }
+	/**
+	 * @param row
+	 *          table row
+	 * @param editor
+	 *          table cell editor
+	 */
+	public void setEditorAt(int row, TableCellEditor editor) {
+		editors.put(new Integer(row), editor);
+	}
 
-  public Object getCellEditorValue() {
-    return editor.getCellEditorValue();
-  }
+	public Component getTableCellEditorComponent(JTable table, Object value,
+			boolean isSelected, int row, int column) {
+		return editor.getTableCellEditorComponent(table, value, isSelected, row,
+				column);
+	}
 
-  public boolean stopCellEditing() {
-    return editor.stopCellEditing();
-  }
+	public Object getCellEditorValue() {
+		return editor.getCellEditorValue();
+	}
 
-  public void cancelCellEditing() {
-    editor.cancelCellEditing();
-  }
+	public boolean stopCellEditing() {
+		return editor.stopCellEditing();
+	}
 
-  public boolean isCellEditable(EventObject anEvent) {
-    selectEditor((MouseEvent) anEvent);
-    return editor.isCellEditable(anEvent);
-  }
+	public void cancelCellEditing() {
+		editor.cancelCellEditing();
+	}
 
-  public void addCellEditorListener(CellEditorListener l) {
-    editor.addCellEditorListener(l);
-  }
+	public boolean isCellEditable(EventObject anEvent) {
+		selectEditor((MouseEvent) anEvent);
+		return editor.isCellEditable(anEvent);
+	}
 
-  public void removeCellEditorListener(CellEditorListener l) {
-    editor.removeCellEditorListener(l);
-  }
+	public void addCellEditorListener(CellEditorListener l) {
+		editor.addCellEditorListener(l);
+	}
 
-  public boolean shouldSelectCell(EventObject anEvent) {
-    selectEditor((MouseEvent) anEvent);
-    return editor.shouldSelectCell(anEvent);
-  }
+	public void removeCellEditorListener(CellEditorListener l) {
+		editor.removeCellEditorListener(l);
+	}
 
-  protected void selectEditor(MouseEvent e) {
-    int row;
-    if (e == null) {
-      row = table.getSelectionModel().getAnchorSelectionIndex();
-    } else {
-      row = table.rowAtPoint(e.getPoint());
-    }
-    editor = (TableCellEditor) editors.get(new Integer(row));
-    if (editor == null) {
-      editor = defaultEditor;
-    }
-  }
+	public boolean shouldSelectCell(EventObject anEvent) {
+		selectEditor((MouseEvent) anEvent);
+		return editor.shouldSelectCell(anEvent);
+	}
+
+	protected void selectEditor(MouseEvent e) {
+		int row;
+		if (e == null) {
+			row = table.getSelectionModel().getAnchorSelectionIndex();
+		} else {
+			row = table.rowAtPoint(e.getPoint());
+		}
+		editor = (TableCellEditor) editors.get(new Integer(row));
+		if (editor == null) {
+			editor = defaultEditor;
+		}
+	}
 }
-
