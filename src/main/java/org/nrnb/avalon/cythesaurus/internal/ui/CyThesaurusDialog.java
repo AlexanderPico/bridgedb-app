@@ -35,40 +35,28 @@
 
 package org.nrnb.avalon.cythesaurus.internal.ui;
 
-import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
-import org.nrnb.avalon.cythesaurus.internal.dev.DebugKey;
-import org.nrnb.avalon.cythesaurus.internal.dev.RazLog;
-import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
-import org.cytoscape.application.CyApplicationManager;
+import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.swing.JOptionPane;
+
+import org.bridgedb.BridgeDb;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskIterator;
-import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskManager;
-
-import javax.swing.AbstractListModel;
-import javax.swing.ListCellRenderer;
-import javax.swing.DefaultListCellRenderer;
-import javax.swing.JList;
-import javax.swing.JLabel;
-import javax.swing.ListSelectionModel;
-import javax.swing.JOptionPane;
-
-import java.awt.Component;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Collections;
-import java.awt.Insets;
+import org.cytoscape.work.TaskMonitor;
+import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
+import org.nrnb.avalon.cythesaurus.internal.dev.RazLog;
+import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 
 /**
  *
@@ -377,7 +365,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     }
     
     /**
-     * update the button of OK to enbale
+     * update the button of OK to enable
      * <br>
      * 2013-9-19:下午9:34:14<br>
      * <br>
@@ -386,10 +374,13 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     	CyNetwork network = cnm.getNetwork(0);
     		// FIXME network is null
     		RazLog.print(network);
-        if (network.getNodeCount() == 0) {
-            OKBtn.setEnabled(false);
-            OKBtn.setToolTipText("None of the networks was selected!");
-        }
+//    		RazLog.print(cnm.getNetworkSet().toArray()[0].getClass());
+    		
+    		//FIXME Need to determine whether has opened a network , if not set the OK button to disable
+//        if (network.getNodeCount() == 0) {
+//            OKBtn.setEnabled(false);
+//            OKBtn.setToolTipText("None of the networks was selected!");
+//        }
 
         OKBtn.setEnabled(true);
         OKBtn.setToolTipText(null);

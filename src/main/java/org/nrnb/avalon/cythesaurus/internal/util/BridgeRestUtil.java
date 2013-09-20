@@ -48,6 +48,8 @@ import java.util.concurrent.TimeUnit;
 import java.net.URL;
 import java.net.URLConnection;
 
+import org.nrnb.avalon.cythesaurus.internal.dev.RazLog;
+
 
 /**
  *
@@ -110,7 +112,7 @@ public class BridgeRestUtil {
 
         try {
             if (!executor.awaitTermination(1, TimeUnit.SECONDS)) {
-                System.err.println("Failed to connect to "+strUrl);
+                RazLog.error("Failed to connect to "+strUrl);
                 executor.shutdown();
             }
         } catch (Exception e) {
