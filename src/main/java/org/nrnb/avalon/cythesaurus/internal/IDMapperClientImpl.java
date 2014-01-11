@@ -46,7 +46,6 @@ import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperCapabilities;
 import org.bridgedb.IDMapperException;
-import org.nrnb.avalon.cythesaurus.internal.dev.RazLog;
 
 /**
  *
@@ -175,7 +174,6 @@ public class IDMapperClientImpl implements IDMapperClient {
                 }
 
                 if (mapper == null) {
-                    RazLog.error("Failed to connect to " + this.toString());
                     return null;
                 }
 

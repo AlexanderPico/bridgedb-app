@@ -52,7 +52,7 @@ import org.cytoscape.work.TaskManager;
         private final CyNetworkManager cnm;
         private final TaskManager taskManager;
 
-        private static final String APP_MENU_TITLE ="ID Mapping";
+        private static final String APP_MENU_TITLE ="Map Identifiers";
         private static final String PARENT_MENU ="Tools";
         
         public IDMappingAction(CySwingApplication swingApp, CyNetworkManager cnm,

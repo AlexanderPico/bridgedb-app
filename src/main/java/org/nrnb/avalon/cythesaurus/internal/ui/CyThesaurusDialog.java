@@ -55,7 +55,6 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
-import org.nrnb.avalon.cythesaurus.internal.dev.RazLog;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 
 /**
@@ -373,8 +372,6 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     private void updateOKButtonEnable() {
     	CyNetwork network = cnm.getNetwork(0);
     		// FIXME network is null
-    		RazLog.print(network);
-//    		RazLog.print(cnm.getNetworkSet().toArray()[0].getClass());
     		
     		//FIXME Need to determine whether has opened a network , if not set the OK button to disable
 //        if (network.getNodeCount() == 0) {
@@ -459,7 +456,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     private TargetAttributeSelectionTable targetAttributeSelectionTable;
     private boolean cancelled = true;
 
-    // Variables declaration - do not modify//GEN-BEGIN:variables
+    // Variables declaration - do not modify                     
     private javax.swing.JButton OKBtn;
 
     private class ApplySourceChangeTask implements Task {
