@@ -58,6 +58,7 @@ import java.util.HashMap;
 import java.util.Collections;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
@@ -925,26 +926,10 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
 //        jTaskConfig.setAutoDispose(true);
 //        jTaskConfig.setMillisToPopup(100);
 
-        final SetDataSetsTask task = new SetDataSetsTask();
+        final SetDataSetsTask task = new SetDataSetsTask(this);
         final TaskIterator ti = new TaskIterator(task);
         
         taskManager.execute(ti);
-
-        if (task.success()) {
-            Vector<String> dss = new Vector(mapDatasetDisplayName.keySet());
-            Collections.sort(dss);
-
-            chooseDatasetComboBox.setModel(new DefaultComboBoxModel(dss));
-        } else {
-            chooseDatasetComboBox.setModel(new DefaultComboBoxModel());
-            JOptionPane.showMessageDialog(this, "Failed to connect to the selected mart.\n" +
-                    "Please select select another mart or change the base URL of BioMart.");
-            if (!biomartOptionCheckBox.isSelected()) {
-                biomartOptionCheckBox.setSelected(true);
-                biomartAdvancedPanel.setVisible(biomartOptionCheckBox.isSelected());
-                this.pack();
-            }
-        }
     }
 
     private boolean connectSynergizer() {
@@ -1178,7 +1163,12 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     // End of variables declaration//GEN-END:variables
 
     private class SetDataSetsTask extends AbstractTask {
-        private boolean success = false;
+        private JDialog dialog;
+        
+        SetDataSetsTask(JDialog dialog) {
+            this.dialog = dialog;
+        }
+        
 		@Override
 		public void cancel() {
 			// could not be cancelled
@@ -1190,7 +1180,23 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
                     try {
                             taskMonitor.setStatusMessage("Loading...");
                             taskMonitor.setProgress(0.00);
-                            success = setDatasets();
+                            
+                            if (setDatasets()) {
+                                Vector<String> dss = new Vector(mapDatasetDisplayName.keySet());
+                                Collections.sort(dss);
+
+                                chooseDatasetComboBox.setModel(new DefaultComboBoxModel(dss));
+                            } else {
+                                chooseDatasetComboBox.setModel(new DefaultComboBoxModel());
+                                JOptionPane.showMessageDialog(dialog, "Failed to connect to the selected mart.\n" +
+                                        "Please select select another mart or change the base URL of BioMart.");
+                                if (!biomartOptionCheckBox.isSelected()) {
+                                    biomartOptionCheckBox.setSelected(true);
+                                    biomartAdvancedPanel.setVisible(biomartOptionCheckBox.isSelected());
+                                    dialog.pack();
+                                }
+                            }
+                            
                             taskMonitor.setStatusMessage("Done");
                             taskMonitor.setProgress(1.00);
                     } catch (Exception e) {
@@ -1200,10 +1206,6 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
                     }
 			
 		}
-
-        public boolean success() {
-            return success;
-        }
     }
 
     private class TextComboBoxEditor implements javax.swing.ComboBoxEditor {

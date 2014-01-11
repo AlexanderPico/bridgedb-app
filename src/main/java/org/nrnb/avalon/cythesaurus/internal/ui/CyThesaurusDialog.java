@@ -45,12 +45,11 @@ import java.util.Set;
 
 import javax.swing.JOptionPane;
 
-import org.bridgedb.BridgeDb;
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTable;
-import org.cytoscape.work.Task;
+import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
@@ -459,17 +458,19 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify                     
     private javax.swing.JButton OKBtn;
 
-    private class ApplySourceChangeTask implements Task {
-        private TaskMonitor taskMonitor;
+    private class ApplySourceChangeTask extends AbstractTask {
 
         public ApplySourceChangeTask() {
         }
 
-        /**
-         * Executes Task.
-         */
-        //@Override
-        public void run() {
+        @Override
+        public void cancel() {
+                // TODO Auto-generated method stub
+
+        }
+
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
                 try {
                         taskMonitor.setStatusMessage("Applying...");
                         setSupportedSrcTypesInTable();
@@ -483,46 +484,6 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
                 }
         }
 
-        /**
-         * Halts the Task: Not Currently Implemented.
-         */
-        //@Override
-        public void halt() {
-
-        }
-
-        /**
-         * Sets the Task Monitor.
-         *
-         * @param taskMonitor
-         *            TaskMonitor Object.
-         */
-        //@Override
-        public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
-                this.taskMonitor = taskMonitor;
-        }
-
-        /**
-         * Gets the Task Title.
-         *
-         * @return Task Title.
-         */
-        //@Override
-        public String getTitle() {
-                return "Apply changes";
-        }
-
-		@Override
-		public void cancel() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void run(TaskMonitor arg0) throws Exception {
-			// TODO Auto-generated method stub
-			
-		}
     }
 }
 

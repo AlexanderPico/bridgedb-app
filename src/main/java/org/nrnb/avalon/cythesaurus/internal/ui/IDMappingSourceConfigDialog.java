@@ -36,9 +36,7 @@
 package org.nrnb.avalon.cythesaurus.internal.ui;
 
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClient;
-import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceUtil;
-import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskMonitor;
 //import cytoscape.task.ui.JTaskConfig;
 import org.cytoscape.work.TaskManager;
@@ -59,6 +57,8 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperCapabilities;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskIterator;
 
 /**
  * 
@@ -113,17 +113,9 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 							// jTaskConfig.setAutoDispose(true);
 							// jTaskConfig.setMillisToPopup(100);
 							//
-							LoadClientDescTask task = new LoadClientDescTask(client);
-							// TaskManager.executeTask(task, jTaskConfig);
-
-							String desc;
-							if (task.success()) {
-								desc = task.description();
-							} else {
-								desc = "Failed to retrieve the information about this ID mapping client.";
-							}
-
-							descTextArea.setText(desc);
+							final LoadClientDescTask task = new LoadClientDescTask(client);
+                                                        final TaskIterator ti = new TaskIterator(task);
+							taskManager.execute(ti);
 						} else {
 							descTextArea.setText(msg);
 						}
@@ -316,53 +308,35 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
     private javax.swing.JTextArea descTextArea;
     // End of variables declaration//GEN-END:variables
 
-	private class LoadClientDescTask implements Task {
-		private TaskMonitor taskMonitor;
-		private boolean success = false;
+	private class LoadClientDescTask extends AbstractTask {
 
 		private final IDMapperClient client;
-		private String description;
 
 		public LoadClientDescTask(final IDMapperClient client) {
 			this.client = client;
-			description = null;
 		}
 
-		public void run() {
+		@Override
+		public void cancel() {
+                    // cannot cancel
+		}
+
+		@Override
+		public void run(TaskMonitor taskMonitor) throws Exception {
 			try {
 				taskMonitor.setStatusMessage("Connecting to " + client.getDisplayName()
 						+ "...");
 				taskMonitor.setProgress(0.00);
-				description = getDescription();
+				descTextArea.setText(getDescription());
 				taskMonitor.setStatusMessage("Done");
 				taskMonitor.setProgress(1.00);
-				success = true;
-			} catch (Exception e) {
+                        } catch (Exception e) {
 				taskMonitor.setProgress(1.00);
 				taskMonitor.setStatusMessage("failed.\n");
 				e.printStackTrace();
+                                descTextArea.setText("Failed to retrieve the information about this ID mapping client.");
 			}
 
-		}
-
-		public boolean success() {
-			return success;
-		}
-
-		public void halt() {
-		}
-
-		public void setTaskMonitor(TaskMonitor taskMonitor)
-				throws IllegalThreadStateException {
-			this.taskMonitor = taskMonitor;
-		}
-
-		public String getTitle() {
-			return new String("Connecting to client");
-		}
-
-		public String description() {
-			return description;
 		}
 
 		private String getDescription() throws IDMapperException {
@@ -467,18 +441,6 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 			}
 
 			return desc.toString();
-		}
-
-		@Override
-		public void cancel() {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void run(TaskMonitor arg0) throws Exception {
-			// TODO Auto-generated method stub
-
 		}
 	}
 }
