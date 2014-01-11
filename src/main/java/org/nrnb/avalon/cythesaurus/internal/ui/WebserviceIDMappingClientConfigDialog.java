@@ -75,7 +75,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         BIOMART("BioMart web service"),
         PICR("PICR (Protein Identifier Cross-Reference) web service"),
         SYNERGIZER("Synergizer web service"),
-        CRONOS("CRONOS web service")
+        //CRONOS("CRONOS web service")
                 ;
 
         private ClientType(String desc) {
@@ -673,12 +673,12 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
                 synergizerPanel.setVisible(false);
                 picrPanel.setVisible(true);
                 cronosPanel.setVisible(false);
-            } else if (type == ClientType.CRONOS) {
-                bridgedbPanel.setVisible(false);
-                biomartPanel.setVisible(false);
-                synergizerPanel.setVisible(false);
-                picrPanel.setVisible(false);
-                cronosPanel.setVisible(true);
+//            } else if (type == ClientType.CRONOS) {
+//                bridgedbPanel.setVisible(false);
+//                biomartPanel.setVisible(false);
+//                synergizerPanel.setVisible(false);
+//                picrPanel.setVisible(false);
+//                cronosPanel.setVisible(true);
             }
             infoButton.setEnabled(true);
         }
@@ -1037,12 +1037,12 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
             String connString = "idmapper-picr-rest:only-active="+(onlyActive?"true":"false");
             String displayName = "PICR: Protein Identifier Cross-Reference Service";
             return new String[]{connString, className, displayName};
-        } else if (typeComboBox.getSelectedItem()==ClientType.CRONOS) {
-            String className = "org.bridgedb.webservice.cronos.IDMapperCronos";
-            CronosOrganism organism = ((CronosOrganism)cronosSpeciesComboBox.getSelectedItem());
-            String connString = "idmapper-cronos:"+organism.threeLetter();
-            String displayName = "CRONOS ("+organism.fullName+")";
-            return new String[]{connString, className, displayName};
+//        } else if (typeComboBox.getSelectedItem()==ClientType.CRONOS) {
+//            String className = "org.bridgedb.webservice.cronos.IDMapperCronos";
+//            CronosOrganism organism = ((CronosOrganism)cronosSpeciesComboBox.getSelectedItem());
+//            String connString = "idmapper-cronos:"+organism.threeLetter();
+//            String displayName = "CRONOS ("+organism.fullName+")";
+//            return new String[]{connString, className, displayName};
         } else {
             throw new java.lang.IllegalStateException();
         }

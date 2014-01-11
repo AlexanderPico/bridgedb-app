@@ -192,22 +192,12 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
-			<artifactId>org.bridgedb.webservice.cronos</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.webservice.picr</artifactId>
 			<version>1.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.webservice.synergizer</artifactId>
-			<version>1.1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.bridgedb</groupId>
-			<artifactId>jaxrpc</artifactId>
 			<version>1.1.0</version>
 		</dependency>
 		<dependency>
@@ -222,11 +212,22 @@
                         <version>10.10.1.1</version>
                 </dependency>
                 
+                <!--cronos support>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
+			<artifactId>org.bridgedb.webservice.cronos</artifactId>
+			<version>1.1.0</version>
+		</dependency>
                 <dependency>
                         <groupId>axis</groupId>
                         <artifactId>axis-ant</artifactId>
                         <version>1.4</version>
                 </dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
+			<artifactId>jaxrpc</artifactId>
+			<version>1.1.0</version>
+		</dependency>
                 
                 <dependency>
                         <groupId>org.apache.axis</groupId>
@@ -251,6 +252,7 @@
                         <artifactId>wsdl4j</artifactId>
                         <version>1.5.1</version>
                 </dependency>
+                <end of cronos support-->
 
 
 
