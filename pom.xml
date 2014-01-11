@@ -177,7 +177,27 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
+			<artifactId>org.bridgedb.rdb.construct</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
 			<artifactId>org.bridgedb.webservice.biomart</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
+			<artifactId>org.bridgedb.webservice.bridgerest</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
+			<artifactId>org.bridgedb.webservice.cronos</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
+			<artifactId>org.bridgedb.webservice.picr</artifactId>
 			<version>1.1.0</version>
 		</dependency>
 		<dependency>
@@ -187,9 +207,53 @@
 		</dependency>
 		<dependency>
 			<groupId>org.bridgedb</groupId>
+			<artifactId>jaxrpc</artifactId>
+			<version>1.1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.bridgedb</groupId>
 			<artifactId>synergizer-client</artifactId>
 			<version>1.1.0</version>
 		</dependency>
+                
+                <dependency>
+                        <groupId>org.apache.derby</groupId>
+                        <artifactId>derby</artifactId>
+                        <version>10.10.1.1</version>
+                </dependency>
+                
+                <dependency>
+                        <groupId>axis</groupId>
+                        <artifactId>axis-ant</artifactId>
+                        <version>1.4</version>
+                </dependency>
+                
+                <dependency>
+                        <groupId>org.apache.axis</groupId>
+                        <artifactId>axis</artifactId>
+                        <version>1.4</version>
+                </dependency>
+                
+                <dependency>
+                        <groupId>commons-discovery</groupId>
+                        <artifactId>commons-discovery</artifactId>
+                        <version>0.2</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                        <version>1.0.4</version>
+                </dependency>
+
+                <dependency>
+                        <groupId>wsdl4j</groupId>
+                        <artifactId>wsdl4j</artifactId>
+                        <version>1.5.1</version>
+                </dependency>
+
+
+
 	</dependencies>
 
 </project>
