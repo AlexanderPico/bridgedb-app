@@ -73,7 +73,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     public enum ClientType {
         BRIDGEDB("BridgeDb web service"),
         BIOMART("BioMart web service"),
-        PICR("PICR (Protein Identifier Cross-Reference) web service"),
+//        PICR("PICR (Protein Identifier Cross-Reference) web service"),
         SYNERGIZER("Synergizer web service"),
         //CRONOS("CRONOS web service")
                 ;
@@ -667,12 +667,12 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
                 picrPanel.setVisible(false);
                 cronosPanel.setVisible(false);
                 initSynergizer();
-            } else if (type == ClientType.PICR) {
-                bridgedbPanel.setVisible(false);
-                biomartPanel.setVisible(false);
-                synergizerPanel.setVisible(false);
-                picrPanel.setVisible(true);
-                cronosPanel.setVisible(false);
+//            } else if (type == ClientType.PICR) {
+//                bridgedbPanel.setVisible(false);
+//                biomartPanel.setVisible(false);
+//                synergizerPanel.setVisible(false);
+//                picrPanel.setVisible(true);
+//                cronosPanel.setVisible(false);
 //            } else if (type == ClientType.CRONOS) {
 //                bridgedbPanel.setVisible(false);
 //                biomartPanel.setVisible(false);
@@ -1031,12 +1031,12 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
             displayName.append("&species="+species);
 
             return new String[]{connString.toString(), className, displayName.toString()};
-        } else if (typeComboBox.getSelectedItem()==ClientType.PICR) {
-            String className = "org.bridgedb.webservice.picr.IDMapperPicrRest";
-            boolean onlyActive = picrOnlyActiveCheckBox.isSelected();
-            String connString = "idmapper-picr-rest:only-active="+(onlyActive?"true":"false");
-            String displayName = "PICR: Protein Identifier Cross-Reference Service";
-            return new String[]{connString, className, displayName};
+//        } else if (typeComboBox.getSelectedItem()==ClientType.PICR) {
+//            String className = "org.bridgedb.webservice.picr.IDMapperPicrRest";
+//            boolean onlyActive = picrOnlyActiveCheckBox.isSelected();
+//            String connString = "idmapper-picr-rest:only-active="+(onlyActive?"true":"false");
+//            String displayName = "PICR: Protein Identifier Cross-Reference Service";
+//            return new String[]{connString, className, displayName};
 //        } else if (typeComboBox.getSelectedItem()==ClientType.CRONOS) {
 //            String className = "org.bridgedb.webservice.cronos.IDMapperCronos";
 //            CronosOrganism organism = ((CronosOrganism)cronosSpeciesComboBox.getSelectedItem());
