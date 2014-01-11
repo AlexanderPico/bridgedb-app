@@ -66,19 +66,22 @@ import org.bridgedb.Xref;
  */
 public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 
-	public IDMappingSourceConfigDialog(javax.swing.JFrame parent, boolean modal) {
+	public IDMappingSourceConfigDialog(javax.swing.JFrame parent, TaskManager taskManager, boolean modal) {
 		super(parent, modal);
+                this.taskManager = taskManager;
 		init();
 	}
 
-	public IDMappingSourceConfigDialog(javax.swing.JDialog parent, boolean modal) {
+	public IDMappingSourceConfigDialog(javax.swing.JDialog parent,TaskManager taskManager,  boolean modal) {
 		super(parent, modal);
+                this.taskManager = taskManager;
 		init();
 	}
 
 	@Deprecated
 	// for using window builder
-	public IDMappingSourceConfigDialog() {
+	public IDMappingSourceConfigDialog(TaskManager taskManager) {
+                this.taskManager = taskManager;
 		init();
 	}
 
@@ -142,115 +145,113 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 	 */
 	@SuppressWarnings("unchecked")
 	// <editor-fold defaultstate="collapsed"
-	// desc="Generated Code">//GEN-BEGIN:initComponents
-	private void initComponents() {
-		java.awt.GridBagConstraints gridBagConstraints;
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-		javax.swing.JPanel sourceConfPanel = new javax.swing.JPanel();
-		javax.swing.JSplitPane sourceDescSplitPane = new javax.swing.JSplitPane();
-		javax.swing.JScrollPane srcTreeScrollPane = new javax.swing.JScrollPane();
-		descScrollPane = new javax.swing.JScrollPane();
-		descTextArea = new javax.swing.JTextArea();
-		javax.swing.JPanel defaultPanel = new javax.swing.JPanel();
-		javax.swing.JButton loadDefaultButton = new javax.swing.JButton();
-		javax.swing.JButton saveAsDefaultButton = new javax.swing.JButton();
-		javax.swing.JPanel closePanel = new javax.swing.JPanel();
-		javax.swing.JButton closeButton = new javax.swing.JButton();
+        javax.swing.JPanel sourceConfPanel = new javax.swing.JPanel();
+        javax.swing.JSplitPane sourceDescSplitPane = new javax.swing.JSplitPane();
+        javax.swing.JScrollPane srcTreeScrollPane = new javax.swing.JScrollPane();
+        descScrollPane = new javax.swing.JScrollPane();
+        descTextArea = new javax.swing.JTextArea();
+        javax.swing.JPanel defaultPanel = new javax.swing.JPanel();
+        javax.swing.JButton loadDefaultButton = new javax.swing.JButton();
+        javax.swing.JButton saveAsDefaultButton = new javax.swing.JButton();
+        javax.swing.JPanel closePanel = new javax.swing.JPanel();
+        javax.swing.JButton closeButton = new javax.swing.JButton();
 
-		setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
-		setTitle("ID Mapping Source Configuration");
-		getContentPane().setLayout(new java.awt.GridBagLayout());
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("ID Mapping Source Configuration");
+        getContentPane().setLayout(new java.awt.GridBagLayout());
 
-		sourceConfPanel.setBorder(javax.swing.BorderFactory
-				.createTitledBorder("ID Mapping Resources Configuration"));
-		sourceConfPanel.setPreferredSize(new java.awt.Dimension(833, 542));
-		sourceConfPanel.setLayout(new java.awt.GridBagLayout());
+        sourceConfPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("ID Mapping Resources Configuration"));
+        sourceConfPanel.setPreferredSize(new java.awt.Dimension(833, 542));
+        sourceConfPanel.setLayout(new java.awt.GridBagLayout());
 
-		sourceDescSplitPane.setDividerLocation(300);
-		sourceDescSplitPane.setPreferredSize(new java.awt.Dimension(800, 500));
+        sourceDescSplitPane.setDividerLocation(300);
+        sourceDescSplitPane.setPreferredSize(new java.awt.Dimension(800, 500));
 
-		srcTreeScrollPane.setMinimumSize(new java.awt.Dimension(200, 200));
-		srcTreeScrollPane.setPreferredSize(new java.awt.Dimension(300, 500));
+        srcTreeScrollPane.setMinimumSize(new java.awt.Dimension(200, 200));
+        srcTreeScrollPane.setPreferredSize(new java.awt.Dimension(300, 500));
 
-		srcTree = new IDMappingSourceSelectionTree(this);
-		srcTreeScrollPane.setViewportView(srcTree);
+        srcTree = new IDMappingSourceSelectionTree(this, taskManager);
+        srcTreeScrollPane.setViewportView(srcTree);
 
-		sourceDescSplitPane.setLeftComponent(srcTreeScrollPane);
+        sourceDescSplitPane.setLeftComponent(srcTreeScrollPane);
 
-		descScrollPane.setPreferredSize(new java.awt.Dimension(500, 500));
+        descScrollPane.setPreferredSize(new java.awt.Dimension(500, 500));
 
-		descTextArea.setEditable(false);
-		descTextArea.setLineWrap(true);
-		descTextArea.setTabSize(4);
-		descTextArea.setText(msg);
-		descTextArea.setWrapStyleWord(true);
-		descScrollPane.setViewportView(descTextArea);
+        descTextArea.setEditable(false);
+        descTextArea.setLineWrap(true);
+        descTextArea.setTabSize(4);
+        descTextArea.setText(msg);
+        descTextArea.setWrapStyleWord(true);
+        descScrollPane.setViewportView(descTextArea);
 
-		sourceDescSplitPane.setRightComponent(descScrollPane);
+        sourceDescSplitPane.setRightComponent(descScrollPane);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-		sourceConfPanel.add(sourceDescSplitPane, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        sourceConfPanel.add(sourceDescSplitPane, gridBagConstraints);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 0;
-		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.weighty = 1.0;
-		gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-		getContentPane().add(sourceConfPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(sourceConfPanel, gridBagConstraints);
 
-		defaultPanel.setVisible(false);
+        defaultPanel.setVisible(false);
 
-		loadDefaultButton.setText("Load default resources");
-		loadDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				loadDefaultButtonActionPerformed(evt);
-			}
-		});
-		defaultPanel.add(loadDefaultButton);
+        loadDefaultButton.setText("Load default resources");
+        loadDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                loadDefaultButtonActionPerformed(evt);
+            }
+        });
+        defaultPanel.add(loadDefaultButton);
 
-		saveAsDefaultButton.setText("Save current resources as default");
-		saveAsDefaultButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				saveAsDefaultButtonActionPerformed(evt);
-			}
-		});
-		defaultPanel.add(saveAsDefaultButton);
+        saveAsDefaultButton.setText("Save current resources as default");
+        saveAsDefaultButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                saveAsDefaultButtonActionPerformed(evt);
+            }
+        });
+        defaultPanel.add(saveAsDefaultButton);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 1;
-		gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-		getContentPane().add(defaultPanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(defaultPanel, gridBagConstraints);
 
-		closePanel.setLayout(new javax.swing.BoxLayout(closePanel,
-				javax.swing.BoxLayout.LINE_AXIS));
+        closePanel.setLayout(new javax.swing.BoxLayout(closePanel, javax.swing.BoxLayout.LINE_AXIS));
 
-		closeButton.setText("Close");
-		closeButton.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				closeButtonActionPerformed(evt);
-			}
-		});
-		closePanel.add(closeButton);
+        closeButton.setText("Close");
+        closeButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                closeButtonActionPerformed(evt);
+            }
+        });
+        closePanel.add(closeButton);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.gridx = 0;
-		gridBagConstraints.gridy = 1;
-		gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
-		gridBagConstraints.weightx = 1.0;
-		gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
-		getContentPane().add(closePanel, gridBagConstraints);
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
+        getContentPane().add(closePanel, gridBagConstraints);
 
-		pack();
-	}// </editor-fold>//GEN-END:initComponents
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
 
 	private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_closeButtonActionPerformed
 		setVisible(false);
@@ -309,11 +310,11 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 			+ "mapping source to delete it.\n\nClick the checkboxes to "
 			+ "select/unselect ID mapping sources to use.";
 	private IDMappingSourceSelectionTree srcTree;
-	// Variables declaration - do not modify//GEN-BEGIN:variables
-	private javax.swing.JScrollPane descScrollPane;
-	private javax.swing.JTextArea descTextArea;
-
-	// End of variables declaration//GEN-END:variables
+        private final TaskManager taskManager;
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JScrollPane descScrollPane;
+    private javax.swing.JTextArea descTextArea;
+    // End of variables declaration//GEN-END:variables
 
 	private class LoadClientDescTask implements Task {
 		private TaskMonitor taskMonitor;

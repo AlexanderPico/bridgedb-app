@@ -240,7 +240,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void srcConfBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srcConfBtnActionPerformed
-        IDMappingSourceConfigDialog srcConfDialog = new IDMappingSourceConfigDialog(this, true);
+        IDMappingSourceConfigDialog srcConfDialog = new IDMappingSourceConfigDialog(this, taskManager, true);
         srcConfDialog.setLocationRelativeTo(this);
         srcConfDialog.setVisible(true);
 

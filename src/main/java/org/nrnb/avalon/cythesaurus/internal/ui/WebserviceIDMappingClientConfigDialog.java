@@ -38,14 +38,12 @@ package org.nrnb.avalon.cythesaurus.internal.ui;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClient;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientImpl;
 import org.nrnb.avalon.cythesaurus.internal.util.BridgeRestUtil;
-import org.cytoscape.work.Task;
 import org.cytoscape.work.TaskMonitor;
 
 //import cytoscape.task.ui.JTaskConfig;
 
 import org.cytoscape.work.TaskManager;
 
-import org.cytoscape.util.swing.OpenBrowser;
 
 import org.bridgedb.IDMapperException;
 import org.bridgedb.webservice.biomart.BiomartStub;
@@ -61,6 +59,8 @@ import java.util.Collections;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskIterator;
 
 // TODO: seperate different web service into different panels
 /**
@@ -115,8 +115,9 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     }
 
     // add a new client
-    public WebserviceIDMappingClientConfigDialog(javax.swing.JDialog parent, boolean modal) {
+    public WebserviceIDMappingClientConfigDialog(javax.swing.JDialog parent, TaskManager taskManager, boolean modal) {
         super(parent, modal);
+        this.taskManager = taskManager;
         initComponents();
 //        postInit();
     }
@@ -924,8 +925,10 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
 //        jTaskConfig.setAutoDispose(true);
 //        jTaskConfig.setMillisToPopup(100);
 
-        SetDataSetsTask task = new SetDataSetsTask();
-//        TaskManager.executeTask(task, jTaskConfig);
+        final SetDataSetsTask task = new SetDataSetsTask();
+        final TaskIterator ti = new TaskIterator(task);
+        
+        taskManager.execute(ti);
 
         if (task.success()) {
             Vector<String> dss = new Vector(mapDatasetDisplayName.keySet());
@@ -1128,6 +1131,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         }
     }
 
+    private final TaskManager taskManager;
     private Set<String> datasetFilter = new HashSet();
     private Set<String> databaseFilter = new HashSet();
 
@@ -1173,51 +1177,33 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     private javax.swing.JComboBox typeComboBox;
     // End of variables declaration//GEN-END:variables
 
-    private class SetDataSetsTask implements Task {
-        private TaskMonitor taskMonitor;
+    private class SetDataSetsTask extends AbstractTask {
         private boolean success = false;
+		@Override
+		public void cancel() {
+			// could not be cancelled
+		}
 
-        public void run() {
-                try {
-                        taskMonitor.setStatusMessage("Loading...");
-                        taskMonitor.setProgress(0.00);
-                        success = setDatasets();
-                        taskMonitor.setStatusMessage("Done");
-                        taskMonitor.setProgress(1.00);
-                } catch (Exception e) {
-                        taskMonitor.setProgress(1.00);
-                        taskMonitor.setStatusMessage("failed.\n");
-                        e.printStackTrace();
-                }
-
-	}
+		@Override
+		public void run(TaskMonitor taskMonitor) throws Exception {
+			
+                    try {
+                            taskMonitor.setStatusMessage("Loading...");
+                            taskMonitor.setProgress(0.00);
+                            success = setDatasets();
+                            taskMonitor.setStatusMessage("Done");
+                            taskMonitor.setProgress(1.00);
+                    } catch (Exception e) {
+                            taskMonitor.setProgress(1.00);
+                            taskMonitor.setStatusMessage("failed.\n");
+                            e.printStackTrace();
+                    }
+			
+		}
 
         public boolean success() {
             return success;
         }
-
-        public void halt() {
-	}
-
-        public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
-		this.taskMonitor = taskMonitor;
-	}
-
-        public String getTitle() {
-		return new String("Load biomart");
-	}
-
-		@Override
-		public void cancel() {
-			// TODO Auto-generated method stub
-			
-		}
-
-		@Override
-		public void run(TaskMonitor arg0) throws Exception {
-			// TODO Auto-generated method stub
-			
-		}
     }
 
     private class TextComboBoxEditor implements javax.swing.ComboBoxEditor {
