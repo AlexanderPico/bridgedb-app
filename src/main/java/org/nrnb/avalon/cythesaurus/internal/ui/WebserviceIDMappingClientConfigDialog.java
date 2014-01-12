@@ -60,6 +60,7 @@ import java.util.Collections;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 
@@ -116,8 +117,10 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     }
 
     // add a new client
-    public WebserviceIDMappingClientConfigDialog(javax.swing.JDialog parent, TaskManager taskManager, boolean modal) {
+    public WebserviceIDMappingClientConfigDialog(javax.swing.JDialog parent,
+            TaskManager taskManager, OpenBrowser openBrowser, boolean modal) {
         super(parent, modal);
+        this.openBrowser = openBrowser;
         this.taskManager = taskManager;
         initComponents();
 //        postInit();
@@ -741,17 +744,17 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoButtonActionPerformed
         ClientType type = (ClientType)typeComboBox.getSelectedItem();
         
-//        if (type==ClientType.BRIDGEDB) {
-//        	openBrowser.openURL("http://webservice.bridgedb.org/ ");
-//        } else if (type==ClientType.BIOMART) {
-//            OpenBrowser.openURL("http://www.biomart.org/");
+        if (type==ClientType.BRIDGEDB) {
+            openBrowser.openURL("http://webservice.bridgedb.org/ ");
+        } else if (type==ClientType.BIOMART) {
+            openBrowser.openURL("http://www.biomart.org/");
 //        } else if (type==ClientType.PICR) {
-//            OpenBrowser.openURL("http://www.ebi.ac.uk/Tools/picr/");
-//        } else if (type==ClientType.SYNERGIZER) {
-//            OpenBrowser.openURL("http://llama.med.harvard.edu/synergizer/translate/");
+//            openBrowser.openURL("http://www.ebi.ac.uk/Tools/picr/");
+        } else if (type==ClientType.SYNERGIZER) {
+            openBrowser.openURL("http://llama.med.harvard.edu/synergizer/translate/");
 //        } else if (type==ClientType.CRONOS) {
-//            OpenBrowser.openURL("http://mips.helmholtz-muenchen.de/genre/proj/cronos/index.html");
-//        }
+//            openBrowser.openURL("http://mips.helmholtz-muenchen.de/genre/proj/cronos/index.html");
+        }
     }//GEN-LAST:event_infoButtonActionPerformed
 
     private void bioMartBaseUrlComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bioMartBaseUrlComboBoxActionPerformed
@@ -1116,6 +1119,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         }
     }
 
+    private final OpenBrowser openBrowser;
     private final TaskManager taskManager;
     private Set<String> datasetFilter = new HashSet();
     private Set<String> databaseFilter = new HashSet();

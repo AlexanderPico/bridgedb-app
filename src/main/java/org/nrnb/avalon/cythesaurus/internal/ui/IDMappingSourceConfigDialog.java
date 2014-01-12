@@ -57,6 +57,7 @@ import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperCapabilities;
 import org.bridgedb.IDMapperException;
 import org.bridgedb.Xref;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 
@@ -66,22 +67,25 @@ import org.cytoscape.work.TaskIterator;
  */
 public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 
-	public IDMappingSourceConfigDialog(javax.swing.JFrame parent, TaskManager taskManager, boolean modal) {
+	public IDMappingSourceConfigDialog(javax.swing.JFrame parent, TaskManager taskManager, OpenBrowser openBrowser, boolean modal) {
 		super(parent, modal);
                 this.taskManager = taskManager;
+                this.openBrowser = openBrowser;
 		init();
 	}
 
-	public IDMappingSourceConfigDialog(javax.swing.JDialog parent,TaskManager taskManager,  boolean modal) {
+	public IDMappingSourceConfigDialog(javax.swing.JDialog parent,TaskManager taskManager, OpenBrowser openBrowser, boolean modal) {
 		super(parent, modal);
                 this.taskManager = taskManager;
+                this.openBrowser = openBrowser;
 		init();
 	}
 
 	@Deprecated
 	// for using window builder
-	public IDMappingSourceConfigDialog(TaskManager taskManager) {
+	public IDMappingSourceConfigDialog(TaskManager taskManager, OpenBrowser openBrowser) {
                 this.taskManager = taskManager;
+                this.openBrowser = openBrowser;
 		init();
 	}
 
@@ -166,7 +170,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
         srcTreeScrollPane.setMinimumSize(new java.awt.Dimension(200, 200));
         srcTreeScrollPane.setPreferredSize(new java.awt.Dimension(300, 500));
 
-        srcTree = new IDMappingSourceSelectionTree(this, taskManager);
+        srcTree = new IDMappingSourceSelectionTree(this, taskManager, openBrowser);
         srcTreeScrollPane.setViewportView(srcTree);
 
         sourceDescSplitPane.setLeftComponent(srcTreeScrollPane);
@@ -303,6 +307,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 			+ "select/unselect ID mapping sources to use.";
 	private IDMappingSourceSelectionTree srcTree;
         private final TaskManager taskManager;
+        private final OpenBrowser openBrowser;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane descScrollPane;
     private javax.swing.JTextArea descTextArea;

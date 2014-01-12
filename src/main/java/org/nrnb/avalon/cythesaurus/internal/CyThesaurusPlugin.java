@@ -72,12 +72,12 @@ public final class CyThesaurusPlugin extends AbstractCyActivator {
             DialogTaskManager taskManagerServiceRef = getService(bc, DialogTaskManager.class);
             CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
             CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
+            OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
             
             IDMappingAction idMappingAction = new IDMappingAction(cySwingApplicationServiceRef,
-                    cyNetworkManagerServiceRef, taskManagerServiceRef);
+                    cyNetworkManagerServiceRef, taskManagerServiceRef, openBrowser);
             
             registerService(bc, idMappingAction, CyAction.class, new Properties());
-            OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
         } catch (Exception e) {
             e.printStackTrace();
         }

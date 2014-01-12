@@ -41,6 +41,7 @@ import org.nrnb.avalon.cythesaurus.internal.ui.CyThesaurusDialog;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.TaskManager;
 
 /**
@@ -51,16 +52,18 @@ import org.cytoscape.work.TaskManager;
         private final CySwingApplication swingApp;
         private final CyNetworkManager cnm;
         private final TaskManager taskManager;
+        private final OpenBrowser openBrowser;
 
         private static final String APP_MENU_TITLE ="Map Identifiers";
         private static final String PARENT_MENU ="Tools";
         
         public IDMappingAction(CySwingApplication swingApp, CyNetworkManager cnm,
-                TaskManager taskManager) {
+                TaskManager taskManager, OpenBrowser openBrowser) {
             super(APP_MENU_TITLE);
             setPreferredMenu(PARENT_MENU);
             this.swingApp = swingApp;
             this.cnm = cnm;
+            this.openBrowser = openBrowser;
             this.taskManager = taskManager;
         }
 
@@ -69,7 +72,8 @@ import org.cytoscape.work.TaskManager;
          */
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            final CyThesaurusDialog dialog = new CyThesaurusDialog(swingApp.getJFrame(), cnm, taskManager, true);
+            final CyThesaurusDialog dialog = new CyThesaurusDialog(swingApp.getJFrame(),
+                    cnm, taskManager, openBrowser, true);
                         dialog.setLocationRelativeTo(swingApp.getJFrame());
                         dialog.setMapSrcAttrIDTypes(mapSrcAttrIDTypes);
             dialog.setVisible(true);

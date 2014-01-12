@@ -49,6 +49,7 @@ import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTable;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
@@ -63,11 +64,13 @@ import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 public class CyThesaurusDialog extends javax.swing.JDialog {
 	private CyNetworkManager cnm;
 	private TaskManager taskManager;
+        private OpenBrowser openBrowser;
 	
     /** Creates new form CyThesaurusDialog */
-    public CyThesaurusDialog(java.awt.Frame parent, CyNetworkManager cnm, TaskManager taskManager, boolean modal) {
+    public CyThesaurusDialog(java.awt.Frame parent, CyNetworkManager cnm, TaskManager taskManager, OpenBrowser openBrowser, boolean modal) {
         super(parent, modal);
         this.cnm = cnm;
+        this.openBrowser = openBrowser;
         this.taskManager = taskManager;
         initComponents();
         postInit();
@@ -239,7 +242,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_cancelBtnActionPerformed
 
     private void srcConfBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srcConfBtnActionPerformed
-        IDMappingSourceConfigDialog srcConfDialog = new IDMappingSourceConfigDialog(this, taskManager, true);
+        IDMappingSourceConfigDialog srcConfDialog = new IDMappingSourceConfigDialog(this, taskManager, openBrowser, true);
         srcConfDialog.setLocationRelativeTo(this);
         srcConfDialog.setVisible(true);
 

@@ -57,6 +57,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.TaskManager;
 
 /**
@@ -74,6 +75,7 @@ class IDMappingSourceSelectionTree extends JTree {
 	private final CheckTreeSelectionModel selection_Model;
 	private final JDialog parent;
         private final TaskManager taskManager;
+        private final OpenBrowser openBrowser;
 	private boolean modified = false;
 
 	private DefaultMutableTreeNode rootNode;
@@ -90,11 +92,12 @@ class IDMappingSourceSelectionTree extends JTree {
 	 * for using window builder
 	 */
 	@Deprecated
-	public IDMappingSourceSelectionTree(TaskManager taskManager) {
+	public IDMappingSourceSelectionTree(TaskManager taskManager, OpenBrowser openBrowser) {
 
 		initTree();
                 
                 this.taskManager = taskManager;
+                this.openBrowser = openBrowser;
 
 		this.parent = new JDialog();
 
@@ -133,10 +136,11 @@ class IDMappingSourceSelectionTree extends JTree {
 
 	}
 
-	public IDMappingSourceSelectionTree(JDialog parent, TaskManager taskManager) {
+	public IDMappingSourceSelectionTree(JDialog parent, TaskManager taskManager, OpenBrowser openBrowser) {
 
 		this.parent = parent;
                 this.taskManager = taskManager;
+                this.openBrowser = openBrowser;
 
 		boolean dig = false;
 		checkTreeManager = new CheckTreeManager(this, dig,
@@ -491,7 +495,7 @@ class IDMappingSourceSelectionTree extends JTree {
 
 	private void addWebservice() {
 		WebserviceIDMappingClientConfigDialog dialog = new WebserviceIDMappingClientConfigDialog(
-				parent, taskManager, true);
+				parent, taskManager, openBrowser, true);
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
 		if (!dialog.isCancelled()) {
