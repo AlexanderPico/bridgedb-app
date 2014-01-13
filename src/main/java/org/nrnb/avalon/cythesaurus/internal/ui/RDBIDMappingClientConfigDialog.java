@@ -39,15 +39,15 @@ import org.nrnb.avalon.cythesaurus.internal.IDMapperClient;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientImpl;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.rdb.IDMapperRdb;
-import org.bridgedb.rdb.SimpleGdb;
 
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.io.CyFileFilter;
 
 import java.io.File;
+import java.util.Collections;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
+import org.cytoscape.util.swing.FileChooserFilter;
 
 /**
  * 
@@ -76,8 +76,9 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 
 	/** Creates new form RDBIDMappingClientConfig */
 	public RDBIDMappingClientConfigDialog(javax.swing.JDialog parent,
-			boolean modal) {
+			FileUtil fileUtil, boolean modal) {
 		super(parent, modal);
+                this.fileUtil = fileUtil;
 		initComponents();
 	}
 
@@ -202,14 +203,15 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 	}// </editor-fold>//GEN-END:initComponents
 
 	private void pgdbButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pgdbButtonActionPerformed
-	// File source = FileUtil.getFile("Select a BridgeDb file", FileUtil.LOAD,
-	// new CyFileFilter[] { new CyFileFilter(new String[]{"bridge","pgdb"},
-	// "BridgeDb Derby file") });
-	// if (source==null) {
-	// return;
-	// }
-	//
-	// pgdbTextField.setText(source.getPath());
+            FileChooserFilter fileChooserFilter = new FileChooserFilter(
+                    "BridgeDb Derby file", new String[]{"bridge","pgdb"});
+            File source = fileUtil.getFile(this, "Select a BridgeDb file", FileUtil.LOAD,
+                    Collections.singleton(fileChooserFilter));
+            if (source==null) {
+                return;
+            }
+	
+            pgdbTextField.setText(source.getPath());
 	}// GEN-LAST:event_pgdbButtonActionPerformed
 
 	private void cancelButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelButtonActionPerformed
@@ -272,6 +274,7 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 		return cancelled;
 	}
 
+        private final FileUtil fileUtil;
 	private boolean cancelled = true;
 	// private IDMapperClient client;
 

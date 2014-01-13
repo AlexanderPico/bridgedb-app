@@ -46,6 +46,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Map;
 import java.util.Properties;
+import org.cytoscape.util.swing.FileUtil;
 
 /**
  * Plugin for attribute-based ID mapping
@@ -73,9 +74,10 @@ public final class CyThesaurusPlugin extends AbstractCyActivator {
             CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
             CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
             OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
+            FileUtil fileUtil = getService(bc, FileUtil.class);
             
             IDMappingAction idMappingAction = new IDMappingAction(cySwingApplicationServiceRef,
-                    cyNetworkManagerServiceRef, taskManagerServiceRef, openBrowser);
+                    cyNetworkManagerServiceRef, taskManagerServiceRef, openBrowser, fileUtil);
             
             registerService(bc, idMappingAction, CyAction.class, new Properties());
         } catch (Exception e) {

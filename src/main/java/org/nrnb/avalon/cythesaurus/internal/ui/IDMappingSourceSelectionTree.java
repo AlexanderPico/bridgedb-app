@@ -57,6 +57,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.JPopupMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.TaskManager;
 
@@ -76,6 +77,7 @@ class IDMappingSourceSelectionTree extends JTree {
 	private final JDialog parent;
         private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
+        private final FileUtil fileUtil;
 	private boolean modified = false;
 
 	private DefaultMutableTreeNode rootNode;
@@ -92,12 +94,14 @@ class IDMappingSourceSelectionTree extends JTree {
 	 * for using window builder
 	 */
 	@Deprecated
-	public IDMappingSourceSelectionTree(TaskManager taskManager, OpenBrowser openBrowser) {
+	public IDMappingSourceSelectionTree(TaskManager taskManager, OpenBrowser openBrowser,
+                FileUtil fileUtil) {
 
 		initTree();
                 
                 this.taskManager = taskManager;
                 this.openBrowser = openBrowser;
+                this.fileUtil = fileUtil;
 
 		this.parent = new JDialog();
 
@@ -136,11 +140,13 @@ class IDMappingSourceSelectionTree extends JTree {
 
 	}
 
-	public IDMappingSourceSelectionTree(JDialog parent, TaskManager taskManager, OpenBrowser openBrowser) {
+	public IDMappingSourceSelectionTree(JDialog parent, TaskManager taskManager,
+                OpenBrowser openBrowser, FileUtil fileUtil) {
 
 		this.parent = parent;
                 this.taskManager = taskManager;
                 this.openBrowser = openBrowser;
+                this.fileUtil = fileUtil;
 
 		boolean dig = false;
 		checkTreeManager = new CheckTreeManager(this, dig,
@@ -447,7 +453,7 @@ class IDMappingSourceSelectionTree extends JTree {
 
 	private void addDatabase() {
 		RDBIDMappingClientConfigDialog dialog = new RDBIDMappingClientConfigDialog(
-				parent, true);
+				parent, fileUtil, true);
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
 		if (!dialog.isCancelled()) {
