@@ -37,7 +37,6 @@ package org.nrnb.avalon.cythesaurus.internal;
 
 import org.bridgedb.bio.BioDataSource;
 import org.cytoscape.application.swing.CyAction;
-import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.util.swing.OpenBrowser;
@@ -46,6 +45,8 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Map;
 import java.util.Properties;
+import org.cytoscape.application.CyApplicationManager;
+import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.FileUtil;
 
 /**
@@ -71,12 +72,13 @@ public final class CyThesaurusPlugin extends AbstractCyActivator {
             //CyThesaurusNamespace.register(CyThesaurusNamespace.NAME);
             
             DialogTaskManager taskManagerServiceRef = getService(bc, DialogTaskManager.class);
+            CyApplicationManager cyApplicationManagerRef = getService(bc, CyApplicationManager.class);
             CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
             CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
             OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
             FileUtil fileUtil = getService(bc, FileUtil.class);
             
-            IDMappingAction idMappingAction = new IDMappingAction(cySwingApplicationServiceRef,
+            IDMappingAction idMappingAction = new IDMappingAction(cyApplicationManagerRef, cySwingApplicationServiceRef,
                     cyNetworkManagerServiceRef, taskManagerServiceRef, openBrowser, fileUtil);
             
             registerService(bc, idMappingAction, CyAction.class, new Properties());

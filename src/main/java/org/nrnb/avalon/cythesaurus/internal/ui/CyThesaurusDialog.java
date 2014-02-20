@@ -44,6 +44,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.swing.JOptionPane;
+import org.cytoscape.application.CyApplicationManager;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
@@ -63,16 +64,21 @@ import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
  * @author gjj
  */
 public class CyThesaurusDialog extends javax.swing.JDialog {
+        private final CyApplicationManager cyApplicationManager;
+        private final CyNetwork currentNetwork;
 	private final CyNetworkManager cnm;
 	private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
         private final FileUtil fileUtil;
 	
     /** Creates new form CyThesaurusDialog */
-    public CyThesaurusDialog(java.awt.Frame parent, CyNetworkManager cnm,
+    public CyThesaurusDialog(java.awt.Frame parent,
+            CyApplicationManager cyApplicationManager, CyNetworkManager cnm,
             TaskManager taskManager, OpenBrowser openBrowser,
             FileUtil fileUtil, boolean modal) {
         super(parent, modal);
+        this.cyApplicationManager = cyApplicationManager;
+        this.currentNetwork = cyApplicationManager.getCurrentNetwork();
         this.cnm = cnm;
         this.openBrowser = openBrowser;
         this.taskManager = taskManager;
@@ -270,7 +276,6 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         if (!verifyUserInput()) return;
 
         //Set<CyNetwork> networks = new HashSet(selectedNetworkData.getNetworks());
-        CyNetwork network = cnm.getNetwork(0);
         Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes = sourceAttributeSelectionTable.getSourceAttrType();
         Map<String, DataSourceWrapper> mapTgtAttrNameIDType = targetAttributeSelectionTable.getMapAttrNameIDType();
         Map<String,Class> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
@@ -280,7 +285,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
         // execute task
         AttributeBasedIDMappingTask task
-                = new AttributeBasedIDMappingTask(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
+                = new AttributeBasedIDMappingTask(currentNetwork, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
 //        // Configure JTask Dialog Pop-Up Box
 //        final JTaskConfig jTaskConfig = new JTaskConfig();
 //        jTaskConfig.setOwner(Cytoscape.getDesktop());
@@ -334,8 +339,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
             }
         }
         
-        CyNetwork network = cnm.getNetwork(0);
-        CyTable table = network.getDefaultNodeTable();
+        CyTable table = currentNetwork.getDefaultNodeTable();
         List<String> existAttrNames = new ArrayList<String>();
         for(CyColumn cyCol : table.getColumns()) {
         	existAttrNames.add(cyCol.getName());
@@ -373,19 +377,15 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     
     /**
      * update the button of OK to enable
-     * <br>
-     * 2013-9-19:下午9:34:14<br>
-     * <br>
+     * 
      */
     private void updateOKButtonEnable() {
-    	CyNetwork network = cnm.getNetwork(0);
-    		// FIXME network is null
-    		
-    		//FIXME Need to determine whether has opened a network , if not set the OK button to disable
-//        if (network.getNodeCount() == 0) {
-//            OKBtn.setEnabled(false);
-//            OKBtn.setToolTipText("None of the networks was selected!");
-//        }
+        if (currentNetwork==null) {
+            OKBtn.setEnabled(false);
+            OKBtn.setToolTipText("No current network");
+            OKBtn.repaint();
+            return;
+        }
 
         OKBtn.setEnabled(true);
         OKBtn.setToolTipText(null);
@@ -403,8 +403,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
     }
 
     private void setSelectedNetworkInSrcTable() {
-    	CyNetwork network = cnm.getNetwork(0);
-        sourceAttributeSelectionTable.setSelectedNetworks(network);
+        sourceAttributeSelectionTable.setSelectedNetworks(currentNetwork);
     }
 
 //    private Set<DataSource>[] getSupportedType() {
