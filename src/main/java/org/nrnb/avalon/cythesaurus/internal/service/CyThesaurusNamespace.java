@@ -487,7 +487,6 @@ public class CyThesaurusNamespace {
 //        }
 //
 //        Set<String> attributes = new HashSet();
-//        attributes.add("ID"); //TODO: remove in Cy3
 //        attributes.addAll(java.util.Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames()));
 //
 //        // parse source attributes

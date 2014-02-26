@@ -103,7 +103,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         setSupportedTgtTypesInTable();
         targetAttributeSelectionTable.addRow();
 
-        setSelectedNetworkInSrcTable();
+//        setSelectedNetworkInSrcTable();
     }
 
     /** This method is called from within the constructor to
@@ -139,7 +139,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
 
         sourceScrollPane.setMinimumSize(new java.awt.Dimension(300, 100));
 
-        sourceAttributeSelectionTable = new SourceAttributeSelectionTable();
+        sourceAttributeSelectionTable = new SourceAttributeSelectionTable(currentNetwork);
         sourceScrollPane.setViewportView(sourceAttributeSelectionTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -349,10 +349,6 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Target attributes must have new names.");
             return false;
         }
-        if (attrNames.contains("ID")) {
-            JOptionPane.showMessageDialog(this, "\"ID\" is researved and cannot be used for the new attribute name.");
-            return false;
-        }
         if (attrNames.contains("")) {
             JOptionPane.showMessageDialog(this, "The new attribute name cannot be empty.");
             return false;
@@ -402,9 +398,9 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         targetAttributeSelectionTable.setSupportedIDType(sourceDss);
     }
 
-    private void setSelectedNetworkInSrcTable() {
-        sourceAttributeSelectionTable.setSelectedNetworks(currentNetwork);
-    }
+//    private void setSelectedNetworkInSrcTable() {
+//        sourceAttributeSelectionTable.setSelectedNetworks(currentNetwork);
+//    }
 
 //    private Set<DataSource>[] getSupportedType() {
 //        Set<DataSource>[] ret = new Set[2];
@@ -483,7 +479,7 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
                         taskMonitor.setStatusMessage("Applying...");
                         setSupportedSrcTypesInTable();
                         setSupportedTgtTypesInTable();
-                        setSelectedNetworkInSrcTable();
+//                        setSelectedNetworkInSrcTable();
                         taskMonitor.setProgress(1.00);
                 } catch (Exception e) {
                         taskMonitor.setProgress(1.00);

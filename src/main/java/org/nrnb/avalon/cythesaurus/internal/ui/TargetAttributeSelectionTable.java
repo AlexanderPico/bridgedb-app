@@ -224,7 +224,6 @@ public class TargetAttributeSelectionTable extends JTable {
 
 	public List<String> getTgtAttrNames() {
 		Set<String> usedName = new HashSet<String>();
-		usedName.add("ID"); // TODO: remove Cy3
 		// Temp comment
 		// usedName.addAll(Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames()));
 		usedName.addAll(destinationAttributes);
@@ -574,7 +573,6 @@ public class TargetAttributeSelectionTable extends JTable {
 			String colName = getColumnName(col);
 			if (colName.compareTo(headerAttrName) == 0) {
 				Set<String> usedName = new HashSet<String>();
-				usedName.add("ID"); // TODO remove in Cy3
 				// Temp comment
 				// usedName.addAll(Arrays.asList(Cytoscape.getNodeAttributes().getAttributeNames()));
 				usedName.addAll(destinationAttributes);

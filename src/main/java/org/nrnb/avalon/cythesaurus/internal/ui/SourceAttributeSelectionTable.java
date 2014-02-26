@@ -42,11 +42,8 @@ import org.nrnb.avalon.cythesaurus.internal.util.DataSourceUtil;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -68,7 +65,6 @@ import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
@@ -77,6 +73,9 @@ import javax.swing.table.TableColumnModel;
 
 import org.bridgedb.DataSource;
 import org.bridgedb.DataSourcePatterns;
+import org.cytoscape.model.CyColumn;
+import org.cytoscape.model.CyRow;
+import org.cytoscape.model.CyTable;
 
 // support different editors for each row in a column
 /**
@@ -89,6 +88,8 @@ public class SourceAttributeSelectionTable extends JTable {
 
 	private IDTypeSelectionTableModel model;
 
+        private CyNetwork selectedNetwork;
+        
 	private Set<DataSourceWrapper> supportedIDType;
 
 	private CheckComboBoxSelectionChangedListener idTypeSelectionChangedListener;
@@ -110,10 +111,13 @@ public class SourceAttributeSelectionTable extends JTable {
 
 	private Vector<String> attributes;
 
-	private Set<String> nodesForTypeGuessing;
+	private Set<CyNode> nodesForTypeGuessing;
 
-	public SourceAttributeSelectionTable() {
+	public SourceAttributeSelectionTable(CyNetwork selectedNetwork) {
 		super();
+                
+                setSelectedNetworks(selectedNetwork);
+                
 		initializeAttibutes();
 
 		supportedIDType = new LinkedHashSet<DataSourceWrapper>();
@@ -122,7 +126,7 @@ public class SourceAttributeSelectionTable extends JTable {
 		typeComboBoxes = new Vector<CheckComboBox>();
 		rmvBtns = new Vector<JButton>();
 
-		nodesForTypeGuessing = new HashSet<String>();
+		nodesForTypeGuessing = new HashSet<CyNode>();
 
 		addBtn = new JButton("Insert");
 		addBtn.setBackground(defBgColor);
@@ -171,15 +175,15 @@ public class SourceAttributeSelectionTable extends JTable {
 
 	private void initializeAttibutes() {
 		attributes = new Vector<String>();
-		// TODO remove in Cytoscape3
-		attributes.add("ID");
-		// TODO: modify if local attribute implemented
 
-		List<String> list = new ArrayList<String>();
-		// Arrays.asList(cytoscape.Cytoscape.getNodeAttributes().getAttributeNames());
-		Collections.sort(list);
+                CyTable table = selectedNetwork.getDefaultNodeTable();
+                List<String> existAttrNames = new ArrayList<String>();
+                for(CyColumn cyCol : table.getColumns()) {
+                        existAttrNames.add(cyCol.getName());
+                }
+		Collections.sort(existAttrNames);
 
-		attributes.addAll(list);
+		attributes.addAll(existAttrNames);
 	}
 
 	void setIDTypeSelectionChangedListener(
@@ -187,14 +191,15 @@ public class SourceAttributeSelectionTable extends JTable {
 		this.idTypeSelectionChangedListener = idTypeSelectionChangedListener;
 	}
 
-	public void setSelectedNetworks(final CyNetwork selectedNetwork) {
+	private void setSelectedNetworks(final CyNetwork selectedNetwork) {
+                this.selectedNetwork = selectedNetwork;
 		nodesForTypeGuessing.clear();
 		if (selectedNetwork != null) {
-			List<CyNode> it = selectedNetwork.getNodeList();
 			int count = 0;
 			// only using 100 or less for guessing
-			for (CyNode cyN : it) {
-				nodesForTypeGuessing.add(cyN.getSUID().toString());
+			for (CyNode cyN : selectedNetwork.getNodeList()) {
+                                if (count++>100) break;
+				nodesForTypeGuessing.add(cyN);
 			}
 		}
 
@@ -251,28 +256,29 @@ public class SourceAttributeSelectionTable extends JTable {
 	private Set<String> getSrcIDsForTypeGuessing(int row) {
 		Set<String> result = new HashSet<String>();
 		String attr = selectedAttribute.get(row);
-		// Temp comment
-		// CyAttributes cyAttributes = Cytoscape.getNodeAttributes();
-		// for (Node node : nodesForTypeGuessing) {
-		// String nodeId = node.getIdentifier();
-		// if (attr.equals("ID")) {
-		// result.add(nodeId);
-		// } else {
-		// byte type = cyAttributes.getType(attr);
-		// if (type == CyAttributes.TYPE_SIMPLE_LIST) {
-		// List list = cyAttributes.getListAttribute(nodeId, attr);
-		// for (Object obj : list) {
-		// result.add(obj.toString());
-		// }
-		// } else {
-		// Object obj = cyAttributes.getAttribute(nodeId, attr);
-		// if (obj!=null)
-		// result.add(obj.toString());
-		// }
-		// }
-		// }
+		CyTable cyTable = selectedNetwork.getDefaultNodeTable();
+                CyColumn cyColumn = cyTable.getColumn(attr);
+		for (CyNode node : nodesForTypeGuessing) {
+                    CyRow cyRow = selectedNetwork.getRow(node);
+                    if (isColumnTypeList(cyColumn)) {
+                        List list = cyRow.getList(attr, cyColumn.getListElementType());
+                        for (Object obj : list) {
+                            result.add(obj.toString());
+                        }
+                    } else {
+                        Object obj = cyRow.getRaw(attr);
+                        if (obj!=null) {
+                            result.add(obj.toString());
+                        }
+                    }
+                }
 		return result;
 	}
+        
+        private static boolean isColumnTypeList(CyColumn col) {
+            Class<?> type = col.getType();
+            return List.class.isAssignableFrom(type);
+        }
 
 	void setSupportedIDType() {
 
@@ -315,10 +321,6 @@ public class SourceAttributeSelectionTable extends JTable {
 
 		for (int i = 0; i < rowCount; i++) {
 			String attr = (String) selectedAttribute.get(i);
-			// TODO REMOVE IN CY3
-			// if (attr.compareTo("ID")==0) {
-			// attr = cytoscape.data.Semantics.CANONICAL_NAME;
-			// }
 
 			Set<DataSourceWrapper> types = null;
 			if (!supportedIDType.isEmpty()) {
