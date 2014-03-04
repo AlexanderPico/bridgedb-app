@@ -115,10 +115,6 @@ public class SourceAttributeSelectionTable extends JTable {
 
 	public SourceAttributeSelectionTable(CyNetwork selectedNetwork) {
 		super();
-                
-                setSelectedNetworks(selectedNetwork);
-                
-		initializeAttibutes();
 
 		supportedIDType = new LinkedHashSet<DataSourceWrapper>();
 		attributeComboBoxes = new Vector<JComboBox>();
@@ -134,6 +130,10 @@ public class SourceAttributeSelectionTable extends JTable {
 		this.setGridColor(defBgColor);
 
 		rowCount = 0;
+                
+                setSelectedNetworks(selectedNetwork);
+                
+		initializeAttibutes();
 
 		model = new IDTypeSelectionTableModel();
 		setModel(model);
