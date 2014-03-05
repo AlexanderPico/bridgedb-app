@@ -61,6 +61,7 @@ import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
+import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 
 /**
  * 
@@ -262,8 +263,8 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 		setVisible(false);
 		this.dispose();
 		try {
-			// if (srcTree.isModified())
-			// IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
+			 if (srcTree.isModified())
+                            IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this,
@@ -279,7 +280,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 			return;
 
 		try {
-			// IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
+			IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this,
@@ -298,7 +299,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 		if (ret == JOptionPane.NO_OPTION)
 			return;
 
-		// IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
+		IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
 
 		srcTree.reset();
 		JOptionPane.showMessageDialog(this,

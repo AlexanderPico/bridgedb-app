@@ -45,6 +45,7 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Map;
 import java.util.Properties;
+import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.FileUtil;
@@ -66,7 +67,11 @@ public final class CyThesaurusPlugin extends AbstractCyActivator {
         try {
             BioDataSource.init();
             //addListeners();
+            
+            CyApplicationConfiguration cyApplicationConfiguration = getService(bc, CyApplicationConfiguration.class);
 
+            IDMapperClientManager.setCyApplicationConfiguration(cyApplicationConfiguration);
+            IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
             IDMapperClientManager.cache();
 
             //CyThesaurusNamespace.register(CyThesaurusNamespace.NAME);

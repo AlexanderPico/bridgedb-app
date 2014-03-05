@@ -40,8 +40,8 @@ package org.nrnb.avalon.cythesaurus.internal;
  * @author gjj
  */
 public class FinalStaticValues {
-    public static final String PLUGIN_NAME = "CyThesaurus";
-    public static final String CLIENT_GLOBAL_PROPS = "cythesaurus.clients.props";
-    public static final String CLIENT_SESSION_PROPS = "cythesaurus.client";
+    public static final String PLUGIN_NAME = "BridgeDb";
+    public static final String CLIENT_GLOBAL_PROPS = "bridgedb.clients.props";
+    public static final String CLIENT_SESSION_PROPS = "bridgedb.client";
     public static final String DEFAULT_SPECIES_NAME = "defaultSpeciesName";
 }

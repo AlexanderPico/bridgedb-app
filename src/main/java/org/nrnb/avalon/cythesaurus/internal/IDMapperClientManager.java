@@ -47,12 +47,10 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -63,7 +61,7 @@ import org.bridgedb.DataSource;
 import org.bridgedb.IDMapper;
 import org.bridgedb.IDMapperCapabilities;
 import org.bridgedb.IDMapperStack;
-import org.cytoscape.property.CyProperty;
+import org.cytoscape.application.CyApplicationConfiguration;
 
 /**
  *
@@ -184,20 +182,18 @@ public class IDMapperClientManager {
     private static final String CLIENT_SELECTED = "Selected:\t";
     private static final String CLIENT_TYPE = "Client Type:\t";
     
-    /* modify 'CytoscapeInit.getProperties()' in Cy 3.0
+    private static CyApplicationConfiguration cyApplicationConfiguration;
+    
+    public static void setCyApplicationConfiguration(CyApplicationConfiguration applicationConfiguration) {
+        cyApplicationConfiguration = applicationConfiguration;
+    }
+    
     public static boolean reloadFromCytoscapeGlobalProperties() {
         removeAllClients(true); // remove all of the current clients
 
-        String fileName = FinalStaticValues.CLIENT_GLOBAL_PROPS;
-        File file = cytoscape.CytoscapeInit.getConfigFile(fileName);
-        if (!file.exists()) {
-            // no default clients have been set
-            return false;
-        }
-
-//        Set<IDMapperClient> clients = new HashSet();
-
         try {
+            File file = getGlobalPropertiesFile();
+            
             BufferedReader in = new BufferedReader(new FileReader(file));
 
             String clientId = null;
@@ -256,7 +252,6 @@ public class IDMapperClientManager {
 
         return true;
     }
-	*/
     
     /* modify 'CytoscapeInit.getProperties()' in Cy 3.0
     static boolean registerDefaultClient() {
@@ -304,11 +299,28 @@ public class IDMapperClientManager {
         return true;
     }
     
-    /* modify 'CytoscapeInit.getProperties()' in Cy 3.0
+    private static File getGlobalPropertiesFile() throws IOException {
+        File configDir = cyApplicationConfiguration.getAppConfigurationDirectoryLocation(
+                CyThesaurusPlugin.class);
+        if (!configDir.exists()) {
+            if (!configDir.mkdirs()) {
+                System.err.println("Failed to create config dir for bridgedb");
+            }
+        }
+        
+        File configFile = new File(configDir.getAbsolutePath()
+                + File.separatorChar + FinalStaticValues.CLIENT_GLOBAL_PROPS);
+        if (!configFile.exists()) {
+            if (!configFile.createNewFile()) {
+                System.err.println("Failed to create config file for bridgedb");
+            }
+        }
+        
+        return configFile;
+    }
+    
     public static void saveCurrentToCytoscapeGlobalProperties() throws IOException {
-        String fileName = FinalStaticValues.CLIENT_GLOBAL_PROPS;
-        File file = cytoscape.CytoscapeInit.getConfigFile(fileName);
-        BufferedWriter out = new BufferedWriter(new FileWriter(file));
+        BufferedWriter out = new BufferedWriter(new FileWriter(getGlobalPropertiesFile()));
 
         Set<IDMapperClient> clients = IDMapperClientManager.allClients();
 
@@ -346,7 +358,6 @@ public class IDMapperClientManager {
 
         out.close();
     }
-    */
 
     public static int countClients() {
         return clientConnectionStringMap.size();
