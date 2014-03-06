@@ -63,14 +63,15 @@ public class AttributeBasedIDMappingTask extends AbstractTask {
 	 */
     //@Override
 	public void run(final TaskMonitor taskMonitor) {
-		 taskMonitor.setTitle("ID mapping");
+		 taskMonitor.setTitle("Mapping identifiers ...");
 		 try {
 			 service.setTaskMonitor(taskMonitor);
 			 service.defineTgtAttrs(network, mapTgtAttrNameAttrType);
 			 service.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
+                         
+			 taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Completed");
 		 } catch (Exception e) {
-			 taskMonitor.setProgress(1.00);
-			 taskMonitor.setStatusMessage("ID mapping failed.\n");
+			 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"ID mapping failed.\n");
 			 e.printStackTrace();
 		 }
 		 success = true;

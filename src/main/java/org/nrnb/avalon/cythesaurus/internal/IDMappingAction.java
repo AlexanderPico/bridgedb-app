@@ -44,7 +44,10 @@ import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
+import org.cytoscape.work.TaskMonitor;
 
 /**
  *
@@ -79,13 +82,37 @@ import org.cytoscape.work.TaskManager;
          */
         @Override
         public void actionPerformed(final ActionEvent ae) {
-            final CyThesaurusDialog dialog = new CyThesaurusDialog(swingApp.getJFrame(),
-                    cyApplicationManager, cnm, taskManager, openBrowser, fileUtil, true);
-                        dialog.setLocationRelativeTo(swingApp.getJFrame());
-                        dialog.setMapSrcAttrIDTypes(mapSrcAttrIDTypes);
-            dialog.setVisible(true);
-            //if (!dialog.isCancelled()) {
-                mapSrcAttrIDTypes = dialog.getMapSrcAttrIDTypes();
-            //}
+            OpenMainDialogTask task = new OpenMainDialogTask();
+            taskManager.execute((new TaskIterator(task)));
+        }
+                
+        private class OpenMainDialogTask extends AbstractTask {            
+            public OpenMainDialogTask() {
+            }
+
+            @Override
+            public void cancel() {
+                    // TODO Auto-generated method stub
+            }
+
+            @Override
+            public void run(TaskMonitor taskMonitor) throws Exception {
+                    taskMonitor.setTitle("BridgeDb App");
+                    try {
+                            taskMonitor.setStatusMessage("Initializing...");
+                            CyThesaurusDialog dialog = new CyThesaurusDialog(swingApp.getJFrame(),
+                                    cyApplicationManager, cnm, taskManager, openBrowser, fileUtil, false);
+                                        dialog.setLocationRelativeTo(swingApp.getJFrame());
+                                        dialog.setMapSrcAttrIDTypes(mapSrcAttrIDTypes);
+                            dialog.setVisible(true);
+                            mapSrcAttrIDTypes = dialog.getMapSrcAttrIDTypes();
+                            taskMonitor.setProgress(1.00);
+                    } catch (Exception e) {
+                            taskMonitor.setProgress(1.00);
+                            taskMonitor.setStatusMessage("Failed.\n");
+                            e.printStackTrace();
+                    }
+            }
+
         }
     }

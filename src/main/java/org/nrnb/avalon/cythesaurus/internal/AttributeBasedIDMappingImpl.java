@@ -66,7 +66,11 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
             
             if (null == cyTable.getColumn(attrname)) {
                 // if not exist
-                cyTable.createColumn(attrname, attrtype, false);
+                if (attrtype == List.class) {
+                    cyTable.createListColumn(attrname, String.class, false);
+                } else {
+                    cyTable.createColumn(attrname, attrtype, false);
+                }
             }
         }
     }
@@ -113,7 +117,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
             Set<XrefWrapper> xrefs = new HashSet();
             ret.put(node, xrefs);
             
-            CyRow cyRow = nodeTable.getRow(node);
+            CyRow cyRow = nodeTable.getRow(node.getSUID());
 
             for (Map.Entry<String,Set<DataSourceWrapper>> entryAttrIDTypes : mapSrcAttrIDTypes.entrySet()) {
                 String attrName = entryAttrIDTypes.getKey();
@@ -211,7 +215,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
             
             // set attribute
             CyNode node = entryNodeXrefs.getKey();
-            CyRow cyRow = nodeTable.getRow(node);
+            CyRow cyRow = nodeTable.getRow(node.getSUID());
             
             for (Map.Entry<DataSourceWrapper, Set<String>> entryDsIds : mapDsIds.entrySet()) {
                 DataSourceWrapper ds = entryDsIds.getKey();
