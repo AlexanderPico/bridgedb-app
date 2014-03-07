@@ -9,9 +9,9 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bridgedb</groupId>
-	<artifactId>bridgedb.app</artifactId>
+	<artifactId>bridgedb.cytoscape.app</artifactId>
 	<version>3.0.0</version>
-	<name>${bundle.symbolicName}</name>
+	<name>BridgeDb App for Cytoscape</name>
 	<packaging>bundle</packaging>
         
 	<build>
