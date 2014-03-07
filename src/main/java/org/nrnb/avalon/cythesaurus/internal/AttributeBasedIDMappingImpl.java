@@ -85,6 +85,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         List<CyNode> nodes = network.getNodeList();
         CyTable table = network.getDefaultNodeTable();
         
+        updateTaskMonitor("Preparing source cross references...", 0.1);
         Map<CyNode,Set<XrefWrapper>> mapNodeSrcXrefs = prepareNodeSrcXrefs(table, nodes, mapSrcAttrIDTypes);
         Set<XrefWrapper> srcXrefs = srcXrefUnion(mapNodeSrcXrefs);
 
@@ -92,10 +93,11 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         Set<DataSourceWrapper> tgtTypes = new HashSet(mapTgtAttrNameIDType.values());
 
         // id mapping
-        updateTaskMonitor("Mapping IDs...",-1.0);
+        updateTaskMonitor("Mapping IDs...",0.2);
         Map<XrefWrapper, Set<XrefWrapper>> mapping = IDMapperWrapper.mapID(srcXrefs, tgtTypes);
 
         // set target attribute
+        updateTaskMonitor("Set target column...", 0.8);
         Map<CyNode,Set<XrefWrapper>> mapNodeTgtXrefs = getNodeTgtXrefs(mapNodeSrcXrefs, mapping);
         setTgtAttribute(table, mapNodeTgtXrefs, mapTgtAttrNameIDType);
 
@@ -107,12 +109,12 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
             Collection<CyNode> nodes, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes) {
         Map<CyNode,Set<XrefWrapper>> ret = new HashMap();
 
-        int nNode = nodes.size();
-        int i=0;
+//        int nNode = nodes.size();
+//        int i=0;
         for (CyNode node : nodes) {
             if (interrupted) return null;
-            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
-            i++;
+//            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
+//            i++;
 
             Set<XrefWrapper> xrefs = new HashSet();
             ret.put(node, xrefs);
@@ -126,10 +128,12 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
                 CyColumn cyColumn = nodeTable.getColumn(attrName);
                 if (cyColumn.getType() == List.class) {
                     List attr = cyRow.get(cyColumn.getName(), List.class);
-                    for (Object obj : attr) {
-                        String str = obj.toString();
-                        for (DataSourceWrapper ds : dss) {
-                            xrefs.add(new XrefWrapper(str, ds));
+                    if (attr!=null) {
+                        for (Object obj : attr) {
+                            String str = obj.toString();
+                            for (DataSourceWrapper ds : dss) {
+                                xrefs.add(new XrefWrapper(str, ds));
+                            }
                         }
                     }
                 } else {
@@ -193,12 +197,12 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
             names.add(attrName);
         }
 
-        int i = 0;
-        int nNode = mapNodeTgtXrefs.size();
+//        int i = 0;
+//        int nNode = mapNodeTgtXrefs.size();
         for (Map.Entry<CyNode,Set<XrefWrapper>> entryNodeXrefs : mapNodeTgtXrefs.entrySet()) {
             if (interrupted) return;
-            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
-            i++;
+//            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
+//            i++;
 
             // type wise
             Map<DataSourceWrapper, Set<String>> mapDsIds = new HashMap();

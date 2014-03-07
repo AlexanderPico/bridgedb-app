@@ -27,10 +27,11 @@ import org.cytoscape.model.CyNetwork;
 
 import java.util.Set;
 import java.util.Map;
+import org.cytoscape.work.ObservableTask;
 /**
  *
  */
-public class AttributeBasedIDMappingTask extends AbstractTask {
+public class AttributeBasedIDMappingTask extends AbstractTask implements ObservableTask {
     private final CyNetwork network;
     private final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
     private final Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
@@ -69,45 +70,19 @@ public class AttributeBasedIDMappingTask extends AbstractTask {
 			 service.defineTgtAttrs(network, mapTgtAttrNameAttrType);
 			 service.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
                          
-			 taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Completed");
+			 taskMonitor.showMessage(TaskMonitor.Level.INFO, service.getReport());
+                         success = true;
 		 } catch (Exception e) {
 			 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"ID mapping failed.\n");
 			 e.printStackTrace();
 		 }
-		 success = true;
 	}
+        
+        public boolean success() {
+            return success;
+        }
 
-	public boolean success() {
-		return success;
-	}
-
-
-//	/**
-//	 * Halts the Task: Not Currently Implemented.
-//	 */
-//        //@Override
-//	public void halt() {
-//            service.interrupt();
-//	}
-//
-//	/**
-//	 * Sets the Task Monitor.
-//	 *
-//	 * @param taskMonitor
-//	 *            TaskMonitor Object.
-//	 */
-//        //@Override
-//	public void setTaskMonitor(TaskMonitor taskMonitor) throws IllegalThreadStateException {
-//		this.taskMonitor = taskMonitor;
-//	}
-//
-//	/**
-//	 * Gets the Task Title.
-//	 *
-//	 * @return Task Title.
-//	 */
-//        //@Override
-//	public String getTitle() {
-//		return new String("ID mapping");
-//	}
+        public String getResults(Class type)  {
+            return service.getReport();
+        }
 }

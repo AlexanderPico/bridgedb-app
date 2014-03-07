@@ -42,8 +42,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.JDialog;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import org.cytoscape.application.CyApplicationManager;
 
 import org.cytoscape.model.CyColumn;
@@ -53,9 +55,12 @@ import org.cytoscape.model.CyTable;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.FinishStatus;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.TaskObserver;
 import org.nrnb.avalon.cythesaurus.internal.IDMapperClientManager;
 import org.nrnb.avalon.cythesaurus.internal.util.DataSourceWrapper;
 
@@ -276,43 +281,59 @@ public class CyThesaurusDialog extends javax.swing.JDialog {
         if (!verifyUserInput()) return;
 
         //Set<CyNetwork> networks = new HashSet(selectedNetworkData.getNetworks());
-        Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes = sourceAttributeSelectionTable.getSourceAttrType();
-        Map<String, DataSourceWrapper> mapTgtAttrNameIDType = targetAttributeSelectionTable.getMapAttrNameIDType();
-        Map<String,Class> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
+        final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes = sourceAttributeSelectionTable.getSourceAttrType();
+        final Map<String, DataSourceWrapper> mapTgtAttrNameIDType = targetAttributeSelectionTable.getMapAttrNameIDType();
+        final Map<String,Class> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
 
 //        // define target attributes
 //        defineTgtAttributes(mapTgtAttrNameAttrType);
 
         // execute task
-        AttributeBasedIDMappingTask task
-                = new AttributeBasedIDMappingTask(currentNetwork, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
-//        // Configure JTask Dialog Pop-Up Box
-//        final JTaskConfig jTaskConfig = new JTaskConfig();
-//        jTaskConfig.setOwner(Cytoscape.getDesktop());
-//        jTaskConfig.displayCloseButton(true);
-//        jTaskConfig.displayCancelButton(false);
-//        jTaskConfig.displayStatus(true);
-//        jTaskConfig.setAutoDispose(false);
-//        jTaskConfig.setMillisToPopup(0); // always pop the task
+        final AttributeBasedIDMappingTask task
+                = new AttributeBasedIDMappingTask(currentNetwork, mapSrcAttrIDTypes,
+                        mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
+        final JDialog thisDialog = this;
 
         // Execute Task in New Thread; pop open JTask Dialog Box.
         //Temp solution, need create taskfactory for AttributeBasedIDMappingTask
         //http://chianti.ucsd.edu/svn/core3/network-merge-impl/trunk/src/main/java/org/cytoscape/network/merge/internal/task/NetworkMergeTaskFactory.java
-        taskManager.execute(new TaskIterator(task));
-        boolean succ = task.success();
+        taskManager.execute(new TaskIterator(task), new TaskObserver() {
+            public void allFinished(FinishStatus finishStatus) {
+            }
+            
+            public void taskFinished(ObservableTask otask) {
+                if (otask==task) {
+                    if (task.success()) {
+                        thisDialog.setVisible(false);
+                        thisDialog.dispose();
+                        cancelled = false;
+                    } else {
+                        CyTable cyTable = currentNetwork.getDefaultNodeTable();
+                        for (String attrName : mapTgtAttrNameAttrType.keySet()) {
+                            cyTable.deleteColumn(attrName);
+                        }
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                JOptionPane.showMessageDialog(thisDialog, "IDs mapping failed");
+                            }
+                        });
+                    }
+                }
+            }
+        });
 
-        if (succ) {
-            this.setVisible(false);
-            this.dispose();
-            cancelled = false;
-        } else {
+//        if (succ) {
+//            this.setVisible(false);
+//            this.dispose();
+//            cancelled = false;
+//        } else {
             //Delete the new attributes
         	//Temp comments 
 //            CyAttributes nodeAttributes = Cytoscape.getNodeAttributes();
 //            for (String attrName : mapTgtAttrNameAttrType.keySet()) {
 //                nodeAttributes.deleteAttribute(attrName);
 //            }
-        }
+//        }
     }//GEN-LAST:event_OKBtnActionPerformed
 
     private boolean verifyUserInput() {
