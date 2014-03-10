@@ -45,10 +45,16 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Map;
 import java.util.Properties;
+import org.bridgedb.cytoscape.internal.task.OpenIDMappingSourceConfigDialogTaskFactory;
+import org.bridgedb.cytoscape.internal.task.OpenMainDialogTaskFactory;
 import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.util.swing.FileUtil;
+import static org.cytoscape.work.ServiceProperties.COMMAND;
+import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
+import org.cytoscape.work.TaskFactory;
+import org.cytoscape.work.TaskManager;
 
 /**
  * Plugin for attribute-based ID mapping
@@ -57,7 +63,6 @@ import org.cytoscape.util.swing.FileUtil;
  */
 public final class BridgeDbApp extends AbstractCyActivator {
     public static Map mapSrcAttrIDTypes = null;
-    public static double VERSION = 1.31;
 
     public BridgeDbApp() {
         super();
@@ -73,18 +78,18 @@ public final class BridgeDbApp extends AbstractCyActivator {
             IDMapperClientManager.setCyApplicationConfiguration(cyApplicationConfiguration);
             IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
             IDMapperClientManager.cache();
-
-            //BridgeDbNamespace.register(BridgeDbNamespace.NAME);
             
             DialogTaskManager taskManagerServiceRef = getService(bc, DialogTaskManager.class);
             CyApplicationManager cyApplicationManagerRef = getService(bc, CyApplicationManager.class);
             CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
-            CyNetworkManager cyNetworkManagerServiceRef = getService(bc, CyNetworkManager.class);
             OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
             FileUtil fileUtil = getService(bc, FileUtil.class);
+
+            registerServices(bc, cyApplicationManagerRef, cySwingApplicationServiceRef,
+                    taskManagerServiceRef, openBrowser, fileUtil);
             
             IDMappingAction idMappingAction = new IDMappingAction(cyApplicationManagerRef, cySwingApplicationServiceRef,
-                    cyNetworkManagerServiceRef, taskManagerServiceRef, openBrowser, fileUtil);
+                    taskManagerServiceRef, openBrowser, fileUtil);
             
             registerService(bc, idMappingAction, CyAction.class, new Properties());
         } catch (Exception e) {
@@ -109,4 +114,24 @@ public final class BridgeDbApp extends AbstractCyActivator {
 //    private void registerDefaultClients() {
 //        IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
 //    }
+    
+    private void registerServices(BundleContext bc, CyApplicationManager cyApplicationManager, 
+                CySwingApplication swingApp, TaskManager taskManager, OpenBrowser openBrowser,
+                FileUtil fileUtil) {
+        // maind dialog
+        OpenMainDialogTaskFactory openMainDialogTaskFactory  = new OpenMainDialogTaskFactory(
+                    cyApplicationManager, swingApp, taskManager, openBrowser, fileUtil);
+        Properties props = new Properties();
+        props.setProperty(COMMAND, "main dialog");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc,openMainDialogTaskFactory, TaskFactory.class, props);
+        
+        // source config dialog
+        OpenIDMappingSourceConfigDialogTaskFactory openIDMappingSourceConfigDialogTaskFactory
+                = new OpenIDMappingSourceConfigDialogTaskFactory(taskManager, openBrowser, fileUtil, null, swingApp.getJFrame());
+        props = new Properties();
+        props.setProperty(COMMAND, "resource config dialog");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc, openIDMappingSourceConfigDialogTaskFactory, TaskFactory.class, props);
+    }
 }

@@ -69,22 +69,18 @@ import org.bridgedb.cytoscape.internal.util.DataSourceWrapper;
  * @author gjj
  */
 public class BridgeDbDialog extends javax.swing.JDialog {
-        private final CyApplicationManager cyApplicationManager;
         private final CyNetwork currentNetwork;
-	private final CyNetworkManager cnm;
 	private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
         private final FileUtil fileUtil;
 	
     /** Creates new form BridgeDbDialog */
     public BridgeDbDialog(java.awt.Frame parent,
-            CyApplicationManager cyApplicationManager, CyNetworkManager cnm,
+            CyApplicationManager cyApplicationManager,
             TaskManager taskManager, OpenBrowser openBrowser,
             FileUtil fileUtil, boolean modal) {
         super(parent, modal);
-        this.cyApplicationManager = cyApplicationManager;
         this.currentNetwork = cyApplicationManager.getCurrentNetwork();
-        this.cnm = cnm;
         this.openBrowser = openBrowser;
         this.taskManager = taskManager;
         this.fileUtil = fileUtil;
@@ -264,16 +260,8 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         srcConfDialog.setVisible(true);
 
         if (srcConfDialog.isModified()) {
-//            final JTaskConfig jTaskConfig = new JTaskConfig();
-//            jTaskConfig.setOwner(Cytoscape.getDesktop());
-//            jTaskConfig.displayCloseButton(false);
-//            jTaskConfig.displayCancelButton(false);
-//            jTaskConfig.displayStatus(true);
-//            jTaskConfig.setAutoDispose(true);
-//            jTaskConfig.setMillisToPopup(100); // always pop the task
-
             // Execute Task in New Thread; pop open JTask Dialog Box.
-        	taskManager.execute((new TaskIterator(new ApplySourceChangeTask())));
+            taskManager.execute((new TaskIterator(new ApplySourceChangeTask())));
         }
     }//GEN-LAST:event_srcConfBtnActionPerformed
 

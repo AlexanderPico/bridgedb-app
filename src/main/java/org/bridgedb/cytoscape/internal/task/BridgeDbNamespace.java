@@ -29,7 +29,7 @@
  * EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
-package org.bridgedb.cytoscape.internal.service;
+package org.bridgedb.cytoscape.internal.task;
 
 import org.bridgedb.cytoscape.internal.BridgeDbApp;
 import org.bridgedb.cytoscape.internal.IDMapperClient;
@@ -59,7 +59,7 @@ import org.bridgedb.IDMapperCapabilities;
 /**
  * 
  */
-public class CyThesaurusNamespace {
+public class BridgeDbNamespace {
     public static final String NAME = "idmapping";
     
     // Commands
@@ -93,7 +93,7 @@ public class CyThesaurusNamespace {
     private static final String REPORT = "report";
     private static final String FIRST_ONLY = "firstonly";
 
-//    protected CyThesaurusNamespace(CyCommandNamespace ns) {
+//    protected BridgeDbNamespace(CyCommandNamespace ns) {
 //        super(ns);
 //        // Define our subcommands
 //        addArgument(VERSION);
@@ -783,7 +783,7 @@ public class CyThesaurusNamespace {
 //            CyCommandNamespace ns = CyCommandManager.reserveNamespace(namespace);
 //
 //            // Handle the simple commands ourselves
-//            CyCommandHandler ch = new CyThesaurusNamespace(ns);
+//            CyCommandHandler ch = new BridgeDbNamespace(ns);
 //
 //            return ch;
 //    }
