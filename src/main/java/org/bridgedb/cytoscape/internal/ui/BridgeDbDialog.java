@@ -35,6 +35,7 @@
 
 package org.bridgedb.cytoscape.internal.ui;
 
+import org.bridgedb.cytoscape.internal.task.AttributeBasedIDMappingTask;
 import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.Collections;

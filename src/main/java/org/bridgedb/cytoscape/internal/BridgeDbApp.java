@@ -37,7 +37,6 @@ package org.bridgedb.cytoscape.internal;
 
 import org.bridgedb.bio.BioDataSource;
 import org.cytoscape.application.swing.CyAction;
-import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.swing.DialogTaskManager;
@@ -45,8 +44,12 @@ import org.osgi.framework.BundleContext;
 
 import java.util.Map;
 import java.util.Properties;
-import org.bridgedb.cytoscape.internal.task.OpenIDMappingSourceConfigDialogTaskFactory;
+import org.bridgedb.cytoscape.internal.task.ListIDMappingResourcesTaskFactory;
+import org.bridgedb.cytoscape.internal.task.OpenIDMappingResourceConfigDialogTaskFactory;
 import org.bridgedb.cytoscape.internal.task.OpenMainDialogTaskFactory;
+import org.bridgedb.cytoscape.internal.task.AddResourceTaskFactory;
+import org.bridgedb.cytoscape.internal.task.RemoveResourceTaskFactory;
+import org.bridgedb.cytoscape.internal.task.SelectResourceTaskFactory;
 import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -127,11 +130,43 @@ public final class BridgeDbApp extends AbstractCyActivator {
         registerService(bc,openMainDialogTaskFactory, TaskFactory.class, props);
         
         // source config dialog
-        OpenIDMappingSourceConfigDialogTaskFactory openIDMappingSourceConfigDialogTaskFactory
-                = new OpenIDMappingSourceConfigDialogTaskFactory(taskManager, openBrowser, fileUtil, null, swingApp.getJFrame());
+        OpenIDMappingResourceConfigDialogTaskFactory openIDMappingSourceConfigDialogTaskFactory
+                = new OpenIDMappingResourceConfigDialogTaskFactory(taskManager, openBrowser, fileUtil, null, swingApp.getJFrame());
         props = new Properties();
         props.setProperty(COMMAND, "resource config dialog");
         props.setProperty(COMMAND_NAMESPACE, "bridgedb");
         registerService(bc, openIDMappingSourceConfigDialogTaskFactory, TaskFactory.class, props);
+        
+        // List mapping resources
+        ListIDMappingResourcesTaskFactory listIDMappingSourceTaskFactory
+                = new ListIDMappingResourcesTaskFactory();
+        props = new Properties();
+        props.setProperty(COMMAND, "resource list");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc, listIDMappingSourceTaskFactory, TaskFactory.class, props);
+        
+        // Add mapping resource
+        AddResourceTaskFactory addResourceTaskFactory
+                = new AddResourceTaskFactory();
+        props = new Properties();
+        props.setProperty(COMMAND, "resource add");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc, addResourceTaskFactory, TaskFactory.class, props);
+        
+        // Remove mapping resource
+        RemoveResourceTaskFactory removeResourceTaskFactory
+                = new RemoveResourceTaskFactory();
+        props = new Properties();
+        props.setProperty(COMMAND, "resource remove");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc, removeResourceTaskFactory, TaskFactory.class, props);
+        
+        // Remove mapping resource
+        SelectResourceTaskFactory selectResourceTaskFactory
+                = new SelectResourceTaskFactory();
+        props = new Properties();
+        props.setProperty(COMMAND, "resource select");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc, selectResourceTaskFactory, TaskFactory.class, props);
     }
 }

@@ -18,14 +18,14 @@ import org.cytoscape.work.TaskManager;
  *
  * @author gaoj
  */
-public class OpenIDMappingSourceConfigDialogTaskFactory extends AbstractTaskFactory {
+public class OpenIDMappingResourceConfigDialogTaskFactory extends AbstractTaskFactory {
     private final TaskManager taskManager;
     private final OpenBrowser openBrowser;
     private final FileUtil fileUtil;
     private final BridgeDbDialog parentDialog;
     private final JFrame parentFrame;
 
-    public OpenIDMappingSourceConfigDialogTaskFactory(TaskManager taskManager, OpenBrowser openBrowser, FileUtil fileUtil, BridgeDbDialog parentDialog, JFrame parentFrame) {
+    public OpenIDMappingResourceConfigDialogTaskFactory(TaskManager taskManager, OpenBrowser openBrowser, FileUtil fileUtil, BridgeDbDialog parentDialog, JFrame parentFrame) {
         this.taskManager = taskManager;
         this.openBrowser = openBrowser;
         this.fileUtil = fileUtil;
@@ -35,7 +35,7 @@ public class OpenIDMappingSourceConfigDialogTaskFactory extends AbstractTaskFact
     
     @Override
     public TaskIterator createTaskIterator() {
-        OpenIDMappingSourceConfigDialogTask task = new OpenIDMappingSourceConfigDialogTask(
+        OpenIDMappingResourceConfigDialogTask task = new OpenIDMappingResourceConfigDialogTask(
                 taskManager, openBrowser, fileUtil, parentDialog, parentFrame);
         return new TaskIterator(task);
     }

@@ -1,4 +1,4 @@
-package org.bridgedb.cytoscape.internal.ui;
+package org.bridgedb.cytoscape.internal.task;
 
 /*******************************************************************************
  * Copyright 2010-2013 BridgeDb App developing team
@@ -32,14 +32,16 @@ import org.cytoscape.work.ObservableTask;
  *
  */
 public class AttributeBasedIDMappingTask extends AbstractTask implements ObservableTask {
-    private final CyNetwork network;
-    private final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
-    private final Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
-    private final AttributeBasedIDMappingImpl service;
-    private final Map<String,Class> mapTgtAttrNameAttrType;
+    private CyNetwork network;
+    private Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
+    private Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
+    private AttributeBasedIDMappingImpl service = new AttributeBasedIDMappingImpl();
+    private Map<String,Class> mapTgtAttrNameAttrType;
     
-//	private TaskMonitor taskMonitor;
-    private boolean success;
+    private boolean success = false;
+    
+    public AttributeBasedIDMappingTask() {
+    }
 
 	/**
          * 
@@ -55,8 +57,6 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
             this.mapSrcAttrIDTypes = mapSrcAttrIDTypes;
             this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
             this.mapTgtAttrNameAttrType = mapTgtAttrNameAttrType;
-            service = new AttributeBasedIDMappingImpl();
-            success = false;
 	}
 
 	/**
