@@ -74,17 +74,20 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 	private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
         private final FileUtil fileUtil;
+        private final IDMapperClientManager idMapperClientManager;
 	
     /** Creates new form BridgeDbDialog */
     public BridgeDbDialog(java.awt.Frame parent,
             CyApplicationManager cyApplicationManager,
             TaskManager taskManager, OpenBrowser openBrowser,
-            FileUtil fileUtil, boolean modal) {
+            FileUtil fileUtil, IDMapperClientManager idMapperClientManager,
+            boolean modal) {
         super(parent, modal);
         this.currentNetwork = cyApplicationManager.getCurrentNetwork();
         this.openBrowser = openBrowser;
         this.taskManager = taskManager;
         this.fileUtil = fileUtil;
+        this.idMapperClientManager = idMapperClientManager;
         initComponents();
         postInit();
     }
@@ -141,7 +144,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
         sourceScrollPane.setMinimumSize(new java.awt.Dimension(300, 100));
 
-        sourceAttributeSelectionTable = new SourceAttributeSelectionTable(currentNetwork);
+        sourceAttributeSelectionTable = new SourceAttributeSelectionTable(currentNetwork, idMapperClientManager);
         sourceScrollPane.setViewportView(sourceAttributeSelectionTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -178,7 +181,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         destinationScrollPane.setMinimumSize(new java.awt.Dimension(300, 100));
         destinationScrollPane.setPreferredSize(new java.awt.Dimension(300, 100));
 
-        targetAttributeSelectionTable = new TargetAttributeSelectionTable();
+        targetAttributeSelectionTable = new TargetAttributeSelectionTable(idMapperClientManager);
         destinationScrollPane.setViewportView(targetAttributeSelectionTable);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -256,7 +259,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
     private void srcConfBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_srcConfBtnActionPerformed
         IDMappingSourceConfigDialog srcConfDialog = new IDMappingSourceConfigDialog(
-                this, taskManager, openBrowser, fileUtil, true);
+                this, taskManager, openBrowser, fileUtil, idMapperClientManager, true);
         srcConfDialog.setLocationRelativeTo(this);
         srcConfDialog.setVisible(true);
 
@@ -331,7 +334,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 //            return false;
 //        }
 
-        if (IDMapperClientManager.countClients()==0) {
+        if (idMapperClientManager.countClients()==0) {
             JOptionPane.showMessageDialog(this, "No source ID type available. Please configure the sources of ID mapping first.");
             return false;
         }

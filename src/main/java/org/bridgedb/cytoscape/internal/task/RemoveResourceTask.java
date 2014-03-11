@@ -18,6 +18,9 @@ import org.cytoscape.work.Tunable;
 public class RemoveResourceTask extends AbstractTask {
     @Tunable(description="BridgeDb IDMapper connection string", context="nogui")
     public String connString = null;
+    @Tunable(description="Application name (optional) for application-specific ID mapping resources"
+            + " -- do not specify if use the globel resources", context="nogui")
+    public String appName = null;
     @Override
     public void run(TaskMonitor tm) throws Exception {
         if (connString == null) {
@@ -26,7 +29,7 @@ public class RemoveResourceTask extends AbstractTask {
         }
 
         try {
-            if (IDMapperClientManager.removeClient(connString)) {
+            if (IDMapperClientManager.getIDMapperClientManager(appName).removeClient(connString)) {
                 tm.showMessage(TaskMonitor.Level.INFO, "Successfully removed");
             } else {
                 tm.showMessage(TaskMonitor.Level.ERROR, "Could not remove. The specific ID mapping resource might not exist.");

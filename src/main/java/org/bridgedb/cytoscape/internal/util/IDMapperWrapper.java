@@ -51,10 +51,16 @@ import org.bridgedb.Xref;
  * @author gjj
  */
 public class IDMapperWrapper {
-    public static boolean xrefExists(XrefWrapper xref) {
+    private final IDMapperClientManager idMapperClientManager;
+
+    public IDMapperWrapper(IDMapperClientManager idMapperClientManager) {
+        this.idMapperClientManager = idMapperClientManager;
+    }
+    
+    public boolean xrefExists(XrefWrapper xref) {
         if (xref==null)
             throw new NullPointerException();
-        IDMapperStack idMapperStack = IDMapperClientManager.selectedIDMapperStack();
+        IDMapperStack idMapperStack = idMapperClientManager.selectedIDMapperStack();
         DataSourceWrapper dsw = xref.getDataSource();
         if (dsw.getDsAttr() == DataSourceWrapper.DsAttr.DATASOURCE) {
             try {
@@ -74,7 +80,8 @@ public class IDMapperWrapper {
         }
     }
 
-    public static Map<XrefWrapper, Set<XrefWrapper>> mapID(Set<XrefWrapper> srcXrefs,
+    public Map<XrefWrapper, Set<XrefWrapper>> mapID(
+            Set<XrefWrapper> srcXrefs,
             Set<DataSourceWrapper> tgtDataSources) {
         // separate xrefs
         Set<Xref> idXrefs = new HashSet();
@@ -101,7 +108,7 @@ public class IDMapperWrapper {
 
         Map<XrefWrapper, Set<XrefWrapper>> result = new HashMap();
         
-        IDMapperStack idMapperStack = IDMapperClientManager.selectedIDMapperStack();
+        IDMapperStack idMapperStack = idMapperClientManager.selectedIDMapperStack();
 
         // mapping id to id
         if (!idXrefs.isEmpty() && !idTypes.isEmpty()) {

@@ -78,10 +78,11 @@ public final class BridgeDbApp extends AbstractCyActivator {
             //addListeners();
             
             CyApplicationConfiguration cyApplicationConfiguration = getService(bc, CyApplicationConfiguration.class);
-
             IDMapperClientManager.setCyApplicationConfiguration(cyApplicationConfiguration);
-            IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
-            IDMapperClientManager.cache();
+            
+            IDMapperClientManager idMapperClientManager = IDMapperClientManager.getDefaultIDMapperClientManager();
+            idMapperClientManager.reloadFromCytoscapeGlobalProperties();
+            idMapperClientManager.cache();
             
             DialogTaskManager taskManagerServiceRef = getService(bc, DialogTaskManager.class);
             CyApplicationManager cyApplicationManagerRef = getService(bc, CyApplicationManager.class);
@@ -174,7 +175,7 @@ public final class BridgeDbApp extends AbstractCyActivator {
         AttributeBasedIDMappingTaskFactory attributeBasedIDMappingTaskFactory
                 = new AttributeBasedIDMappingTaskFactory();
         props = new Properties();
-        props.setProperty(COMMAND, "attribute-based mapping");
+        props.setProperty(COMMAND, "id mapping");
         props.setProperty(COMMAND_NAMESPACE, "bridgedb");
         registerService(bc, attributeBasedIDMappingTaskFactory, TaskFactory.class, props);
     }

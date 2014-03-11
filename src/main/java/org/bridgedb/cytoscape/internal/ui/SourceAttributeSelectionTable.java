@@ -86,6 +86,8 @@ import org.cytoscape.model.CyTable;
 public class SourceAttributeSelectionTable extends JTable {
 	private static final long serialVersionUID = 1L;
 
+        private final IDMapperClientManager idMapperClientManager;
+        
 	private IDTypeSelectionTableModel model;
 
         private CyNetwork selectedNetwork;
@@ -113,9 +115,10 @@ public class SourceAttributeSelectionTable extends JTable {
 
 	private Set<CyNode> nodesForTypeGuessing;
 
-	public SourceAttributeSelectionTable(CyNetwork selectedNetwork) {
+	public SourceAttributeSelectionTable(CyNetwork selectedNetwork,
+                IDMapperClientManager idMapperClientManager) {
 		super();
-
+                this.idMapperClientManager = idMapperClientManager;
 		supportedIDType = new LinkedHashSet<DataSourceWrapper>();
 		attributeComboBoxes = new Vector<JComboBox>();
 		selectedAttribute = new Vector<String>();
@@ -285,7 +288,7 @@ public class SourceAttributeSelectionTable extends JTable {
 		Map<String, Set<DataSourceWrapper>> oldMap = getSourceAttrType();
 
 		supportedIDType = new LinkedHashSet<DataSourceWrapper>();
-		supportedIDType.addAll(new TreeSet<DataSourceWrapper>(IDMapperClientManager
+		supportedIDType.addAll(new TreeSet<DataSourceWrapper>(idMapperClientManager
 				.getSupportedSrcTypes()));
 
 		// select the id type previously selected

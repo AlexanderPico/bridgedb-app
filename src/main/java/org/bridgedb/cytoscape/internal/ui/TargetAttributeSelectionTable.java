@@ -77,6 +77,7 @@ import javax.swing.JScrollPane;
 public class TargetAttributeSelectionTable extends JTable {
 	private static final long serialVersionUID = -8848324722496899309L;
 
+        private final IDMapperClientManager idMapperClientManager;
 	private IDTypeSelectionTableModel model;
 
 	private Set<DataSourceWrapper> supportedIDType;
@@ -98,9 +99,9 @@ public class TargetAttributeSelectionTable extends JTable {
 
 	private java.awt.Color defBgColor = (new JScrollPane()).getBackground();
 
-	public TargetAttributeSelectionTable() {
+	public TargetAttributeSelectionTable(IDMapperClientManager idMapperClientManager) {
 		super();
-
+                this.idMapperClientManager = idMapperClientManager;
 		supportedIDType = new HashSet<DataSourceWrapper>();
 
 		rowCount = 0;
@@ -156,9 +157,9 @@ public class TargetAttributeSelectionTable extends JTable {
 
 		supportedIDType = new LinkedHashSet<DataSourceWrapper>();
 		for (DataSourceWrapper tgt : new TreeSet<DataSourceWrapper>(
-				IDMapperClientManager.getSupportedTgtTypes())) {
+				idMapperClientManager.getSupportedTgtTypes())) {
 			for (DataSourceWrapper src : sourceDss) {
-				if (IDMapperClientManager.isMappingSupported(src, tgt)) {
+				if (idMapperClientManager.isMappingSupported(src, tgt)) {
 					supportedIDType.add(tgt);
 					break;
 				}

@@ -30,6 +30,7 @@ import org.cytoscape.model.CyNetwork;
 
 import java.util.Set;
 import java.util.Map;
+import org.bridgedb.cytoscape.internal.AttributeBasedIDMapping;
 import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.Tunable;
@@ -40,23 +41,27 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
     @Tunable(description="Network to mapping identifiers in",context="nogui")
     public CyNetwork network;
     
-    @Tunable(description="",context="nogui")
+    @Tunable(description="Source node attribute",context="nogui")
     public String sourceAttribute;
     
-    @Tunable(description="",context="nogui")
+    @Tunable(description="Source ID type",context="nogui")
     public String sourceIdType;
     
-    @Tunable(description="",context="nogui")
+    @Tunable(description="Target node attribute",context="nogui")
     public String targetAttribute;
     
-    @Tunable(description="",context="nogui")
+    @Tunable(description="Target ID type",context="nogui")
     public String targetIdType;
+    
+    @Tunable(description="Application name (optional) for application-specific ID mapping resources"
+            + " -- do not specify if use the globel resources", context="nogui")
+    public String appName = null;
     
     private Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
     private Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
     private Map<String,Class<?>> mapTgtAttrNameAttrType;
     
-    AttributeBasedIDMappingImpl mappingService = new AttributeBasedIDMappingImpl();
+    AttributeBasedIDMapping mappingService;
     
     private boolean success = false;
     
@@ -87,13 +92,13 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
 	 */
     //@Override
 	public void run(final TaskMonitor taskMonitor) {
+            mappingService = new AttributeBasedIDMappingImpl(taskMonitor, IDMapperClientManager.getIDMapperClientManager(appName));
             if (byCommand && !convertCommandParameters(taskMonitor)) {
                 return;
             }
             
 		 taskMonitor.setTitle("Mapping identifiers ...");
 		 try {
-			 mappingService.setTaskMonitor(taskMonitor);
 			 mappingService.defineTgtAttrs(network, mapTgtAttrNameAttrType);
 			 mappingService.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
                          
@@ -135,8 +140,9 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
             return false;
         }
         
-        Set<DataSourceWrapper> srcDataSources = IDMapperClientManager.getSupportedSrcTypes();
-        Set<DataSourceWrapper> tgtDataSources = IDMapperClientManager.getSupportedTgtTypes();
+        IDMapperClientManager idMapperClientManager = IDMapperClientManager.getIDMapperClientManager(appName);
+        Set<DataSourceWrapper> srcDataSources = idMapperClientManager.getSupportedSrcTypes();
+        Set<DataSourceWrapper> tgtDataSources = idMapperClientManager.getSupportedTgtTypes();
         if (srcDataSources==null || srcDataSources.isEmpty()) {
             taskMonitor.setStatusMessage("No supported source or target id type."
                     + " Please select mapping resources first.");

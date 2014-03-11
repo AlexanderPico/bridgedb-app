@@ -35,6 +35,13 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     protected boolean interrupted;
     protected String report;
     protected Map<String,Class<?>> attrNameType = null;
+    protected IDMapperClientManager idMapperClientManager;
+    protected IDMapperWrapper idMapperWrapper;
+
+    public AttributeBasedIDMappingImpl(TaskMonitor taskMonitor, IDMapperClientManager idMapperClientManager) {
+        this.taskMonitor = taskMonitor;
+        idMapperWrapper = new IDMapperWrapper(idMapperClientManager);
+    }
 
     public void setTaskMonitor(TaskMonitor taskMonitor) {
         this.taskMonitor = taskMonitor;
@@ -94,7 +101,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
 
         // id mapping
         updateTaskMonitor("Mapping IDs...", -1.0);
-        Map<XrefWrapper, Set<XrefWrapper>> mapping = IDMapperWrapper.mapID(srcXrefs, tgtTypes);
+        Map<XrefWrapper, Set<XrefWrapper>> mapping = idMapperWrapper.mapID(srcXrefs, tgtTypes);
 
         // set target attribute
         updateTaskMonitor("Set target column...", -1.0);

@@ -94,23 +94,50 @@ public class IDMapperClientManager {
             return changed;
         }
     }
+    
+    private static CyApplicationConfiguration cyApplicationConfiguration;
+    
+    public static void setCyApplicationConfiguration(CyApplicationConfiguration applicationConfiguration) {
+        cyApplicationConfiguration = applicationConfiguration;
+    }
+    
+    private static final Map<String, IDMapperClientManager> idMapperClientManagers = new HashMap<String, IDMapperClientManager>();
+    
+    public static IDMapperClientManager getIDMapperClientManager(String appName) {
+        if (appName==null) {
+            appName = FinalStaticValues.PLUGIN_NAME; // by default;
+        }
+        
+        IDMapperClientManager idMapperClientManager = idMapperClientManagers.get(appName);
+        if (idMapperClientManager==null) {
+            idMapperClientManager = new IDMapperClientManager(appName);
+            idMapperClientManagers.put(appName, idMapperClientManager);
+        }
+        return idMapperClientManager;
+    }
+    
+    public static IDMapperClientManager getDefaultIDMapperClientManager() {
+        return getIDMapperClientManager(FinalStaticValues.PLUGIN_NAME);
+    }
 
-    private static Map<String, IDMapperClient> clientConnectionStringMap;
-    private static Set<IDMapperClient> selectedClients;
+    private final Map<String, IDMapperClient> clientConnectionStringMap;
+    private final Set<IDMapperClient> selectedClients;
 
-    private static CacheStatus cacheStatus = CacheStatus.UNCACHED;
-    private static Set<DataSourceWrapper> srcTypes = null;
-    private static Set<DataSourceWrapper> tgtTypes = null;
-    private static Set<List<DataSourceWrapper>> supportedMapping = null;
-    private static IDMapperStack selectedIDMapperStack = null;
-    private static List<IDMapperChangeListener> listeners;
+    private CacheStatus cacheStatus = CacheStatus.UNCACHED;
+    private Set<DataSourceWrapper> srcTypes = null;
+    private Set<DataSourceWrapper> tgtTypes = null;
+    private Set<List<DataSourceWrapper>> supportedMapping = null;
+    private IDMapperStack selectedIDMapperStack = null;
+    private final List<IDMapperChangeListener> listeners;
+    
+    private ExecutorService executor = null;
 
-    private static ExecutorService executor = null;
+    private final int waitSeconds = 5;
+    
+    private final String appName;
 
-    private static int waitSeconds = 5;
-
-    static {
-//        new IDMapperClientManager();
+    private IDMapperClientManager(String appName) {
+        this.appName = appName;
         clientConnectionStringMap = new HashMap<String, IDMapperClient>();
         selectedClients = new HashSet<IDMapperClient>();
         listeners = new ArrayList<IDMapperChangeListener>();
@@ -119,28 +146,26 @@ public class IDMapperClientManager {
                 cacheStatus = CacheStatus.UNCACHED;
             }
         });
+        
+        //reloadFromCytoscapeSessionProperties();
     }
 
-    public static void addIDMapperChangeListener(IDMapperChangeListener listener) {
+    public void addIDMapperChangeListener(IDMapperChangeListener listener) {
         if (listener==null)
             throw new NullPointerException();
 
         listeners.add(listener);
     }
 
-    private static void fireIDMapperChange() {
+    private void fireIDMapperChange() {
         resetCache();
         for (IDMapperChangeListener listener : listeners) {
             listener.changed();
         }
     }
 
-    private IDMapperClientManager() {
-        //reloadFromCytoscapeSessionProperties();
-    }
-
     /* modify 'CytoscapeInit.getProperties()' in Cy 3.0
-    public static void reloadFromCytoscapeSessionProperties() {
+    public void reloadFromCytoscapeSessionProperties() {
         
     	Properties props = CytoscapeInit.getProperties();
 
@@ -182,13 +207,7 @@ public class IDMapperClientManager {
     private static final String CLIENT_SELECTED = "Selected:\t";
     private static final String CLIENT_TYPE = "Client Type:\t";
     
-    private static CyApplicationConfiguration cyApplicationConfiguration;
-    
-    public static void setCyApplicationConfiguration(CyApplicationConfiguration applicationConfiguration) {
-        cyApplicationConfiguration = applicationConfiguration;
-    }
-    
-    public static boolean reloadFromCytoscapeGlobalProperties() {
+    public boolean reloadFromCytoscapeGlobalProperties() {
         removeAllClients(true); // remove all of the current clients
 
         try {
@@ -259,12 +278,12 @@ public class IDMapperClientManager {
         String defaultSpecies = props.getProperty(FinalStaticValues.DEFAULT_SPECIES_NAME);
         return registerDefaultClient(defaultSpecies);
     }
-	*/
-    static boolean registerDefaultClient(String defaultSpecies) {
+    
+    private boolean registerDefaultClient(String defaultSpecies) {
         return registerDefaultClient(defaultSpecies, null);
     }
 
-    static boolean registerDefaultClient(String newDefaultSpecies, String oldDefaultSpecies) {
+    private boolean registerDefaultClient(String newDefaultSpecies, String oldDefaultSpecies) {
         if (newDefaultSpecies==null) {
             throw new IllegalArgumentException("newDefaultSpecies is null");
         }
@@ -297,9 +316,9 @@ public class IDMapperClientManager {
 
         registerClient(client);
         return true;
-    }
+    }*/
     
-    private static File getGlobalPropertiesFile() throws IOException {
+    private File getGlobalPropertiesFile() throws IOException {
         File configDir = cyApplicationConfiguration.getAppConfigurationDirectoryLocation(
                 BridgeDbApp.class);
         if (!configDir.exists()) {
@@ -309,7 +328,7 @@ public class IDMapperClientManager {
         }
         
         File configFile = new File(configDir.getAbsolutePath()
-                + File.separatorChar + FinalStaticValues.CLIENT_GLOBAL_PROPS);
+                + File.separatorChar + appName + "." + FinalStaticValues.CLIENT_GLOBAL_PROPS);
         if (!configFile.exists()) {
             if (!configFile.createNewFile()) {
                 System.err.println("Failed to create config file for bridgedb");
@@ -319,10 +338,10 @@ public class IDMapperClientManager {
         return configFile;
     }
     
-    public static void saveCurrentToCytoscapeGlobalProperties() throws IOException {
+    public void saveCurrentToCytoscapeGlobalProperties() throws IOException {
         BufferedWriter out = new BufferedWriter(new FileWriter(getGlobalPropertiesFile()));
 
-        Set<IDMapperClient> clients = IDMapperClientManager.allClients();
+        Set<IDMapperClient> clients = allClients();
 
         for (IDMapperClient client : clients) {
             out.write(CLIENT_START);
@@ -359,27 +378,27 @@ public class IDMapperClientManager {
         out.close();
     }
 
-    public static int countClients() {
+    public int countClients() {
         return clientConnectionStringMap.size();
     }
 
-    public static Set<IDMapperClient> allClients() {
+    public Set<IDMapperClient> allClients() {
         return new HashSet(clientConnectionStringMap.values());
     }
 
-    public static Set<IDMapperClient> selectedClients() {
+    public Set<IDMapperClient> selectedClients() {
         return Collections.unmodifiableSet(selectedClients);
     }
     
-    public static IDMapperClient getClient(String clientConnStr) {
+    public IDMapperClient getClient(String clientConnStr) {
         return clientConnectionStringMap.get(clientConnStr);
     }
 
-    public static boolean removeClient(String clientConnStr) {
+    public boolean removeClient(String clientConnStr) {
         return removeClient(clientConnStr, true);
     }
 
-    public static boolean removeClient(String clientConnStr,
+    public boolean removeClient(String clientConnStr,
             boolean removeSessionProps) {
         if (clientConnStr == null) {
             return false;
@@ -389,11 +408,11 @@ public class IDMapperClientManager {
         return removeClient(cl, removeSessionProps);
     }
 
-    public static boolean removeClient(final IDMapperClient client) {
+    public boolean removeClient(final IDMapperClient client) {
         return removeClient(client, true);
     }
 
-    public static boolean removeClient(final IDMapperClient client,
+    public boolean removeClient(final IDMapperClient client,
             boolean removeSessionProps) {
         if (client == null) {
             return false;
@@ -416,21 +435,21 @@ public class IDMapperClientManager {
         return true;
     }
 
-    public static void removeAllClients() {
+    public void removeAllClients() {
         removeAllClients(true);
     }
 
-    public static void removeAllClients(boolean removeSessionProps) {
+    public void removeAllClients(boolean removeSessionProps) {
         for (IDMapperClient client : allClients()) {
             removeClient(client, removeSessionProps);
         }
     }
 
-    public static boolean registerClient(final IDMapperClient client) {
+    public boolean registerClient(final IDMapperClient client) {
         return registerClient(client, true);
     }
 
-    public static boolean registerClient(final IDMapperClient client, boolean selected) {
+    public boolean registerClient(final IDMapperClient client, boolean selected) {
         return registerClient(client, selected, false);
     }
 
@@ -439,7 +458,7 @@ public class IDMapperClientManager {
      * connection string, that client will be replaced with the new client.
      * @param client
      */
-    public static boolean registerClient(final IDMapperClient client, boolean selected, boolean connectImmediately) {
+    public boolean registerClient(final IDMapperClient client, boolean selected, boolean connectImmediately) {
         if (client == null) {
             throw new IllegalArgumentException();
         }
@@ -464,7 +483,7 @@ public class IDMapperClientManager {
         return true;
     }
 
-    public static void setClientSelection(IDMapperClient client, boolean select) {
+    public  void setClientSelection(IDMapperClient client, boolean select) {
         boolean changed;
         if (select)
             changed = selectedClients.add(client);
@@ -477,11 +496,11 @@ public class IDMapperClientManager {
         }
     }
 
-    public static boolean isClientSelected(IDMapperClient client) {
+    public  boolean isClientSelected(IDMapperClient client) {
         return selectedClients.contains(client);
     }
 
-    public static IDMapperStack selectedIDMapperStack() {
+    public  IDMapperStack selectedIDMapperStack() {
         cacheAndWait(waitSeconds);
         return selectedIDMapperStack;
     }
@@ -490,7 +509,7 @@ public class IDMapperClientManager {
      *
      * @return supported source ID types by the selected resources
      */
-    public static Set<DataSourceWrapper> getSupportedSrcTypes() {
+    public  Set<DataSourceWrapper> getSupportedSrcTypes() {
         cacheAndWait(waitSeconds);
         return srcTypes;
     }
@@ -499,12 +518,12 @@ public class IDMapperClientManager {
      *
      * @return supported target ID types by the selected resources
      */
-    public static Set<DataSourceWrapper> getSupportedTgtTypes() {
+    public  Set<DataSourceWrapper> getSupportedTgtTypes() {
         cacheAndWait(waitSeconds);
         return tgtTypes;
     }
 
-    public static boolean isMappingSupported(DataSourceWrapper srcType, DataSourceWrapper tgtType) {
+    public  boolean isMappingSupported(DataSourceWrapper srcType, DataSourceWrapper tgtType) {
         cacheAndWait(waitSeconds);
         List<DataSourceWrapper> dsws = new ArrayList<DataSourceWrapper>(2);
         dsws.add(srcType);
@@ -512,16 +531,16 @@ public class IDMapperClientManager {
         return supportedMapping.contains(dsws);
     }
 
-    public static void resetCache() {
+    public  void resetCache() {
         cacheStatus = CacheStatus.UNCACHED;
     }
 
-    public static void reCache() {
+    public  void reCache() {
         resetCache();
         cache();
     }
 
-    public static void cacheAndWait(int seconds) {
+    public  void cacheAndWait(int seconds) {
         cache();
         if (cacheStatus == CacheStatus.CACHED)
             return;
@@ -535,7 +554,7 @@ public class IDMapperClientManager {
         }
     }
 
-    public static void cache() {
+    public  void cache() {
         synchronized(cacheStatus) {
             if (cacheStatus == CacheStatus.CACHED)
                 return;

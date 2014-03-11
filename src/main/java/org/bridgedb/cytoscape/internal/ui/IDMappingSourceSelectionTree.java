@@ -66,6 +66,7 @@ import org.cytoscape.work.TaskManager;
  * @author gjj
  */
 class IDMappingSourceSelectionTree extends JTree {
+        private final IDMapperClientManager idMapperClientManager;
 
 	/**
 	 * 
@@ -95,7 +96,8 @@ class IDMappingSourceSelectionTree extends JTree {
 	 */
 	@Deprecated
 	public IDMappingSourceSelectionTree(TaskManager taskManager, OpenBrowser openBrowser,
-                FileUtil fileUtil) {
+                FileUtil fileUtil, final IDMapperClientManager idMapperClientManager) {
+                this.idMapperClientManager = idMapperClientManager;
 
 		initTree();
                 
@@ -126,7 +128,7 @@ class IDMappingSourceSelectionTree extends JTree {
 					Object clientObj = clientNode.getUserObject();
 					if (clientObj instanceof IDMapperClient) {
 						IDMapperClient client = (IDMapperClient) clientObj;
-						IDMapperClientManager.setClientSelection(client,
+						idMapperClientManager.setClientSelection(client,
 								selection_Model.isPathSelected(path, true));
 						modified = true;
 					} else {
@@ -141,8 +143,8 @@ class IDMappingSourceSelectionTree extends JTree {
 	}
 
 	public IDMappingSourceSelectionTree(JDialog parent, TaskManager taskManager,
-                OpenBrowser openBrowser, FileUtil fileUtil) {
-
+                OpenBrowser openBrowser, FileUtil fileUtil, final IDMapperClientManager idMapperClientManager) {
+                this.idMapperClientManager = idMapperClientManager;
 		this.parent = parent;
                 this.taskManager = taskManager;
                 this.openBrowser = openBrowser;
@@ -169,7 +171,7 @@ class IDMappingSourceSelectionTree extends JTree {
 					Object clientObj = clientNode.getUserObject();
 					if (clientObj instanceof IDMapperClient) {
 						IDMapperClient client = (IDMapperClient) clientObj;
-						IDMapperClientManager.setClientSelection(client,
+						idMapperClientManager.setClientSelection(client,
 								selection_Model.isPathSelected(path, true));
 						modified = true;
 					} else {
@@ -221,13 +223,13 @@ class IDMappingSourceSelectionTree extends JTree {
 		boolean expandWs = false;
 		boolean expandDb = false;
 
-		for (IDMapperClient client : IDMapperClientManager.allClients()) {
+		for (IDMapperClient client : idMapperClientManager.allClients()) {
 			DefaultMutableTreeNode clientNode = new DefaultMutableTreeNode(client);
 			IDMapperClient.ClientType clientType = client.getClientType();
 			if (clientType == IDMapperClient.ClientType.FILE) {
 				// fileTreeNode.add(clientNode);
 				insertAlphabetically(fileTreeNode, clientNode);
-				if (IDMapperClientManager.isClientSelected(client)) {
+				if (idMapperClientManager.isClientSelected(client)) {
 					expandFile = true;
 					// expandPath(new TreePath(new
 					// DefaultMutableTreeNode[]{rootNode,fileTreeNode}));
@@ -241,7 +243,7 @@ class IDMappingSourceSelectionTree extends JTree {
 			} else if (clientType == IDMapperClient.ClientType.RDB) {
 				// dbTreeNode.add(clientNode);
 				insertAlphabetically(dbTreeNode, clientNode);
-				if (IDMapperClientManager.isClientSelected(client)) {
+				if (idMapperClientManager.isClientSelected(client)) {
 					expandDb = true;
 					// expandPath(new TreePath(new
 					// DefaultMutableTreeNode[]{rootNode,dbTreeNode}));
@@ -255,7 +257,7 @@ class IDMappingSourceSelectionTree extends JTree {
 			} else if (clientType == IDMapperClient.ClientType.WEBSERVICE) {
 				// wsTreeNode.add(clientNode);
 				insertAlphabetically(wsTreeNode, clientNode);
-				if (IDMapperClientManager.isClientSelected(client)) {
+				if (idMapperClientManager.isClientSelected(client)) {
 					expandWs = true;
 					// expandPath(new TreePath(new
 					// DefaultMutableTreeNode[]{rootNode,wsTreeNode}));
@@ -467,13 +469,13 @@ class IDMappingSourceSelectionTree extends JTree {
 			}
 
 			if (client != null) {
-				if (IDMapperClientManager.getClient(client.getConnectionString()) != null) {
+				if (idMapperClientManager.getClient(client.getConnectionString()) != null) {
 					JOptionPane.showMessageDialog(parent,
 							"This database has already been added as an ID mapping source.");
 					return;
 				}
 
-				IDMapperClientManager.registerClient(client);
+				idMapperClientManager.registerClient(client);
 
 				DefaultMutableTreeNode clientNode = new DefaultMutableTreeNode(client);
 				// dbTreeNode.add(clientNode);
@@ -515,14 +517,14 @@ class IDMappingSourceSelectionTree extends JTree {
 			}
 
 			if (client != null) {
-				if (IDMapperClientManager.getClient(client.getConnectionString()) != null) {
+				if (idMapperClientManager.getClient(client.getConnectionString()) != null) {
 					JOptionPane
 							.showMessageDialog(parent,
 									"This web service has already been added as an ID mapping source.");
 					return;
 				}
 
-				IDMapperClientManager.registerClient(client);
+				idMapperClientManager.registerClient(client);
 
 				DefaultMutableTreeNode clientNode = new DefaultMutableTreeNode(client);
 
@@ -566,13 +568,13 @@ class IDMappingSourceSelectionTree extends JTree {
 			}
 
 			if (client != null) {
-				if (IDMapperClientManager.getClient(client.getConnectionString()) != null) {
+				if (idMapperClientManager.getClient(client.getConnectionString()) != null) {
 					JOptionPane.showMessageDialog(parent,
 							"This file has already been added as an ID mapping source.");
 					return;
 				}
 
-				IDMapperClientManager.registerClient(client);
+				idMapperClientManager.registerClient(client);
 
 				DefaultMutableTreeNode clientNode = new DefaultMutableTreeNode(client);
 
@@ -603,7 +605,7 @@ class IDMappingSourceSelectionTree extends JTree {
 		if (node == null)
 			return;
 		IDMapperClient client = (IDMapperClient) node.getUserObject();
-		IDMapperClientManager.removeClient(client.getConnectionString());
+		idMapperClientManager.removeClient(client.getConnectionString());
 
 		TreeNode parentNode = node.getParent();
 		node.removeFromParent();

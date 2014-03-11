@@ -7,6 +7,7 @@
 package org.bridgedb.cytoscape.internal.task;
 
 import javax.swing.JFrame;
+import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.bridgedb.cytoscape.internal.ui.BridgeDbDialog;
 import org.bridgedb.cytoscape.internal.ui.IDMappingSourceConfigDialog;
 import org.cytoscape.util.swing.FileUtil;
@@ -14,12 +15,17 @@ import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
 
 /**
  *
  * @author gaoj
  */
 public class OpenIDMappingResourceConfigDialogTask extends AbstractTask { 
+    @Tunable(description="Application name (optional) for application-specific ID mapping resources"
+            + " -- do not specify if use the globel resources", context="nogui")
+    public String appName = null;
+    
     private final TaskManager taskManager;
     private final OpenBrowser openBrowser;
     private final FileUtil fileUtil;
@@ -51,11 +57,15 @@ public class OpenIDMappingResourceConfigDialogTask extends AbstractTask {
                     taskMonitor.setStatusMessage("Initializing...");
                     if (parentDialog!=null) {
                         srcConfDialog = new IDMappingSourceConfigDialog(
-                            parentDialog, taskManager, openBrowser, fileUtil, true);
+                            parentDialog, taskManager, openBrowser, fileUtil,
+                            IDMapperClientManager.getIDMapperClientManager(appName),
+                            true);
                         srcConfDialog.setLocationRelativeTo(parentDialog);
                     } else {
                         srcConfDialog = new IDMappingSourceConfigDialog(
-                            parentFrame, taskManager, openBrowser, fileUtil, true);
+                            parentFrame, taskManager, openBrowser, fileUtil,
+                            IDMapperClientManager.getIDMapperClientManager(appName),
+                            true);
                         srcConfDialog.setLocationRelativeTo(parentFrame);
                     }
                     srcConfDialog.setVisible(true);

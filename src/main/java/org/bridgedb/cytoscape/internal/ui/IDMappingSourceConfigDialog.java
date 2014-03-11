@@ -68,34 +68,41 @@ import org.bridgedb.cytoscape.internal.IDMapperClientManager;
  * @author gjj
  */
 public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
+        private final IDMapperClientManager idMapperClientManager;
 
 	public IDMappingSourceConfigDialog(javax.swing.JFrame parent,
                 TaskManager taskManager, OpenBrowser openBrowser,
-                FileUtil fileUtil, boolean modal) {
+                FileUtil fileUtil, IDMapperClientManager idMapperClientManager,
+                boolean modal) {
 		super(parent, modal);
                 this.taskManager = taskManager;
                 this.openBrowser = openBrowser;
                 this.fileUtil = fileUtil;
+                this.idMapperClientManager = idMapperClientManager;
 		init();
 	}
 
 	public IDMappingSourceConfigDialog(javax.swing.JDialog parent,
                 TaskManager taskManager, OpenBrowser openBrowser,
-                FileUtil fileUtil, boolean modal) {
+                FileUtil fileUtil, IDMapperClientManager idMapperClientManager,
+                boolean modal) {
 		super(parent, modal);
                 this.taskManager = taskManager;
                 this.openBrowser = openBrowser;
                 this.fileUtil = fileUtil;
+                this.idMapperClientManager = idMapperClientManager;
 		init();
 	}
 
 	@Deprecated
 	// for using window builder
 	public IDMappingSourceConfigDialog(TaskManager taskManager,
-                    OpenBrowser openBrowser, FileUtil fileUtil)    {
+                    OpenBrowser openBrowser, FileUtil fileUtil,
+                    IDMapperClientManager idMapperClientManager) {
                 this.taskManager = taskManager;
                 this.openBrowser = openBrowser;
                 this.fileUtil = fileUtil;
+                this.idMapperClientManager = idMapperClientManager;
 		init();
 	}
 
@@ -180,7 +187,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
         srcTreeScrollPane.setMinimumSize(new java.awt.Dimension(200, 200));
         srcTreeScrollPane.setPreferredSize(new java.awt.Dimension(300, 500));
 
-        srcTree = new IDMappingSourceSelectionTree(this, taskManager, openBrowser, fileUtil);
+        srcTree = new IDMappingSourceSelectionTree(this, taskManager, openBrowser, fileUtil, idMapperClientManager);
         srcTreeScrollPane.setViewportView(srcTree);
 
         sourceDescSplitPane.setLeftComponent(srcTreeScrollPane);
@@ -264,7 +271,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 		this.dispose();
 		try {
 			 if (srcTree.isModified())
-                            IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
+                            idMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this,
@@ -280,7 +287,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 			return;
 
 		try {
-			IDMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
+			idMapperClientManager.saveCurrentToCytoscapeGlobalProperties();
 		} catch (Exception e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(this,
@@ -299,7 +306,7 @@ public class IDMappingSourceConfigDialog extends javax.swing.JDialog {
 		if (ret == JOptionPane.NO_OPTION)
 			return;
 
-		IDMapperClientManager.reloadFromCytoscapeGlobalProperties();
+		idMapperClientManager.reloadFromCytoscapeGlobalProperties();
 
 		srcTree.reset();
 		JOptionPane.showMessageDialog(this,

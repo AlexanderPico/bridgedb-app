@@ -7,21 +7,26 @@
 package org.bridgedb.cytoscape.internal.task;
 
 import static org.bridgedb.cytoscape.internal.BridgeDbApp.mapSrcAttrIDTypes;
+import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.bridgedb.cytoscape.internal.ui.BridgeDbDialog;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
-import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.Tunable;
 
 /**
  *
  * @author gaoj
  */
-public class OpenMainDialogTask extends AbstractTask { 
+public class OpenMainDialogTask extends AbstractTask {
+    @Tunable(description="Application name (optional) for application-specific ID mapping resources"
+            + " -- do not specify if use the globel resources", context="nogui")
+    public String appName = null;
+    
     private final CyApplicationManager cyApplicationManager;
     private final CySwingApplication swingApp;
     private final TaskManager taskManager;
@@ -54,7 +59,9 @@ public class OpenMainDialogTask extends AbstractTask {
             try {
                     taskMonitor.setStatusMessage("Initializing...");
                     BridgeDbDialog dialog = new BridgeDbDialog(swingApp.getJFrame(),
-                            cyApplicationManager, taskManager, openBrowser, fileUtil, false);
+                            cyApplicationManager, taskManager, openBrowser, fileUtil,
+                            IDMapperClientManager.getIDMapperClientManager(appName),
+                            false);
                     dialog.setLocationRelativeTo(swingApp.getJFrame());
                     dialog.setMapSrcAttrIDTypes(mapSrcAttrIDTypes);
                     dialog.setVisible(true);

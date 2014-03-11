@@ -27,6 +27,10 @@ public class AddResourceTask extends AbstractTask {
     
     @Tunable(description="Resouce display name", context="nogui")
     public String displayName = null;
+
+    @Tunable(description="Application name (optional) for application-specific ID mapping resources"
+            + " -- do not specify if use the globel resources", context="nogui")
+    public String appName = null;
     
     @Override
     public void run(TaskMonitor tm) throws Exception {
@@ -37,13 +41,15 @@ public class AddResourceTask extends AbstractTask {
 
         if (displayName==null)
             displayName = connString;
+        
+        IDMapperClientManager idMapperClientManager = IDMapperClientManager.getIDMapperClientManager(appName);
 
         try {
             IDMapperClient client = new IDMapperClientImpl
                             .Builder(connString, classPath)
                             .displayName(displayName)
                             .build();
-            boolean succ = IDMapperClientManager.registerClient(client, true, true);
+            boolean succ = idMapperClientManager.registerClient(client, true, true);
             if (succ)
                 tm.showMessage(TaskMonitor.Level.INFO, "Successfully added");
             else

@@ -23,6 +23,10 @@ public class SelectResourceTask extends AbstractTask {
     @Tunable(description="Select or deselect", context="nogui")
     public boolean select = true;
     
+    @Tunable(description="Application name (optional) for application-specific ID mapping resources"
+            + " -- do not specify if use the globel resources", context="nogui")
+    public String appName = null;
+    
     @Override
     public void run(TaskMonitor tm) throws Exception {
         if (connString == null) {
@@ -30,13 +34,15 @@ public class SelectResourceTask extends AbstractTask {
              return;
         }
 
+        IDMapperClientManager idMapperClientManager = IDMapperClientManager.getIDMapperClientManager(appName);
         try {
-            IDMapperClient client = IDMapperClientManager.getClient(connString);
+            
+            IDMapperClient client = idMapperClientManager.getClient(connString);
             if (client == null) {
                 tm.showMessage(TaskMonitor.Level.ERROR, "Could not "+(select?"select":"deselect")
                         +" the specific ID mapping resource since it did not exist.");
             } else {
-                IDMapperClientManager.setClientSelection(client, select);
+                idMapperClientManager.setClientSelection(client, select);
                 tm.showMessage(TaskMonitor.Level.INFO, select?"selected":"deselected");
             }
         } catch (Exception e) {
