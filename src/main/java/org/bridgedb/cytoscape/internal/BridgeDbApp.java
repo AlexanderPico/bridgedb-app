@@ -48,6 +48,7 @@ import org.bridgedb.cytoscape.internal.task.ListIDMappingResourcesTaskFactory;
 import org.bridgedb.cytoscape.internal.task.OpenIDMappingResourceConfigDialogTaskFactory;
 import org.bridgedb.cytoscape.internal.task.OpenMainDialogTaskFactory;
 import org.bridgedb.cytoscape.internal.task.AddResourceTaskFactory;
+import org.bridgedb.cytoscape.internal.task.AttributeBasedIDMappingTaskFactory;
 import org.bridgedb.cytoscape.internal.task.RemoveResourceTaskFactory;
 import org.bridgedb.cytoscape.internal.task.SelectResourceTaskFactory;
 import org.cytoscape.application.CyApplicationConfiguration;
@@ -168,5 +169,13 @@ public final class BridgeDbApp extends AbstractCyActivator {
         props.setProperty(COMMAND, "resource select");
         props.setProperty(COMMAND_NAMESPACE, "bridgedb");
         registerService(bc, selectResourceTaskFactory, TaskFactory.class, props);
+        
+        // Remove mapping resource
+        AttributeBasedIDMappingTaskFactory attributeBasedIDMappingTaskFactory
+                = new AttributeBasedIDMappingTaskFactory();
+        props = new Properties();
+        props.setProperty(COMMAND, "attribute-based mapping");
+        props.setProperty(COMMAND_NAMESPACE, "bridgedb");
+        registerService(bc, attributeBasedIDMappingTaskFactory, TaskFactory.class, props);
     }
 }

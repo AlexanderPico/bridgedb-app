@@ -285,15 +285,13 @@ public class TargetAttributeSelectionTable extends JTable {
 
 	// cytoscape attr
 	@SuppressWarnings("rawtypes")
-	public Map<String, Class> getMapAttrNameAttrType() {
-		Map<String, Class> ret = new HashMap<String, Class>();
+	public Map<String, Class<?>> getMapAttrNameAttrType() {
+		Map<String, Class<?>> ret = new HashMap<String, Class<?>>();
 		for (int i = 0; i < rowCount; i++) {
 			String name = getAttrName(i);
 			boolean oneId = oneIDOnly.compareTo((String) oneIDOnlyComboBoxes.get(i)
 					.getSelectedItem()) == 0;
 			Class<?> attrType = oneId ? String.class : List.class;
-			// CyAttributes.TYPE_STRING : CyAttributes.TYPE_SIMPLE_LIST;
-
 			ret.put(name, attrType);
 		}
 		return ret;

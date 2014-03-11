@@ -17,6 +17,9 @@ package org.bridgedb.cytoscape.internal.task;
  * limitations under the License.
  ******************************************************************************/
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
 import org.bridgedb.cytoscape.internal.AttributeBasedIDMappingImpl;
 import org.bridgedb.cytoscape.internal.util.DataSourceWrapper;
 
@@ -27,18 +30,37 @@ import org.cytoscape.model.CyNetwork;
 
 import java.util.Set;
 import java.util.Map;
+import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.cytoscape.work.ObservableTask;
+import org.cytoscape.work.Tunable;
 /**
  *
  */
 public class AttributeBasedIDMappingTask extends AbstractTask implements ObservableTask {
-    private CyNetwork network;
+    @Tunable(description="Network to mapping identifiers in",context="nogui")
+    public CyNetwork network;
+    
+    @Tunable(description="",context="nogui")
+    public String sourceAttribute;
+    
+    @Tunable(description="",context="nogui")
+    public String sourceIdType;
+    
+    @Tunable(description="",context="nogui")
+    public String targetAttribute;
+    
+    @Tunable(description="",context="nogui")
+    public String targetIdType;
+    
     private Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes;
     private Map<String, DataSourceWrapper> mapTgtAttrNameIDType;
-    private AttributeBasedIDMappingImpl service = new AttributeBasedIDMappingImpl();
-    private Map<String,Class> mapTgtAttrNameAttrType;
+    private Map<String,Class<?>> mapTgtAttrNameAttrType;
+    
+    AttributeBasedIDMappingImpl mappingService = new AttributeBasedIDMappingImpl();
     
     private boolean success = false;
+    
+    private boolean byCommand = true;
     
     public AttributeBasedIDMappingTask() {
     }
@@ -52,7 +74,8 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
 	public AttributeBasedIDMappingTask(final CyNetwork network,
                                        final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
                                        final Map<String, DataSourceWrapper> mapTgtAttrNameIDType,
-                                       Map<String,Class> mapTgtAttrNameAttrType) {
+                                       Map<String,Class<?>> mapTgtAttrNameAttrType) {
+            byCommand = false;
             this.network = network;
             this.mapSrcAttrIDTypes = mapSrcAttrIDTypes;
             this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
@@ -64,13 +87,17 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
 	 */
     //@Override
 	public void run(final TaskMonitor taskMonitor) {
+            if (byCommand && !convertCommandParameters(taskMonitor)) {
+                return;
+            }
+            
 		 taskMonitor.setTitle("Mapping identifiers ...");
 		 try {
-			 service.setTaskMonitor(taskMonitor);
-			 service.defineTgtAttrs(network, mapTgtAttrNameAttrType);
-			 service.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
+			 mappingService.setTaskMonitor(taskMonitor);
+			 mappingService.defineTgtAttrs(network, mapTgtAttrNameAttrType);
+			 mappingService.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
                          
-			 taskMonitor.showMessage(TaskMonitor.Level.INFO, service.getReport());
+			 taskMonitor.showMessage(TaskMonitor.Level.INFO, mappingService.getReport());
                          success = true;
 		 } catch (Exception e) {
 			 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"ID mapping failed.\n");
@@ -83,6 +110,68 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
         }
 
         public String getResults(Class type)  {
-            return service.getReport();
+            return mappingService.getReport();
         }
+        
+    private boolean convertCommandParameters(final TaskMonitor taskMonitor) {
+        if (network == null) {
+            taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Please specify a network.");
+            return false;
+        }
+        
+        if (sourceAttribute == null) {
+            taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Please specify source attribute.");
+            return false;
+        }
+        
+        if (null == network.getDefaultNodeTable().getColumn(sourceAttribute)) {
+            taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Could not find source node attribute "
+                    +sourceAttribute);
+            return false;
+        }
+        
+        if (sourceIdType == null) {
+            taskMonitor.setStatusMessage("Please specify source ID type.");
+            return false;
+        }
+        
+        Set<DataSourceWrapper> srcDataSources = IDMapperClientManager.getSupportedSrcTypes();
+        Set<DataSourceWrapper> tgtDataSources = IDMapperClientManager.getSupportedTgtTypes();
+        if (srcDataSources==null || srcDataSources.isEmpty()) {
+            taskMonitor.setStatusMessage("No supported source or target id type."
+                    + " Please select mapping resources first.");
+            return false;
+        }
+        
+        DataSourceWrapper srcDsw = DataSourceWrapper.getInstance(sourceIdType);
+        if (!srcDataSources.contains(srcDsw)) {
+            taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Could not find source ID type "
+                    +sourceIdType);
+            return false;
+        }
+        
+        DataSourceWrapper tgtDsw = DataSourceWrapper.getInstance(targetIdType);
+        if (!tgtDataSources.contains(tgtDsw)) {
+            taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Could not find target ID type "
+                    +targetIdType);
+            return false;
+        }
+        
+        if (targetAttribute == null) {
+            taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Please specify target attribute.");
+            return false;
+        }
+        
+        if (null == network.getDefaultNodeTable().getColumn(targetAttribute)) {
+            taskMonitor.showMessage(TaskMonitor.Level.INFO, "Could not find target node attribute "
+                    +targetAttribute+". A new attribute in node table will be created.");
+        }
+        
+        mapSrcAttrIDTypes = Collections.singletonMap(sourceAttribute, Collections.singleton(srcDsw));
+        mapTgtAttrNameIDType = Collections.singletonMap(targetAttribute, tgtDsw);
+        mapTgtAttrNameAttrType = new HashMap<String,Class<?>>(1);
+        mapTgtAttrNameAttrType.put(targetAttribute, List.class); // why could not use singleton?
+        
+        return true;
+    }
 }

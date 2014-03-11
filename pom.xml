@@ -11,7 +11,7 @@
 	<groupId>org.bridgedb</groupId>
 	<artifactId>bridgedb.cytoscape.app</artifactId>
 	<version>3.0.0</version>
-	<name>BridgeDb App for Cytoscape</name>
+	<name>BridgeDb</name>
 	<packaging>bundle</packaging>
         
 	<build>

@@ -272,7 +272,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         //Set<CyNetwork> networks = new HashSet(selectedNetworkData.getNetworks());
         final Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes = sourceAttributeSelectionTable.getSourceAttrType();
         final Map<String, DataSourceWrapper> mapTgtAttrNameIDType = targetAttributeSelectionTable.getMapAttrNameIDType();
-        final Map<String,Class> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
+        final Map<String,Class<?>> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
 
 //        // define target attributes
 //        defineTgtAttributes(mapTgtAttrNameAttrType);

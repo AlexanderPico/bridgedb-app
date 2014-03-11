@@ -34,7 +34,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     protected TaskMonitor taskMonitor;
     protected boolean interrupted;
     protected String report;
-    protected Map<String,Class> attrNameType = null;
+    protected Map<String,Class<?>> attrNameType = null;
 
     public void setTaskMonitor(TaskMonitor taskMonitor) {
         this.taskMonitor = taskMonitor;
@@ -55,14 +55,14 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
      * Call this method first before mapping if necessary.
      * @param attrNameType
      */
-    public void defineTgtAttrs(CyNetwork network, Map<String,Class> attrNameType) {
+    public void defineTgtAttrs(CyNetwork network, Map<String,Class<?>> attrNameType) {
         this.attrNameType = attrNameType;
         
         CyTable cyTable = network.getDefaultNodeTable();
 
-        for (Map.Entry<String,Class> entry : attrNameType.entrySet()) {
+        for (Map.Entry<String,Class<?>> entry : attrNameType.entrySet()) {
             String attrname = entry.getKey();
-            Class attrtype = entry.getValue();
+            Class<?> attrtype = entry.getValue();
             
             if (null == cyTable.getColumn(attrname)) {
                 // if not exist
