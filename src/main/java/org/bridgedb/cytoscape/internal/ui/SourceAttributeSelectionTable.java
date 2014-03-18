@@ -206,82 +206,82 @@ public class SourceAttributeSelectionTable extends JTable {
 			}
 		}
 
-		if (setGuessedDataSources()) {
-			repaint();
-		}
+//		if (setGuessedDataSources()) {
+//			repaint();
+//		}
 	}
 
-	private boolean setGuessedDataSources() {
-		if (nodesForTypeGuessing.isEmpty())
-			return false;
-
-		boolean changed = false;
-		for (int row = 0; row < rowCount; row++) {
-			if (setGuessedDataSources(row)) {
-				changed = true;
-			}
-		}
-
-		return changed;
-	}
-
-	private boolean setGuessedDataSources(int row) {
-		if (typeComboBoxes.get(row).getSelectedItems() == null) {
-			// only for those without any selections
-			Set<DataSourceWrapper> dsws = guessDataSources(row);
-			if (!dsws.isEmpty()) {
-				CheckComboBox cc = typeComboBoxes.get(row);
-				cc.addSelectedItems(dsws);
-				idTypeSelectionChangedListener.selectionChanged(row);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private Set<DataSourceWrapper> guessDataSources(int row) {
-		Set<DataSourceWrapper> result = new HashSet<DataSourceWrapper>();
-		Set<String> srcIds = getSrcIDsForTypeGuessing(row);
-		for (String id : srcIds) {
-			Set<DataSource> dss = DataSourcePatterns.getDataSourceMatches(id);
-			for (DataSource ds : dss) {
-				DataSourceWrapper dsw = DataSourceWrapper.getInstance(
-						DataSourceUtil.getName(ds), DataSourceWrapper.DsAttr.DATASOURCE,
-						false);
-				if (dsw != null && supportedIDType.contains(dsw)) {
-					result.add(dsw);
-				}
-			}
-		}
-		return result;
-	}
-
-	private Set<String> getSrcIDsForTypeGuessing(int row) {
-		Set<String> result = new HashSet<String>();
-		String attr = selectedAttribute.get(row);
-		CyTable cyTable = selectedNetwork.getDefaultNodeTable();
-                CyColumn cyColumn = cyTable.getColumn(attr);
-		for (CyNode node : nodesForTypeGuessing) {
-                    CyRow cyRow = selectedNetwork.getRow(node);
-                    if (isColumnTypeList(cyColumn)) {
-                        List list = cyRow.getList(attr, cyColumn.getListElementType());
-                        for (Object obj : list) {
-                            result.add(obj.toString());
-                        }
-                    } else {
-                        Object obj = cyRow.getRaw(attr);
-                        if (obj!=null) {
-                            result.add(obj.toString());
-                        }
-                    }
-                }
-		return result;
-	}
-        
-        private static boolean isColumnTypeList(CyColumn col) {
-            Class<?> type = col.getType();
-            return List.class.isAssignableFrom(type);
-        }
+//	private boolean setGuessedDataSources() {
+//		if (nodesForTypeGuessing.isEmpty())
+//			return false;
+//
+//		boolean changed = false;
+//		for (int row = 0; row < rowCount; row++) {
+//			if (setGuessedDataSources(row)) {
+//				changed = true;
+//			}
+//		}
+//
+//		return changed;
+//	}
+//
+//	private boolean setGuessedDataSources(int row) {
+//		if (typeComboBoxes.get(row).getSelectedItems() == null) {
+//			// only for those without any selections
+//			Set<DataSourceWrapper> dsws = guessDataSources(row);
+//			if (!dsws.isEmpty()) {
+//				CheckComboBox cc = typeComboBoxes.get(row);
+//				cc.addSelectedItems(dsws);
+//				idTypeSelectionChangedListener.selectionChanged(row);
+//				return true;
+//			}
+//		}
+//		return false;
+//	}
+//
+//	private Set<DataSourceWrapper> guessDataSources(int row) {
+//		Set<DataSourceWrapper> result = new HashSet<DataSourceWrapper>();
+//		Set<String> srcIds = getSrcIDsForTypeGuessing(row);
+//		for (String id : srcIds) {
+//			Set<DataSource> dss = DataSourcePatterns.getDataSourceMatches(id);
+//			for (DataSource ds : dss) {
+//				DataSourceWrapper dsw = DataSourceWrapper.getInstance(
+//						DataSourceUtil.getName(ds), DataSourceWrapper.DsAttr.DATASOURCE,
+//						false);
+//				if (dsw != null && supportedIDType.contains(dsw)) {
+//					result.add(dsw);
+//				}
+//			}
+//		}
+//		return result;
+//	}
+//
+//	private Set<String> getSrcIDsForTypeGuessing(int row) {
+//		Set<String> result = new HashSet<String>();
+//		String attr = selectedAttribute.get(row);
+//		CyTable cyTable = selectedNetwork.getDefaultNodeTable();
+//                CyColumn cyColumn = cyTable.getColumn(attr);
+//		for (CyNode node : nodesForTypeGuessing) {
+//                    CyRow cyRow = selectedNetwork.getRow(node);
+//                    if (isColumnTypeList(cyColumn)) {
+//                        List list = cyRow.getList(attr, cyColumn.getListElementType());
+//                        for (Object obj : list) {
+//                            result.add(obj.toString());
+//                        }
+//                    } else {
+//                        Object obj = cyRow.getRaw(attr);
+//                        if (obj!=null) {
+//                            result.add(obj.toString());
+//                        }
+//                    }
+//                }
+//		return result;
+//	}
+//        
+//        private static boolean isColumnTypeList(CyColumn col) {
+//            Class<?> type = col.getType();
+//            return List.class.isAssignableFrom(type);
+//        }
 
 	void setSupportedIDType() {
 
@@ -297,7 +297,7 @@ public class SourceAttributeSelectionTable extends JTable {
 		model.fireTableStructureChanged();
 		setColumnEditorAndCellRenderer();
 
-		setGuessedDataSources();
+//		setGuessedDataSources();
 	}
 
 	void setSourceAttrType(Map<String, Set<DataSourceWrapper>> srcAttrType) {
@@ -463,9 +463,9 @@ public class SourceAttributeSelectionTable extends JTable {
 					selectedAttribute.set(i, selected);
 
 					// guess id types
-					if (setGuessedDataSources(i)) {
-						repaint();
-					}
+//					if (setGuessedDataSources(i)) {
+//						repaint();
+//					}
 				}
 			}
 		});
