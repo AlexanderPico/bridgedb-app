@@ -82,14 +82,27 @@
 						<!--<Embed-Dependency>groupId=org.bridgedb;scope=compile|runtime;inline=true</Embed-Dependency>-->
                                                 <!--embed all dependencies except the ones with scpe provided-->
 						<Embed-Dependency>*;scope=!provided;type=!pom;inline=true</Embed-Dependency>
-						<Bundle-ClassPath>.,lib/derby.jar,lib/derbyclient-10.5.3.0_1.jar</Bundle-ClassPath>
-<!--                                                
-<Import-Package>
-                                                    org.apache.*;resolution:=optional
-                                                </Import-Package>-->
+<Import-Package>javax.crypto,javax.crypto.interfaces,jav
+ ax.crypto.spec,javax.jws,javax.management,javax.naming,javax.naming.dir
+ ectory,javax.naming.spi,javax.net,javax.net.ssl,javax.security.auth,jav
+ ax.sql,javax.swing,javax.swing.border,javax.swing.event,javax.swing.pla
+ f,javax.swing.table,javax.swing.tree,javax.xml.bin
+ d.annotation,javax.xml.datatype,javax.xml.namespace,javax.xml.parsers,j
+ avax.xml.transform,javax.xml.transform.dom,javax.xml.transform.stream,j
+ avax.xml.ws,javax.xml.ws.soap,org.cytoscape.application;version="[3.1
+ ,4)",org.cytoscape.application.swing;version="[3.1,4)",org.cytoscape.fi
+ lter.model;version="[3.1,4)",org.cytoscape.model;version="[3.1,4)",org.
+ cytoscape.model.subnetwork;version="[3.1,4)",org.cytoscape.property;ver
+ sion="[3.1,4)",org.cytoscape.service.util;version="[3.1,4)",org.cytosca
+ pe.session;version="[3.1,4)",org.cytoscape.util.swing;version="[3.1,4)"
+ ,org.cytoscape.view.model;version="[3.1,4)",org.cytoscape.view.presenta
+ tion;version="[3.1,4)",org.cytoscape.view.vizmap;version="[3.1,4)",org.
+ cytoscape.work;version="[3.1,4)",org.cytoscape.work.swing;version="[3.1
+ ,4)",org.cytoscape.work.util;version="[3.1,4)",org.osgi.framework;versi
+ on="[1.5,2)",org.slf4j;version="[1.5,2)",org.w3c.dom,org.xml.sax,*;resolution:=optional
+                                                </Import-Package>
 					</instructions>
 					<archive>
-			        	<manifestFile>src/main/resources/MANIFEST.MF</manifestFile>
 			        </archive>
 				</configuration>
 			</plugin>
@@ -237,17 +250,11 @@
 			<version>${bridgedb.version}</version>
 		</dependency>
                 
-<!--                <dependency>
+                <dependency>
                     <groupId>org.apache.derby</groupId>
                         <artifactId>derby</artifactId>
                         <version>10.5.3.0_1</version>
                 </dependency>
-                
-                <dependency>
-	            <groupId>org.apache.derby</groupId>
-	            <artifactId>derbyclient</artifactId>
-	            <version>10.5.3.0_1</version>
-	        </dependency>            -->
                 
                 <!--cronos support>
 		<dependency>
