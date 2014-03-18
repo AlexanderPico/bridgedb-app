@@ -20,6 +20,9 @@
 			<resource>
 				<directory>src/main/resources</directory>
 			</resource>
+			<resource>
+				<directory>src/main/lib</directory>
+			</resource>
 		</resources>
 		<!-- Cytoscape requires Java 1.6 -->
 		<plugins>
@@ -79,10 +82,15 @@
 						<!--<Embed-Dependency>groupId=org.bridgedb;scope=compile|runtime;inline=true</Embed-Dependency>-->
                                                 <!--embed all dependencies except the ones with scpe provided-->
 						<Embed-Dependency>*;scope=!provided;type=!pom;inline=true</Embed-Dependency>
-<!--                                                <Import-Package>
+						<Bundle-ClassPath>.,lib/derby.jar,lib/derbyclient-10.5.3.0_1.jar</Bundle-ClassPath>
+<!--                                                
+<Import-Package>
                                                     org.apache.*;resolution:=optional
                                                 </Import-Package>-->
 					</instructions>
+					<archive>
+			        	<manifestFile>src/main/resources/MANIFEST.MF</manifestFile>
+			        </archive>
 				</configuration>
 			</plugin>
 		</plugins>

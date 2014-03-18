@@ -35,6 +35,8 @@
 package org.bridgedb.cytoscape.internal;
 
 import java.awt.event.ActionEvent;
+import java.sql.DriverManager;
+
 import org.cytoscape.application.CyApplicationManager;
 import org.bridgedb.cytoscape.internal.task.OpenMainDialogTaskFactory;
 
@@ -75,6 +77,11 @@ import org.cytoscape.work.TaskManager;
          */
         @Override
         public void actionPerformed(final ActionEvent ae) {
+        	try {
+	        	DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
+	        } catch (Exception e) {
+	        	e.printStackTrace();
+		    }	
             OpenMainDialogTaskFactory openMainDialogTaskFactory  = new OpenMainDialogTaskFactory(
                     cyApplicationManager, swingApp, taskManager, openBrowser, fileUtil);
             taskManager.execute(openMainDialogTaskFactory.createTaskIterator());
