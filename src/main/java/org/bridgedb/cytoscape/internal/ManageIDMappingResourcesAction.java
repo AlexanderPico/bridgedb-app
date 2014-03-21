@@ -35,10 +35,9 @@
 package org.bridgedb.cytoscape.internal;
 
 import java.awt.event.ActionEvent;
-import java.sql.DriverManager;
+import org.bridgedb.cytoscape.internal.task.OpenIDMappingResourceConfigDialogTaskFactory;
 
 import org.cytoscape.application.CyApplicationManager;
-import org.bridgedb.cytoscape.internal.task.OpenMainDialogTaskFactory;
 
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
@@ -50,20 +49,18 @@ import org.cytoscape.work.TaskManager;
  *
  * @author jgao
  */
-    class IDMappingAction extends AbstractCyAction {
-        private final CyApplicationManager cyApplicationManager;
+    class ManageIDMappingResourcesAction extends AbstractCyAction {
         private final CySwingApplication swingApp;
         private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
         private final FileUtil fileUtil;
         
-        public IDMappingAction(CyApplicationManager cyApplicationManager, 
+        public ManageIDMappingResourcesAction(
                 CySwingApplication swingApp,TaskManager taskManager,
                 OpenBrowser openBrowser, FileUtil fileUtil) {
-            super("Map Identifiers");
+            super("Manage ID Mapping Resources");
             setPreferredMenu(FinalStaticValues.PARENT_MENU);
-            this.setMenuGravity((float)0.0);
-            this.cyApplicationManager = cyApplicationManager;
+            this.setMenuGravity((float)0.5);
             this.swingApp = swingApp;
             this.openBrowser = openBrowser;
             this.taskManager = taskManager;
@@ -75,13 +72,9 @@ import org.cytoscape.work.TaskManager;
          */
         @Override
         public void actionPerformed(final ActionEvent ae) {
-        	try {
-	        	DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
-	        } catch (Exception e) {
-	        	e.printStackTrace();
-		    }	
-            OpenMainDialogTaskFactory openMainDialogTaskFactory  = new OpenMainDialogTaskFactory(
-                    cyApplicationManager, swingApp, taskManager, openBrowser, fileUtil);
-            taskManager.execute(openMainDialogTaskFactory.createTaskIterator());
+            OpenIDMappingResourceConfigDialogTaskFactory openIDMappingResourceConfigDialogTaskFactory
+                    = new OpenIDMappingResourceConfigDialogTaskFactory(
+                    taskManager, openBrowser, fileUtil, null, swingApp.getJFrame());
+            taskManager.execute(openIDMappingResourceConfigDialogTaskFactory.createTaskIterator());
         } 
     }

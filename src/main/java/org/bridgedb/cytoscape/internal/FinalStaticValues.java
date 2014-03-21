@@ -40,6 +40,7 @@ package org.bridgedb.cytoscape.internal;
  * @author gjj
  */
 public class FinalStaticValues {
+    public static final String PARENT_MENU ="Apps.BridgeDb";
     public static final String PLUGIN_NAME = "bridgedb";
     public static final String CLIENT_GLOBAL_PROPS = "clients.props";
     public static final String CLIENT_SESSION_PROPS = "client";

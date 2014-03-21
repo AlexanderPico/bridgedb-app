@@ -35,6 +35,7 @@
 
 package org.bridgedb.cytoscape.internal;
 
+import java.sql.DriverManager;
 import org.bridgedb.bio.BioDataSource;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.service.util.AbstractCyActivator;
@@ -76,7 +77,12 @@ public final class BridgeDbApp extends AbstractCyActivator {
     public void start(BundleContext bc) {
         try {
             BioDataSource.init();
-            //addListeners();
+            
+            try {
+                    DriverManager.registerDriver(new org.apache.derby.jdbc.EmbeddedDriver());
+            } catch (Exception e) {
+                    e.printStackTrace();
+            }	
             
             CyApplicationConfiguration cyApplicationConfiguration = getService(bc, CyApplicationConfiguration.class);
             IDMapperClientManager.setCyApplicationConfiguration(cyApplicationConfiguration);
@@ -97,7 +103,12 @@ public final class BridgeDbApp extends AbstractCyActivator {
             IDMappingAction idMappingAction = new IDMappingAction(cyApplicationManagerRef, cySwingApplicationServiceRef,
                     taskManagerServiceRef, openBrowser, fileUtil);
             
+            ManageIDMappingResourcesAction manageIDMappingResourcesAction
+                    = new ManageIDMappingResourcesAction(cySwingApplicationServiceRef,
+                    taskManagerServiceRef, openBrowser, fileUtil);
+            
             registerService(bc, idMappingAction, CyAction.class, new Properties());
+            registerService(bc, manageIDMappingResourcesAction, CyAction.class, new Properties());
         } catch (Exception e) {
             e.printStackTrace();
         }

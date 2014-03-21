@@ -52,20 +52,20 @@ public class OpenIDMappingResourceConfigDialogTask extends AbstractTask {
 
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-            taskMonitor.setTitle("BridgeDb App");
+            taskMonitor.setTitle("Manager ID Mapping Resources");
             try {
                     taskMonitor.setStatusMessage("Initializing...");
                     if (parentDialog!=null) {
                         srcConfDialog = new IDMappingSourceConfigDialog(
                             parentDialog, taskManager, openBrowser, fileUtil,
                             IDMapperClientManager.getIDMapperClientManager(appName),
-                            true);
+                            false);
                         srcConfDialog.setLocationRelativeTo(parentDialog);
                     } else {
                         srcConfDialog = new IDMappingSourceConfigDialog(
                             parentFrame, taskManager, openBrowser, fileUtil,
                             IDMapperClientManager.getIDMapperClientManager(appName),
-                            true);
+                            false);
                         srcConfDialog.setLocationRelativeTo(parentFrame);
                     }
                     srcConfDialog.setVisible(true);

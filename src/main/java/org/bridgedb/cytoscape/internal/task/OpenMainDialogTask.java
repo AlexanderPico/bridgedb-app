@@ -55,7 +55,7 @@ public class OpenMainDialogTask extends AbstractTask {
 
     @Override
     public void run(TaskMonitor taskMonitor) throws Exception {
-            taskMonitor.setTitle("BridgeDb App");
+            taskMonitor.setTitle("BridgeDb ID Mapping");
             try {
                     taskMonitor.setStatusMessage("Initializing...");
                     BridgeDbDialog dialog = new BridgeDbDialog(swingApp.getJFrame(),
