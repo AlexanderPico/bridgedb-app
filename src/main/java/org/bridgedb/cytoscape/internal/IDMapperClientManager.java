@@ -377,6 +377,10 @@ public class IDMapperClientManager {
 
         out.close();
     }
+    
+    public int countSelectedClients() {
+        return selectedClients.size();
+    }
 
     public int countClients() {
         return clientConnectionStringMap.size();

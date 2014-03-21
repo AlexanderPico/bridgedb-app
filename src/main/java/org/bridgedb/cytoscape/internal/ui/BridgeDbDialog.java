@@ -210,7 +210,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(destinationPanel, gridBagConstraints);
 
-        srcConfBtn.setText("ID Mapping Resources Configuration");
+        srcConfBtn.setText("Manage ID Mapping Resources");
         srcConfBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 srcConfBtnActionPerformed(evt);
@@ -334,9 +334,16 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 //            return false;
 //        }
 
-        if (idMapperClientManager.countClients()==0) {
-            JOptionPane.showMessageDialog(this, "No source ID type available. Please configure the sources of ID mapping first.");
+        if (idMapperClientManager.countSelectedClients()==0) {
+            int ret = JOptionPane.showConfirmDialog(this, "No ID mapping resources have been registered/selected.\n"
+                    + "Would you like to manage ID mapping resources?", "No ID Mapping Resources",
+                    JOptionPane.YES_NO_OPTION);
+            if (ret == JOptionPane.YES_OPTION) {
+                srcConfBtnActionPerformed(null);
+            } 
+            
             return false;
+            
         }
 
 //        if (types[1].isEmpty()) {
