@@ -69,6 +69,6 @@ public interface AttributeBasedIDMapping {
      * @param attrNameType
      */
     public void defineTgtAttrs(CyNetwork network, Map<String,Class<?>> attrNameType);
-
-    public String getReport();
+    
+    public void interrupt();
 }

@@ -357,6 +357,18 @@ public class BridgeDbDialog extends javax.swing.JDialog {
                 JOptionPane.showMessageDialog(this, "Please select at least one ID type for each source attribute.");
                 return false;
             }
+            
+            for (DataSourceWrapper ds : dss) {
+                if (ds.getDsAttr() == DataSourceWrapper.DsAttr.ATTRIBUTE) {
+                    int ret = JOptionPane.showConfirmDialog(this, "Attributes selected for source type."
+                            + " It may take long time to map from attributes to IDs.\n"
+                            + "Are you sure you want to proceed?", "Attribute mapping takes long time",
+                            JOptionPane.YES_NO_OPTION);
+                    if (ret == JOptionPane.NO_OPTION) {
+                        return false;
+                    }
+                }
+            }
         }
         
         CyTable table = currentNetwork.getDefaultNodeTable();
@@ -379,6 +391,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
             JOptionPane.showMessageDialog(this, "Target attributes must have different names.");
             return false;
         }
+        
 
 //        List<String> idTypes = targetAttributeSelectionTable.getTgtIDTypes();
 //        Set<String> idTypesNR = new HashSet(idTypes);

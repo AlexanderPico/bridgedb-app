@@ -86,6 +86,12 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
             this.mapTgtAttrNameIDType = mapTgtAttrNameIDType;
             this.mapTgtAttrNameAttrType = mapTgtAttrNameAttrType;
 	}
+        
+    @Override
+        public void cancel() {
+            mappingService.interrupt();
+            success = false;
+        }
 
 	/**
 	 * Executes Task.
@@ -97,12 +103,11 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
                 return;
             }
             
-		 taskMonitor.setTitle("Mapping identifiers ...");
+		 taskMonitor.setTitle("Mapping identifiers");
 		 try {
 			 mappingService.defineTgtAttrs(network, mapTgtAttrNameAttrType);
 			 mappingService.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType);
                          
-			 taskMonitor.showMessage(TaskMonitor.Level.INFO, mappingService.getReport());
                          success = true;
 		 } catch (Exception e) {
 			 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"ID mapping failed.\n");
@@ -115,7 +120,7 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
         }
 
         public String getResults(Class type)  {
-            return mappingService.getReport();
+            return "";
         }
         
     private boolean convertCommandParameters(final TaskMonitor taskMonitor) {

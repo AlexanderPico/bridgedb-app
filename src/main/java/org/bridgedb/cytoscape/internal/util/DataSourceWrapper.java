@@ -122,7 +122,7 @@ public class DataSourceWrapper implements Comparable<DataSourceWrapper> {
 
         @Override
         public String toString() {
-            return value;
+            return da==DsAttr.DATASOURCE ? value : "Attribute: "+value;
         }
 
         public int compareTo(DataSourceWrapper dsw) {

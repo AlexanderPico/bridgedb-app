@@ -33,7 +33,6 @@ import java.util.*;
 public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     protected TaskMonitor taskMonitor;
     protected boolean interrupted;
-    protected String report;
     protected Map<String,Class<?>> attrNameType = null;
     protected IDMapperClientManager idMapperClientManager;
     protected IDMapperWrapper idMapperWrapper;
@@ -49,13 +48,9 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     }
 
     public void interrupt() {
-            interrupted = true;
-            report = "Aborted!";
+        interrupted = true;
+        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "ID mapping cancelled.");
      }
-
-    public String getReport() {
-        return report;
-    }
 
     /**
      * Define target attributes.
@@ -100,7 +95,12 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         Set<DataSourceWrapper> tgtTypes = new HashSet(mapTgtAttrNameIDType.values());
 
         // id mapping
-        updateTaskMonitor("Mapping IDs...", -1.0);
+        
+        if (attributesSelected(mapSrcAttrIDTypes)) {
+            updateTaskMonitor("Mapping IDs...\nThis may take minutes or longer to finish since attributes were selected as source type", -1.0);
+        } else {
+            updateTaskMonitor("Mapping IDs...", -1.0);
+        }
         Map<XrefWrapper, Set<XrefWrapper>> mapping = idMapperWrapper.mapID(srcXrefs, tgtTypes);
 
         // set target attribute
@@ -108,8 +108,22 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         Map<CyNode,Set<XrefWrapper>> mapNodeTgtXrefs = getNodeTgtXrefs(mapNodeSrcXrefs, mapping);
         setTgtAttribute(table, mapNodeTgtXrefs, mapTgtAttrNameIDType);
 
-        report = "Identifiers mapped for "+mapNodeTgtXrefs.size()+" nodes (out of "+nodes.size()+")!";
-        updateTaskMonitor(report,1.00);
+        if (mapNodeTgtXrefs.size()==0 && nodes.size()!=0) {
+            updateTaskMonitor("No IDs were mapped. Please make sure you seleceted the corrected ID mapping resources and source ID types.", 1.0, true);
+        } else {
+            updateTaskMonitor("Identifiers mapped for "+mapNodeTgtXrefs.size()+" nodes (out of "+nodes.size()+")!",1.0);
+        }
+    }
+    
+    private boolean attributesSelected(Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes) {
+        for (Set<DataSourceWrapper> dsws : mapSrcAttrIDTypes.values()) {
+            for (DataSourceWrapper dsw : dsws) {
+                if (dsw.getDsAttr() == DataSourceWrapper.DsAttr.ATTRIBUTE) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private Map<CyNode,Set<XrefWrapper>> prepareNodeSrcXrefs(CyTable nodeTable,
@@ -205,11 +219,12 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         }
 
 //        int i = 0;
-//        int nNode = mapNodeTgtXrefs.size();
         for (Map.Entry<CyNode,Set<XrefWrapper>> entryNodeXrefs : mapNodeTgtXrefs.entrySet()) {
             if (interrupted) return;
+            
+//            if (++i%100==0) {
 //            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
-//            i++;
+//            }
 
             // type wise
             Map<DataSourceWrapper, Set<String>> mapDsIds = new HashMap();
@@ -256,9 +271,18 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     }
 
     private void updateTaskMonitor(String status, double percentage) {
+        updateTaskMonitor(status, percentage, false);
+    }
+
+    private void updateTaskMonitor(String status, double percentage, boolean error) {
         if (this.taskMonitor!=null) {
-            taskMonitor.setStatusMessage(status);
+            if (error) {
+                taskMonitor.showMessage(TaskMonitor.Level.ERROR, status);
+            } else {
+                taskMonitor.setStatusMessage(status);
+            }
             taskMonitor.setProgress(percentage);
         }
     }
+    
 }
