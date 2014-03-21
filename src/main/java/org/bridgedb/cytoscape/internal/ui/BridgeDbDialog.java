@@ -296,6 +296,11 @@ public class BridgeDbDialog extends javax.swing.JDialog {
             public void taskFinished(ObservableTask otask) {
                 if (otask==task) {
                     if (task.success()) {
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {
+                                JOptionPane.showMessageDialog(thisDialog.getParent(), task.getResults(String.class));
+                            }
+                        });
                         thisDialog.setVisible(false);
                         thisDialog.dispose();
                         cancelled = false;
@@ -306,7 +311,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
                         }
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
-                                JOptionPane.showMessageDialog(thisDialog, "IDs mapping failed");
+                                JOptionPane.showMessageDialog(thisDialog.getParent(), "IDs mapping failed");
                             }
                         });
                     }

@@ -36,6 +36,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     protected Map<String,Class<?>> attrNameType = null;
     protected IDMapperClientManager idMapperClientManager;
     protected IDMapperWrapper idMapperWrapper;
+    protected String report;
 
     public AttributeBasedIDMappingImpl(TaskMonitor taskMonitor, IDMapperClientManager idMapperClientManager) {
         this.taskMonitor = taskMonitor;
@@ -47,10 +48,16 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         interrupted = false;
     }
 
+    @Override
     public void interrupt() {
         interrupted = true;
         taskMonitor.showMessage(TaskMonitor.Level.ERROR, "ID mapping cancelled.");
      }
+
+    @Override
+    public String getReport() {
+        return report;
+    }
 
     /**
      * Define target attributes.
@@ -109,9 +116,11 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         setTgtAttribute(table, mapNodeTgtXrefs, mapTgtAttrNameIDType);
 
         if (mapNodeTgtXrefs.size()==0 && nodes.size()!=0) {
-            updateTaskMonitor("No IDs were mapped. Please make sure you seleceted the corrected ID mapping resources and source ID types.", 1.0, true);
+            report = "No IDs were mapped. Please make sure you seleceted the corrected ID mapping resources and source ID types.";
+            updateTaskMonitor(report, 1.0, true);
         } else {
-            updateTaskMonitor("Identifiers mapped for "+mapNodeTgtXrefs.size()+" nodes (out of "+nodes.size()+")!",1.0);
+            report = "Identifiers mapped for "+mapNodeTgtXrefs.size()+" nodes (out of "+nodes.size()+").";
+            updateTaskMonitor(report,1.0);
         }
     }
     

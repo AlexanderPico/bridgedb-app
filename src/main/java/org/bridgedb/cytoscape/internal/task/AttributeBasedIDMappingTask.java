@@ -120,7 +120,7 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
         }
 
         public String getResults(Class type)  {
-            return "";
+            return mappingService.getReport();
         }
         
     private boolean convertCommandParameters(final TaskMonitor taskMonitor) {
