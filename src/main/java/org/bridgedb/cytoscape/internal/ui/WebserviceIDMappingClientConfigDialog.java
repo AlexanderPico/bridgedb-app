@@ -877,7 +877,16 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         
         Collections.sort(marts);
 
+        int ixDefault = 0;
+        for (int i=0; i<marts.size(); i++) {
+            if (marts.get(i).toUpperCase().startsWith("ENSEMBL GENES")) {
+                ixDefault = i;
+                break;
+            }
+        }
+
         chooseDBComboBox.setModel(new DefaultComboBoxModel(marts));
+        chooseDBComboBox.setSelectedIndex(ixDefault);
     }
 
     private void setSynergizerSpecies() {
@@ -921,14 +930,6 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     }
 
     private void setDatasetsCombo() {
-//        final JTaskConfig jTaskConfig = new JTaskConfig();
-//        jTaskConfig.setOwner(cytoscape.Cytoscape.getDesktop());
-//        jTaskConfig.displayCloseButton(true);
-//        jTaskConfig.displayCancelButton(false);
-//        jTaskConfig.displayStatus(true);
-//        jTaskConfig.setAutoDispose(true);
-//        jTaskConfig.setMillisToPopup(100);
-
         final SetDataSetsTask task = new SetDataSetsTask(this);
         final TaskIterator ti = new TaskIterator(task);
         

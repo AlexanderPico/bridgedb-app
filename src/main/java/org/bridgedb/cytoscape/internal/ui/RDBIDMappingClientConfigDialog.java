@@ -61,7 +61,7 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 	private static final long serialVersionUID = 9140043093001072657L;
 
 	private enum DBType {
-		PGDB("BridgeDb Derby Embeded (.bridge/.pgdb)");
+		PGDB("BridgeDb Derby Embeded (.bridge)");
 
 		DBType(String name) {
 			this.name = name;
@@ -141,7 +141,7 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new java.awt.Insets(0, 5, 0, 5);
         getContentPane().add(namePanel, gridBagConstraints);
 
-        pgdbPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("BridgeDb File (.bridge/.pgdb)"));
+        pgdbPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("BridgeDb File (.bridge)"));
         pgdbPanel.setLayout(new java.awt.GridBagLayout());
 
         pgdbTextField.setPreferredSize(new java.awt.Dimension(250, 20));
@@ -201,7 +201,7 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 
 	private void pgdbButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pgdbButtonActionPerformed
             FileChooserFilter fileChooserFilter = new FileChooserFilter(
-                    "BridgeDb Derby file", new String[]{"bridge","pgdb"});
+                    "BridgeDb Derby file", new String[]{"bridge"});
             File source = fileUtil.getFile(this, "Select a BridgeDb file", FileUtil.LOAD,
                     Collections.singleton(fileChooserFilter));
             if (source==null) {
