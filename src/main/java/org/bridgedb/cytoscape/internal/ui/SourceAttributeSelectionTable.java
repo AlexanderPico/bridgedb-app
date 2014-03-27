@@ -196,16 +196,16 @@ public class SourceAttributeSelectionTable extends JTable {
 
 	private void setSelectedNetworks(final CyNetwork selectedNetwork) {
                 this.selectedNetwork = selectedNetwork;
-		nodesForTypeGuessing.clear();
-		if (selectedNetwork != null) {
-			int count = 0;
-			// only using 100 or less for guessing
-			for (CyNode cyN : selectedNetwork.getNodeList()) {
-                                if (count++>100) break;
-				nodesForTypeGuessing.add(cyN);
-			}
-		}
-
+//		nodesForTypeGuessing.clear();
+//		if (selectedNetwork != null) {
+//			int count = 0;
+//			// only using 100 or less for guessing
+//			for (CyNode cyN : selectedNetwork.getNodeList()) {
+//                                if (count++>100) break;
+//				nodesForTypeGuessing.add(cyN);
+//			}
+//		}
+//
 //		if (setGuessedDataSources()) {
 //			repaint();
 //		}

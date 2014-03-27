@@ -42,6 +42,7 @@ import org.bridgedb.cytoscape.internal.task.OpenMainDialogTaskFactory;
 
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.TaskManager;
@@ -52,18 +53,20 @@ import org.cytoscape.work.TaskManager;
  */
     class IDMappingAction extends AbstractCyAction {
         private final CyApplicationManager cyApplicationManager;
+        private final CyNetworkManager cnm;
         private final CySwingApplication swingApp;
         private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
         private final FileUtil fileUtil;
         
-        public IDMappingAction(CyApplicationManager cyApplicationManager, 
+        public IDMappingAction(CyApplicationManager cyApplicationManager, CyNetworkManager cnm,
                 CySwingApplication swingApp,TaskManager taskManager,
                 OpenBrowser openBrowser, FileUtil fileUtil) {
             super("Map Identifiers");
             setPreferredMenu(FinalStaticValues.PARENT_MENU);
             this.setMenuGravity((float)0.0);
             this.cyApplicationManager = cyApplicationManager;
+            this.cnm = cnm;
             this.swingApp = swingApp;
             this.openBrowser = openBrowser;
             this.taskManager = taskManager;
@@ -81,7 +84,7 @@ import org.cytoscape.work.TaskManager;
 	        	e.printStackTrace();
 		    }	
             OpenMainDialogTaskFactory openMainDialogTaskFactory  = new OpenMainDialogTaskFactory(
-                    cyApplicationManager, swingApp, taskManager, openBrowser, fileUtil);
+                    cyApplicationManager, cnm, swingApp, taskManager, openBrowser, fileUtil);
             taskManager.execute(openMainDialogTaskFactory.createTaskIterator());
         } 
     }

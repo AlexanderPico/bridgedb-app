@@ -21,13 +21,15 @@ import org.cytoscape.work.TaskManager;
  */
 public class OpenMainDialogTaskFactory extends AbstractTaskFactory {
     private final CyApplicationManager cyApplicationManager;
+    private final CyNetworkManager cnm;
     private final CySwingApplication swingApp;
     private final TaskManager taskManager;
     private final OpenBrowser openBrowser;
     private final FileUtil fileUtil;
 
-    public OpenMainDialogTaskFactory(CyApplicationManager cyApplicationManager, CySwingApplication swingApp, TaskManager taskManager, OpenBrowser openBrowser, FileUtil fileUtil) {
+    public OpenMainDialogTaskFactory(CyApplicationManager cyApplicationManager, CyNetworkManager cnm, CySwingApplication swingApp, TaskManager taskManager, OpenBrowser openBrowser, FileUtil fileUtil) {
         this.cyApplicationManager = cyApplicationManager;
+        this.cnm = cnm;
         this.swingApp = swingApp;
         this.taskManager = taskManager;
         this.openBrowser = openBrowser;
@@ -36,7 +38,7 @@ public class OpenMainDialogTaskFactory extends AbstractTaskFactory {
     
     @Override
     public TaskIterator createTaskIterator() {
-        OpenMainDialogTask task = new OpenMainDialogTask(cyApplicationManager,
+        OpenMainDialogTask task = new OpenMainDialogTask(cyApplicationManager, cnm,
             swingApp, taskManager, openBrowser, fileUtil);
         return new TaskIterator(task);
     }

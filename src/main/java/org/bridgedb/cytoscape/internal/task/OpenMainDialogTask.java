@@ -11,6 +11,7 @@ import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.bridgedb.cytoscape.internal.ui.BridgeDbDialog;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
@@ -28,6 +29,7 @@ public class OpenMainDialogTask extends AbstractTask {
     public String appName = null;
     
     private final CyApplicationManager cyApplicationManager;
+    private final CyNetworkManager cnm;
     private final CySwingApplication swingApp;
     private final TaskManager taskManager;
     private final OpenBrowser openBrowser;
@@ -35,10 +37,11 @@ public class OpenMainDialogTask extends AbstractTask {
     private BridgeDbDialog dialog;
 
     public OpenMainDialogTask(CyApplicationManager cyApplicationManager,
-            CySwingApplication swingApp,
+            CyNetworkManager cnm, CySwingApplication swingApp,
             TaskManager taskManager, OpenBrowser openBrowser,
             FileUtil fileUtil) {
         this.cyApplicationManager = cyApplicationManager;
+        this.cnm = cnm;
         this.swingApp = swingApp;
         this.taskManager = taskManager;
         this.openBrowser = openBrowser;
@@ -59,7 +62,7 @@ public class OpenMainDialogTask extends AbstractTask {
             try {
                     taskMonitor.setStatusMessage("Initializing...");
                     BridgeDbDialog dialog = new BridgeDbDialog(swingApp.getJFrame(),
-                            cyApplicationManager, taskManager, openBrowser, fileUtil,
+                            cyApplicationManager, cnm, taskManager, openBrowser, fileUtil,
                             IDMapperClientManager.getIDMapperClientManager(appName),
                             false);
                     dialog.setLocationRelativeTo(swingApp.getJFrame());

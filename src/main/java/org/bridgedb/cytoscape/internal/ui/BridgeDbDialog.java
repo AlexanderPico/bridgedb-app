@@ -38,11 +38,14 @@ package org.bridgedb.cytoscape.internal.ui;
 import org.bridgedb.cytoscape.internal.task.AttributeBasedIDMappingTask;
 import java.awt.Insets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JDialog;
 
 import javax.swing.JOptionPane;
@@ -51,7 +54,6 @@ import org.cytoscape.application.CyApplicationManager;
 
 import org.cytoscape.model.CyColumn;
 import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTable;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
@@ -64,26 +66,38 @@ import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.TaskObserver;
 import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.bridgedb.cytoscape.internal.util.DataSourceWrapper;
+import org.cytoscape.model.CyNetworkManager;
 
 /**
  *
  * @author gjj
  */
 public class BridgeDbDialog extends javax.swing.JDialog {
-        private final CyNetwork currentNetwork;
-	private final TaskManager taskManager;
+        private CyNetwork currentNetwork;
+        private final CyNetwork[] networks;
+        private final TaskManager taskManager;
         private final OpenBrowser openBrowser;
         private final FileUtil fileUtil;
         private final IDMapperClientManager idMapperClientManager;
 	
     /** Creates new form BridgeDbDialog */
     public BridgeDbDialog(java.awt.Frame parent,
-            CyApplicationManager cyApplicationManager,
+            CyApplicationManager cyApplicationManager, CyNetworkManager cnm,
             TaskManager taskManager, OpenBrowser openBrowser,
             FileUtil fileUtil, IDMapperClientManager idMapperClientManager,
             boolean modal) {
         super(parent, modal);
+        networks = cnm.getNetworkSet().toArray(new CyNetwork[0]);
+        
+//        Arrays.sort(networks, new Comparator<CyNetwork>() {
+//            public int compare(CyNetwork o1, CyNetwork o2) {
+//                return o1.toString().compareTo(o2.toString());
+//            }
+//        });
         this.currentNetwork = cyApplicationManager.getCurrentNetwork();
+        if (this.currentNetwork==null && networks.length>0) {
+            this.currentNetwork = networks[0];
+        }
         this.openBrowser = openBrowser;
         this.taskManager = taskManager;
         this.fileUtil = fileUtil;
@@ -121,6 +135,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
     private void initComponents() {
         java.awt.GridBagConstraints gridBagConstraints;
 
+        javax.swing.JPanel networkPanel = new javax.swing.JPanel();
         javax.swing.JPanel sourcePanel = new javax.swing.JPanel();
         javax.swing.JScrollPane sourceScrollPane = new javax.swing.JScrollPane();
         javax.swing.JPanel addRemoveSourcePanel = new javax.swing.JPanel();
@@ -136,8 +151,37 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("BridgeDb");
         getContentPane().setLayout(new java.awt.GridBagLayout());
-
-        sourcePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select source attribute/IDType(s)"));
+        
+        networkPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select a network"));
+        networkPanel.setLayout(new java.awt.GridBagLayout());
+        
+        networkComboBox = new javax.swing.JComboBox();
+		networkComboBox.setModel(new DefaultComboBoxModel(networks));
+        networkComboBox.setSelectedItem(currentNetwork);
+		networkComboBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                networkComboBoxActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
+        //networkPanel.add(networkComboBox, gridBagConstraints);
+        
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.5;
+        gridBagConstraints.insets = new Insets(5, 5, 5, 0);
+        getContentPane().add(networkPanel, gridBagConstraints);
+        
+        sourcePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select source ID types and attributes"));
         sourcePanel.setMinimumSize(new java.awt.Dimension(500, 120));
         sourcePanel.setPreferredSize(new java.awt.Dimension(500, 140));
         sourcePanel.setLayout(new java.awt.GridBagLayout());
@@ -166,14 +210,14 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.5;
         gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(sourcePanel, gridBagConstraints);
 
-        destinationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select destination attribute/IDType(s)"));
+        destinationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select destination attributes and ID types"));
         destinationPanel.setMinimumSize(new java.awt.Dimension(500, 130));
         destinationPanel.setPreferredSize(new java.awt.Dimension(500, 140));
         destinationPanel.setLayout(new java.awt.GridBagLayout());
@@ -203,7 +247,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.5;
@@ -220,7 +264,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new Insets(5, 5, 0, 0);
         getContentPane().add(typeSourceConfPanel, gridBagConstraints);
@@ -244,7 +288,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_END;
         gridBagConstraints.insets = new Insets(5, 5, 0, 0);
         getContentPane().add(OKPanel, gridBagConstraints);
@@ -333,6 +377,10 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 //        }
     }//GEN-LAST:event_OKBtnActionPerformed
 
+    private void networkComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
+        
+    } 
+    
     private boolean verifyUserInput() {
 //        if (selectedNetworkData.getNetworks().isEmpty()) {
 //            JOptionPane.showMessageDialog(this, "Please select at least one network.");
@@ -416,7 +464,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
     private void updateOKButtonEnable() {
         if (currentNetwork==null) {
             OKBtn.setEnabled(false);
-            OKBtn.setToolTipText("No current network");
+            OKBtn.setToolTipText("No networks");
             OKBtn.repaint();
             return;
         }
@@ -499,6 +547,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton OKBtn;
+    private javax.swing.JComboBox networkComboBox;
 
     private class ApplySourceChangeTask extends AbstractTask {
 

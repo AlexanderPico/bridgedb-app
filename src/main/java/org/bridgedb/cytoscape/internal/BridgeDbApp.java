@@ -56,6 +56,7 @@ import org.bridgedb.cytoscape.internal.task.SelectResourceTaskFactory;
 import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.util.swing.FileUtil;
 import static org.cytoscape.work.ServiceProperties.COMMAND;
 import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
@@ -92,15 +93,16 @@ public final class BridgeDbApp extends AbstractCyActivator {
             idMapperClientManager.cache();
             
             DialogTaskManager taskManagerServiceRef = getService(bc, DialogTaskManager.class);
+            CyNetworkManager networkManagerRef = getService(bc, CyNetworkManager.class);
             CyApplicationManager cyApplicationManagerRef = getService(bc, CyApplicationManager.class);
             CySwingApplication cySwingApplicationServiceRef = getService(bc, CySwingApplication.class);
             OpenBrowser openBrowser = getService(bc,OpenBrowser.class);
             FileUtil fileUtil = getService(bc, FileUtil.class);
 
-            registerServices(bc, cyApplicationManagerRef, cySwingApplicationServiceRef,
+            registerServices(bc, cyApplicationManagerRef, networkManagerRef, cySwingApplicationServiceRef,
                     taskManagerServiceRef, openBrowser, fileUtil);
             
-            IDMappingAction idMappingAction = new IDMappingAction(cyApplicationManagerRef, cySwingApplicationServiceRef,
+            IDMappingAction idMappingAction = new IDMappingAction(cyApplicationManagerRef, networkManagerRef, cySwingApplicationServiceRef,
                     taskManagerServiceRef, openBrowser, fileUtil);
             
             ManageIDMappingResourcesAction manageIDMappingResourcesAction
@@ -133,11 +135,11 @@ public final class BridgeDbApp extends AbstractCyActivator {
 //    }
     
     private void registerServices(BundleContext bc, CyApplicationManager cyApplicationManager, 
-                CySwingApplication swingApp, TaskManager taskManager, OpenBrowser openBrowser,
-                FileUtil fileUtil) {
+            CyNetworkManager networkManagerRef, CySwingApplication swingApp,
+            TaskManager taskManager, OpenBrowser openBrowser, FileUtil fileUtil) {
         // maind dialog
         OpenMainDialogTaskFactory openMainDialogTaskFactory  = new OpenMainDialogTaskFactory(
-                    cyApplicationManager, swingApp, taskManager, openBrowser, fileUtil);
+                    cyApplicationManager, networkManagerRef, swingApp, taskManager, openBrowser, fileUtil);
         Properties props = new Properties();
         props.setProperty(COMMAND, "main dialog");
         props.setProperty(COMMAND_NAMESPACE, "bridgedb");
