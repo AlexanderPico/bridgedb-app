@@ -1095,6 +1095,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
             String[] orgUrls = new String[orgs.size()];
             int iorg = 0;
             for (String org : orgs) {
+                if (org.equalsIgnoreCase("null")) continue;
                 orgUrls[iorg++] = BridgeRestUtil.defaultBaseUrl + "/" +org;
             }
             DefaultComboBoxModel bridgeComboBoxModel = new DefaultComboBoxModel(orgUrls);
