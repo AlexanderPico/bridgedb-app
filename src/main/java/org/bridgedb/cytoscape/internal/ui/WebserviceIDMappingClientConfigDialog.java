@@ -270,8 +270,8 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         biomartPanel.setVisible(false);
 
         chooseDBPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Mart/Database"));
-        chooseDBPanel.setMinimumSize(new java.awt.Dimension(400, 48));
-        chooseDBPanel.setPreferredSize(new java.awt.Dimension(400, 50));
+        chooseDBPanel.setMinimumSize(new java.awt.Dimension(600, 48));
+        chooseDBPanel.setPreferredSize(new java.awt.Dimension(600, 50));
         chooseDBPanel.setLayout(new javax.swing.BoxLayout(chooseDBPanel, javax.swing.BoxLayout.LINE_AXIS));
 
         chooseDBComboBox.addActionListener(new java.awt.event.ActionListener() {
@@ -866,6 +866,9 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
             if (!databaseFilter.contains(mart)) {
                 String displayName = biomartStub.martDisplayName(mart);
                 String display = displayName;//+"("+mart+")";
+                if (display.length()>73) {
+                    display = display.substring(0,70)+"...";
+                }
                 mapMartDisplayName.put(display, mart);
             }
         }
