@@ -1092,6 +1092,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
     private void initBridgeDb() {
         if (!bridgeRestInitialized) {
             List<String> orgs = BridgeRestUtil.supportedOrganismsNr(BridgeRestUtil.defaultBaseUrl);
+            Collections.sort(orgs);
             String[] orgUrls = new String[orgs.size()];
             int iorg = 0;
             for (String org : orgs) {
