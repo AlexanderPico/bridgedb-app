@@ -205,12 +205,17 @@ public class IDMapperClientImpl implements IDMapperClient {
             return;
         }
 
-//        for (DataSource ds : dss) {
-//            if (ds.getFullName()==null) {
-//                String sysCode = ds.getSystemCode();
-//                DataSource.register(sysCode, sysCode);
-//            }
-//        }
+        for (DataSource ds : dss) {
+            if (ds.getFullName()==null) {
+                String sysCode = ds.getSystemCode();
+                DataSource.register(sysCode, sysCode);
+            }
+            
+            if (ds.getSystemCode()==null) {
+                String fullName = ds.getFullName();
+                DataSource.register(fullName, fullName);
+            }
+        }
     }
     
     public String getConnectionString() {

@@ -36,6 +36,7 @@
 package org.bridgedb.cytoscape.internal.util;
 
 import java.util.Collection;
+import java.util.Collections;
 import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 
 import java.util.HashMap;
