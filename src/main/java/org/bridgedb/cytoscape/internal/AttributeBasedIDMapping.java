@@ -61,14 +61,7 @@ public interface AttributeBasedIDMapping {
      *      value: target ID type
      */
     public void map(CyNetwork network, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
-            Map<String, DataSourceWrapper> mapTgtAttrNameIDType);
-    
-    /**
-     * Define target attributes.
-     * Call this method first before mapping if necessary.
-     * @param attrNameType
-     */
-    public void defineTgtAttrs(CyNetwork network, Map<String,Class<?>> attrNameType);
+            Map<String, DataSourceWrapper> mapTgtAttrNameIDType, Map<String,Class<?>> attrNameType);
     
     public void interrupt();
     

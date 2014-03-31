@@ -341,18 +341,22 @@ public class BridgeDbDialog extends javax.swing.JDialog {
                 if (otask==task) {
                     if (task.success()) {
                         SwingUtilities.invokeLater(new Runnable() {
-                            public void run() {
-                                JOptionPane.showMessageDialog(thisDialog.getParent(), task.getResults(String.class));
+                            public void run() {                                
+                                int ret = JOptionPane.showConfirmDialog(thisDialog,
+                                        task.getResults(String.class)+"\nWould you like to map more identifiers?",
+                                        "Attribute mapping takes long time",
+                                        JOptionPane.YES_NO_OPTION);
+                                if (ret == JOptionPane.NO_OPTION) {
+                                    thisDialog.setVisible(false);
+                                    thisDialog.dispose();
+                                }
                             }
                         });
-                        thisDialog.setVisible(false);
-                        thisDialog.dispose();
-                        cancelled = false;
                     } else {
-                        CyTable cyTable = currentNetwork.getDefaultNodeTable();
-                        for (String attrName : mapTgtAttrNameAttrType.keySet()) {
-                            cyTable.deleteColumn(attrName);
-                        }
+//                        CyTable cyTable = currentNetwork.getDefaultNodeTable();
+//                        for (String attrName : mapTgtAttrNameAttrType.keySet()) {
+//                            cyTable.deleteColumn(attrName);
+//                        }
                         SwingUtilities.invokeLater(new Runnable() {
                             public void run() {
                                 JOptionPane.showMessageDialog(thisDialog.getParent(), "IDs mapping failed");
@@ -423,17 +427,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
                 }
             }
         }
-        
-        CyTable table = currentNetwork.getDefaultNodeTable();
-        List<String> existAttrNames = new ArrayList<String>();
-        for(CyColumn cyCol : table.getColumns()) {
-        	existAttrNames.add(cyCol.getName());
-        }
         List<String> attrNames = targetAttributeSelectionTable.getTgtAttrNames();
-        if (!Collections.disjoint(attrNames, existAttrNames)) { // overlap between new and existing attribute
-            JOptionPane.showMessageDialog(this, "Target attributes must have new names.");
-            return false;
-        }
         if (attrNames.contains("")) {
             JOptionPane.showMessageDialog(this, "The new attribute name cannot be empty.");
             return false;
@@ -443,6 +437,36 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         if (attrNamesNR.size()!=attrNames.size()) { //same name
             JOptionPane.showMessageDialog(this, "Target attributes must have different names.");
             return false;
+        }
+        
+        CyTable table = currentNetwork.getDefaultNodeTable();
+        List<String> existAttrNames = new ArrayList<String>();
+        for(CyColumn cyCol : table.getColumns()) {
+        	existAttrNames.add(cyCol.getName());
+        }
+        existAttrNames.retainAll(attrNames);
+        if (!existAttrNames.isEmpty()) { // overlap between new and existing attribute
+            StringBuilder msg = new StringBuilder();
+            msg.append("Target attribute");
+            if (existAttrNames.size()>1) {
+                msg.append("s");
+            }
+            msg.append(" (");
+            for (String attr : existAttrNames) {
+                msg.append(attr).append(",");
+            }
+            msg.deleteCharAt(msg.length()-1);
+            msg.append(") exist");
+            if (existAttrNames.size()==1) {
+                msg.append("s");
+            }
+            msg.append(".\nWould you like to replace them with the mapped IDs?");
+            int ret = JOptionPane.showConfirmDialog(this, msg.toString(),
+                            "Repace existing attributes?",
+                            JOptionPane.YES_NO_OPTION);
+                    if (ret == JOptionPane.NO_OPTION) {
+                        return false;
+                    }
         }
         
 
@@ -537,13 +561,8 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         this.setSupportedTgtTypesInTable();
     }
 
-    public boolean isCancelled() {
-        return cancelled;
-    }
-
     private SourceAttributeSelectionTable sourceAttributeSelectionTable;
     private TargetAttributeSelectionTable targetAttributeSelectionTable;
-    private boolean cancelled = true;
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton OKBtn;

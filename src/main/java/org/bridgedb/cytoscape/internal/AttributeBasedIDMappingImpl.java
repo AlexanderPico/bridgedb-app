@@ -64,7 +64,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
      * Call this method first before mapping if necessary.
      * @param attrNameType
      */
-    public void defineTgtAttrs(CyNetwork network, Map<String,Class<?>> attrNameType) {
+    private void defineTgtAttrs(CyNetwork network, Map<String,Class<?>> attrNameType) {
         this.attrNameType = attrNameType;
         
         CyTable cyTable = network.getDefaultNodeTable();
@@ -73,13 +73,15 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
             String attrname = entry.getKey();
             Class<?> attrtype = entry.getValue();
             
-            if (null == cyTable.getColumn(attrname)) {
-                // if not exist
-                if (attrtype == List.class) {
-                    cyTable.createListColumn(attrname, String.class, false);
-                } else {
-                    cyTable.createColumn(attrname, attrtype, false);
-                }
+            if (null != cyTable.getColumn(attrname)) {
+                cyTable.deleteColumn(attrname);
+            }
+            
+            // if not exist
+            if (attrtype == List.class) {
+                cyTable.createListColumn(attrname, String.class, false);
+            } else {
+                cyTable.createColumn(attrname, attrtype, false);
             }
         }
     }
@@ -88,7 +90,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
      * {@inheritDoc}
      */
     public void map(CyNetwork network, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
-            Map<String, DataSourceWrapper> mapTgtAttrNameIDType) {
+            Map<String, DataSourceWrapper> mapTgtAttrNameIDType, Map<String,Class<?>> attrNameType) {
 
         // prepare source xrefs
         List<CyNode> nodes = network.getNodeList();
@@ -110,6 +112,9 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         }
         Map<XrefWrapper, Set<XrefWrapper>> mapping = idMapperWrapper.mapID(srcXrefs, tgtTypes);
 
+        // define target attributes
+        defineTgtAttrs(network, attrNameType);
+        
         // set target attribute
         updateTaskMonitor("Set target column...", -1.0);
         Map<CyNode,Set<XrefWrapper>> mapNodeTgtXrefs = getNodeTgtXrefs(mapNodeSrcXrefs, mapping);
