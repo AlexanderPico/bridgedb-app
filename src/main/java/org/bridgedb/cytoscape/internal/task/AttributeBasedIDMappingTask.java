@@ -105,7 +105,7 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
             
 		 taskMonitor.setTitle("Mapping identifiers");
 		 try {
-			 mappingService.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
+			 mappingService.map(network, mapSrcAttrIDTypes, mapTgtAttrNameIDType, mapTgtAttrNameAttrType, byCommand?-1:100);
                          success = true;
 		 } catch (Exception e) {
 			 taskMonitor.showMessage(TaskMonitor.Level.ERROR,"ID mapping failed.\n");

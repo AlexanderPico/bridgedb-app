@@ -61,7 +61,8 @@ public interface AttributeBasedIDMapping {
      *      value: target ID type
      */
     public void map(CyNetwork network, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
-            Map<String, DataSourceWrapper> mapTgtAttrNameIDType, Map<String,Class<?>> attrNameType);
+            Map<String, DataSourceWrapper> mapTgtAttrNameIDType, Map<String,Class<?>> attrNameType,
+            int srcXrefsPerBatch);
     
     public void interrupt();
     

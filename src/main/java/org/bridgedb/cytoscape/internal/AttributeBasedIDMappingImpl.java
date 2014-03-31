@@ -51,7 +51,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
     @Override
     public void interrupt() {
         interrupted = true;
-        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "ID mapping cancelled.");
+        taskMonitor.showMessage(TaskMonitor.Level.ERROR, "ID mapping cancelled. Not all IDs were mapped.");
      }
 
     @Override
@@ -90,7 +90,8 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
      * {@inheritDoc}
      */
     public void map(CyNetwork network, Map<String,Set<DataSourceWrapper>> mapSrcAttrIDTypes,
-            Map<String, DataSourceWrapper> mapTgtAttrNameIDType, Map<String,Class<?>> attrNameType) {
+            Map<String, DataSourceWrapper> mapTgtAttrNameIDType, Map<String,Class<?>> attrNameType,
+            int srcXrefsPerBatch) {
 
         // prepare source xrefs
         List<CyNode> nodes = network.getNodeList();
@@ -98,19 +99,33 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         
         updateTaskMonitor("Preparing source cross references...", -1.0);
         Map<CyNode,Set<XrefWrapper>> mapNodeSrcXrefs = prepareNodeSrcXrefs(table, nodes, mapSrcAttrIDTypes);
-        Set<XrefWrapper> srcXrefs = srcXrefUnion(mapNodeSrcXrefs);
+        List<XrefWrapper> srcXrefs = srcXrefUnion(mapNodeSrcXrefs);
 
         // target id types
         Set<DataSourceWrapper> tgtTypes = new HashSet(mapTgtAttrNameIDType.values());
 
         // id mapping
+        String msg = attributesSelected(mapSrcAttrIDTypes) ? 
+                "This may take minutes or longer to finish since attributes were selected as source type. Mapping IDs...\n"
+                : "Mapping IDs... ";
         
-        if (attributesSelected(mapSrcAttrIDTypes)) {
-            updateTaskMonitor("Mapping IDs...\nThis may take minutes or longer to finish since attributes were selected as source type", -1.0);
+        Map<XrefWrapper, Set<XrefWrapper>> mapping;
+        
+        if (srcXrefsPerBatch==-1) {
+            mapping = idMapperWrapper.mapID(srcXrefs, tgtTypes);
         } else {
-            updateTaskMonitor("Mapping IDs...", -1.0);
+            mapping = new HashMap<XrefWrapper, Set<XrefWrapper>>();
+            int batches = (int)Math.ceil(1.0*srcXrefs.size()/srcXrefsPerBatch);
+            for (int batch=0; batch<batches; batch++) {
+                int start = batch*srcXrefsPerBatch;
+                int end = batch==batches-1 ? srcXrefs.size() : (batch+1)*srcXrefsPerBatch;
+                updateTaskMonitor(msg + (start+1) + "/" +srcXrefs.size() + " source identifiers", 1.0*(start+1)/srcXrefs.size());
+                mapping.putAll(idMapperWrapper.mapID(srcXrefs.subList(start, end), tgtTypes));
+                if (interrupted) {
+                    break;
+                }
+            }
         }
-        Map<XrefWrapper, Set<XrefWrapper>> mapping = idMapperWrapper.mapID(srcXrefs, tgtTypes);
 
         // define target attributes
         defineTgtAttrs(network, attrNameType);
@@ -120,7 +135,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         Map<CyNode,Set<XrefWrapper>> mapNodeTgtXrefs = getNodeTgtXrefs(mapNodeSrcXrefs, mapping);
         setTgtAttribute(table, mapNodeTgtXrefs, mapTgtAttrNameIDType);
 
-        if (mapNodeTgtXrefs.size()==0 && nodes.size()!=0) {
+        if (mapNodeTgtXrefs.isEmpty() && !nodes.isEmpty()) {
             report = "No IDs were mapped. Please make sure you seleceted the corrected ID mapping resources and source ID types.";
             updateTaskMonitor(report, 1.0, true);
         } else {
@@ -147,7 +162,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
 //        int nNode = nodes.size();
 //        int i=0;
         for (CyNode node : nodes) {
-            if (interrupted) return null;
+//            if (interrupted) return null;
 //            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);
 //            i++;
 
@@ -188,12 +203,12 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         return ret;
     }
 
-    private Set<XrefWrapper> srcXrefUnion(Map<CyNode,Set<XrefWrapper>> mapNodeSrcXrefs) {
+    private List<XrefWrapper> srcXrefUnion(Map<CyNode,Set<XrefWrapper>> mapNodeSrcXrefs) {
         Set<XrefWrapper> ret = new HashSet();
         for (Set<XrefWrapper> xrefs : mapNodeSrcXrefs.values()) {
             ret.addAll(xrefs);
         }
-        return ret;
+        return new ArrayList<XrefWrapper>(ret);
     }
 
     private Map<CyNode,Set<XrefWrapper>> getNodeTgtXrefs (Map<CyNode,Set<XrefWrapper>> mapNodeSrcXrefs,
@@ -234,7 +249,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
 
 //        int i = 0;
         for (Map.Entry<CyNode,Set<XrefWrapper>> entryNodeXrefs : mapNodeTgtXrefs.entrySet()) {
-            if (interrupted) return;
+//            if (interrupted) return;
             
 //            if (++i%100==0) {
 //            updateTaskMonitor("Preparing cross reference for nodes...\n"+i+"/"+nNode,(i+1)*100/nNode);

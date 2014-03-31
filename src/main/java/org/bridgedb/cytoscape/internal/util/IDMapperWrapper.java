@@ -35,6 +35,7 @@
 
 package org.bridgedb.cytoscape.internal.util;
 
+import java.util.Collection;
 import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 
 import java.util.HashMap;
@@ -81,7 +82,7 @@ public class IDMapperWrapper {
     }
 
     public Map<XrefWrapper, Set<XrefWrapper>> mapID(
-            Set<XrefWrapper> srcXrefs,
+            Collection<XrefWrapper> srcXrefs,
             Set<DataSourceWrapper> tgtDataSources) {
         // separate xrefs
         Set<Xref> idXrefs = new HashSet();
