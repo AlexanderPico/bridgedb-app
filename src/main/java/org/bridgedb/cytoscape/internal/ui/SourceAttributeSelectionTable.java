@@ -38,7 +38,6 @@ package org.bridgedb.cytoscape.internal.ui;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.bridgedb.cytoscape.internal.IDMapperClientManager;
-import org.bridgedb.cytoscape.internal.util.DataSourceUtil;
 import org.bridgedb.cytoscape.internal.util.DataSourceWrapper;
 
 import java.util.ArrayList;
@@ -71,10 +70,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import org.bridgedb.DataSource;
-import org.bridgedb.DataSourcePatterns;
 import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyRow;
 import org.cytoscape.model.CyTable;
 
 // support different editors for each row in a column
@@ -83,7 +79,7 @@ import org.cytoscape.model.CyTable;
  * 
  * 
  */
-public class SourceAttributeSelectionTable extends JTable {
+public final class SourceAttributeSelectionTable extends JTable {
 	private static final long serialVersionUID = 1L;
 
         private final IDMapperClientManager idMapperClientManager;
@@ -119,6 +115,10 @@ public class SourceAttributeSelectionTable extends JTable {
                 IDMapperClientManager idMapperClientManager) {
 		super();
                 this.idMapperClientManager = idMapperClientManager;
+                setNetwork(selectedNetwork);
+        }
+        
+        public void setNetwork(CyNetwork selectedNetwork) {
 		supportedIDType = new LinkedHashSet<DataSourceWrapper>();
 		attributeComboBoxes = new Vector<JComboBox>();
 		selectedAttribute = new Vector<String>();
@@ -134,7 +134,7 @@ public class SourceAttributeSelectionTable extends JTable {
 
 		rowCount = 0;
                 
-                setSelectedNetworks(selectedNetwork);
+                this.selectedNetwork = selectedNetwork;
                 
 		initializeAttibutes();
 
@@ -194,8 +194,8 @@ public class SourceAttributeSelectionTable extends JTable {
 		this.idTypeSelectionChangedListener = idTypeSelectionChangedListener;
 	}
 
-	private void setSelectedNetworks(final CyNetwork selectedNetwork) {
-                this.selectedNetwork = selectedNetwork;
+//	private void setSelectedNetworks(final CyNetwork selectedNetwork) {
+//                this.selectedNetwork = selectedNetwork;
 //		nodesForTypeGuessing.clear();
 //		if (selectedNetwork != null) {
 //			int count = 0;
@@ -209,8 +209,8 @@ public class SourceAttributeSelectionTable extends JTable {
 //		if (setGuessedDataSources()) {
 //			repaint();
 //		}
-	}
-
+//	}
+//
 //	private boolean setGuessedDataSources() {
 //		if (nodesForTypeGuessing.isEmpty())
 //			return false;

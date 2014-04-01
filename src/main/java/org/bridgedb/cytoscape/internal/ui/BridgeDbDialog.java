@@ -328,7 +328,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         final AttributeBasedIDMappingTask task
                 = new AttributeBasedIDMappingTask(currentNetwork, mapSrcAttrIDTypes,
                         mapTgtAttrNameIDType, mapTgtAttrNameAttrType);
-        final JDialog thisDialog = this;
+        final BridgeDbDialog thisDialog = this;
 
         // Execute Task in New Thread; pop open JTask Dialog Box.
         //Temp solution, need create taskfactory for AttributeBasedIDMappingTask
@@ -349,6 +349,10 @@ public class BridgeDbDialog extends javax.swing.JDialog {
                                 if (ret == JOptionPane.NO_OPTION) {
                                     thisDialog.setVisible(false);
                                     thisDialog.dispose();
+                                } else {
+                                    thisDialog.sourceAttributeSelectionTable.setNetwork(currentNetwork);
+                                    setSupportedSrcTypesInTable();
+                                    setSupportedTgtTypesInTable();
                                 }
                             }
                         });
