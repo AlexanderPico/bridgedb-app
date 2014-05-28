@@ -745,7 +745,7 @@ public class WebserviceIDMappingClientConfigDialog extends javax.swing.JDialog {
         ClientType type = (ClientType)typeComboBox.getSelectedItem();
         
         if (type==ClientType.BRIDGEDB) {
-            openBrowser.openURL("http://webservice.bridgedb.org/ ");
+            openBrowser.openURL("http://webservice.bridgedb.org/");
         } else if (type==ClientType.BIOMART) {
             openBrowser.openURL("http://www.biomart.org/");
 //        } else if (type==ClientType.PICR) {

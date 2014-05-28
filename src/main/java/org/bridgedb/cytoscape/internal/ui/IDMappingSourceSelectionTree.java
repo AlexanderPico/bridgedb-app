@@ -455,7 +455,7 @@ class IDMappingSourceSelectionTree extends JTree {
 
 	private void addDatabase() {
 		RDBIDMappingClientConfigDialog dialog = new RDBIDMappingClientConfigDialog(
-				parent, fileUtil, true);
+				parent, fileUtil, openBrowser, true);
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
 		if (!dialog.isCancelled()) {

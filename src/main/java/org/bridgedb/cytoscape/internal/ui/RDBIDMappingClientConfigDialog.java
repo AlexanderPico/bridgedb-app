@@ -48,6 +48,7 @@ import java.util.Collections;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JOptionPane;
 import org.cytoscape.util.swing.FileChooserFilter;
+import org.cytoscape.util.swing.OpenBrowser;
 
 /**
  * 
@@ -76,9 +77,10 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 
 	/** Creates new form RDBIDMappingClientConfig */
 	public RDBIDMappingClientConfigDialog(javax.swing.JDialog parent,
-			FileUtil fileUtil, boolean modal) {
+			FileUtil fileUtil, OpenBrowser openBrowser, boolean modal) {
 		super(parent, modal);
                 this.fileUtil = fileUtil;
+                this.openBrowser = openBrowser;
 		initComponents();
 	}
 
@@ -109,6 +111,7 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 
         javax.swing.JPanel namePanel = new javax.swing.JPanel();
         nameComboBox = new javax.swing.JComboBox();
+        infoButton = new javax.swing.JButton();
         pgdbPanel = new javax.swing.JPanel();
         pgdbTextField = new javax.swing.JTextField();
         javax.swing.JButton pgdbButton = new javax.swing.JButton();
@@ -132,6 +135,14 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
         namePanel.add(nameComboBox, gridBagConstraints);
+
+        infoButton.setText("Download");
+        infoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoButtonActionPerformed(evt);
+            }
+        });
+        namePanel.add(infoButton, new java.awt.GridBagConstraints());
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -198,6 +209,13 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoButtonActionPerformed
+	DBType type = (DBType) nameComboBox.getSelectedItem();
+        if (type == DBType.PGDB) {
+            openBrowser.openURL("http://bridgedb.org/data/gene_database/");
+        }
+    }//GEN-LAST:event_infoButtonActionPerformed
 
 	private void pgdbButtonActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_pgdbButtonActionPerformed
             FileChooserFilter fileChooserFilter = new FileChooserFilter(
@@ -272,11 +290,13 @@ public class RDBIDMappingClientConfigDialog extends javax.swing.JDialog {
 	}
 
         private final FileUtil fileUtil;
+        private final OpenBrowser openBrowser;
 	private boolean cancelled = true;
 	// private IDMapperClient client;
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton cancelButton;
+    private javax.swing.JButton infoButton;
     private javax.swing.JComboBox nameComboBox;
     private javax.swing.JButton okButton;
     private javax.swing.JPanel pgdbPanel;
