@@ -75,7 +75,7 @@ import org.cytoscape.model.CyTable;
 
 // support different editors for each row in a column
 /**
- * Table for selecting which attribute to use for matching nodes
+ * Table for selecting which column to use for matching nodes
  * 
  * 
  */
@@ -103,7 +103,7 @@ public final class SourceAttributeSelectionTable extends JTable {
 
 	private int rowCount;
 
-	private final String colHeaderAtt = "Key Attribute";
+	private final String colHeaderAtt = "Source Column in Node Table";
 	private final String colHeaderSrc = "Source ID Type(s)";
 	private final String colHeaderBtn = " ";
 
@@ -436,14 +436,14 @@ public final class SourceAttributeSelectionTable extends JTable {
 		if (rowCount >= attributes.size()) {
 			// Temp comment
 			// JOptionPane.showMessageDialog(cytoscape.Cytoscape.getDesktop(),
-			// "All attributes have been used. Cannot add more.");
+			// "All columns have been used. Cannot add more.");
 			return;
 		}
 
 		final JComboBox cb = new JComboBox(attributes);
 		cb.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO: check if the attribute has already been used
+				// TODO: check if the column has already been used
 				String selected = (String) cb.getSelectedItem();
 				int i = 0;
 				int n = attributeComboBoxes.size();
@@ -456,7 +456,7 @@ public final class SourceAttributeSelectionTable extends JTable {
 				if (selectedAttribute.contains(selected)) {
 					// Temp commet
 					// JOptionPane.showMessageDialog(cytoscape.Cytoscape.getDesktop(),
-					// "This attribute has already been selected.\n" +
+					// "This column has already been selected.\n" +
 					// "Please selecte another one.");
 					// cb.setSelectedItem(selectedAttribute.get(i));
 				} else {
@@ -573,7 +573,7 @@ public final class SourceAttributeSelectionTable extends JTable {
 
 		// @Override
 		public int getColumnCount() {
-			return 3; // select; network; attribute; id types
+			return 3; // select; network; column; id types
 		}
 
 		// @Override

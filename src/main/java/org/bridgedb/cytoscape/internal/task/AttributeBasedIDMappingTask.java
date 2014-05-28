@@ -41,14 +41,14 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
     @Tunable(description="Network to mapping identifiers in",context="nogui")
     public CyNetwork network;
     
-    @Tunable(description="Source node attribute",context="nogui")
-    public String sourceAttribute;
+    @Tunable(description="Source column in node table",context="nogui")
+    public String sourceColumn;
     
     @Tunable(description="Source ID type",context="nogui")
     public String sourceIdType;
     
-    @Tunable(description="Target node attribute",context="nogui")
-    public String targetAttribute;
+    @Tunable(description="Target column in node table",context="nogui")
+    public String targetColumn;
     
     @Tunable(description="Target ID type",context="nogui")
     public String targetIdType;
@@ -127,14 +127,14 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
             return false;
         }
         
-        if (sourceAttribute == null) {
+        if (sourceColumn == null) {
             taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Please specify source attribute.");
             return false;
         }
         
-        if (null == network.getDefaultNodeTable().getColumn(sourceAttribute)) {
+        if (null == network.getDefaultNodeTable().getColumn(sourceColumn)) {
             taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Could not find source node attribute "
-                    +sourceAttribute);
+                    +sourceColumn);
             return false;
         }
         
@@ -166,20 +166,20 @@ public class AttributeBasedIDMappingTask extends AbstractTask implements Observa
             return false;
         }
         
-        if (targetAttribute == null) {
+        if (targetColumn == null) {
             taskMonitor.showMessage(TaskMonitor.Level.ERROR, "Please specify target attribute.");
             return false;
         }
         
-        if (null == network.getDefaultNodeTable().getColumn(targetAttribute)) {
+        if (null == network.getDefaultNodeTable().getColumn(targetColumn)) {
             taskMonitor.showMessage(TaskMonitor.Level.INFO, "Could not find target node attribute "
-                    +targetAttribute+". A new attribute in node table will be created.");
+                    +targetColumn+". A new attribute in node table will be created.");
         }
         
-        mapSrcAttrIDTypes = Collections.singletonMap(sourceAttribute, Collections.singleton(srcDsw));
-        mapTgtAttrNameIDType = Collections.singletonMap(targetAttribute, tgtDsw);
+        mapSrcAttrIDTypes = Collections.singletonMap(sourceColumn, Collections.singleton(srcDsw));
+        mapTgtAttrNameIDType = Collections.singletonMap(targetColumn, tgtDsw);
         mapTgtAttrNameAttrType = new HashMap<String,Class<?>>(1);
-        mapTgtAttrNameAttrType.put(targetAttribute, List.class); // why could not use singleton?
+        mapTgtAttrNameAttrType.put(targetColumn, List.class); // why could not use singleton?
         
         return true;
     }

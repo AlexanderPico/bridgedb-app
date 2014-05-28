@@ -181,9 +181,9 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         //getContentPane().add(networkPanel, gridBagConstraints);
         
-        sourcePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select source ID types and attributes"));
-        sourcePanel.setMinimumSize(new java.awt.Dimension(500, 120));
-        sourcePanel.setPreferredSize(new java.awt.Dimension(500, 140));
+        sourcePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select source ID types and columns in node table of the selected network"));
+        sourcePanel.setMinimumSize(new java.awt.Dimension(700, 120));
+        sourcePanel.setPreferredSize(new java.awt.Dimension(700, 140));
         sourcePanel.setLayout(new java.awt.GridBagLayout());
 
         sourceScrollPane.setMinimumSize(new java.awt.Dimension(300, 100));
@@ -217,9 +217,9 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         gridBagConstraints.insets = new Insets(5, 5, 5, 0);
         getContentPane().add(sourcePanel, gridBagConstraints);
 
-        destinationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select destination attributes and ID types"));
-        destinationPanel.setMinimumSize(new java.awt.Dimension(500, 130));
-        destinationPanel.setPreferredSize(new java.awt.Dimension(500, 140));
+        destinationPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select destination ID types and columns in node table of the selected network"));
+        destinationPanel.setMinimumSize(new java.awt.Dimension(700, 130));
+        destinationPanel.setPreferredSize(new java.awt.Dimension(700, 140));
         destinationPanel.setLayout(new java.awt.GridBagLayout());
 
         destinationScrollPane.setMinimumSize(new java.awt.Dimension(300, 100));
@@ -321,7 +321,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         final Map<String, DataSourceWrapper> mapTgtAttrNameIDType = targetAttributeSelectionTable.getMapAttrNameIDType();
         final Map<String,Class<?>> mapTgtAttrNameAttrType = targetAttributeSelectionTable.getMapAttrNameAttrType();
 
-//        // define target attributes
+//        // define target columns
 //        defineTgtAttributes(mapTgtAttrNameAttrType);
 
         // execute task
@@ -344,7 +344,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
                             public void run() {                                
                                 int ret = JOptionPane.showConfirmDialog(thisDialog,
                                         task.getResults(String.class)+"\nWould you like to map more identifiers?",
-                                        "Attribute mapping takes long time",
+                                        "Done",
                                         JOptionPane.YES_NO_OPTION);
                                 if (ret == JOptionPane.NO_OPTION) {
                                     thisDialog.setVisible(false);
@@ -376,7 +376,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 //            this.dispose();
 //            cancelled = false;
 //        } else {
-            //Delete the new attributes
+            //Delete the new columns
         	//Temp comments 
 //            CyAttributes nodeAttributes = Cytoscape.getNodeAttributes();
 //            for (String attrName : mapTgtAttrNameAttrType.keySet()) {
@@ -433,13 +433,13 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         }
         List<String> attrNames = targetAttributeSelectionTable.getTgtAttrNames();
         if (attrNames.contains("")) {
-            JOptionPane.showMessageDialog(this, "The new attribute name cannot be empty.");
+            JOptionPane.showMessageDialog(this, "The column name cannot be empty.");
             return false;
         }
 
         Set<String> attrNamesNR = new HashSet(attrNames);
         if (attrNamesNR.size()!=attrNames.size()) { //same name
-            JOptionPane.showMessageDialog(this, "Target attributes must have different names.");
+            JOptionPane.showMessageDialog(this, "Target columns must have different names.");
             return false;
         }
         
@@ -451,7 +451,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         existAttrNames.retainAll(attrNames);
         if (!existAttrNames.isEmpty()) { // overlap between new and existing attribute
             StringBuilder msg = new StringBuilder();
-            msg.append("Target attribute");
+            msg.append("Target column");
             if (existAttrNames.size()>1) {
                 msg.append("s");
             }
@@ -466,7 +466,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
             }
             msg.append(".\nWould you like to replace them with the mapped IDs?");
             int ret = JOptionPane.showConfirmDialog(this, msg.toString(),
-                            "Repace existing attributes?",
+                            "Repace existing columns?",
                             JOptionPane.YES_NO_OPTION);
                     if (ret == JOptionPane.NO_OPTION) {
                         return false;
@@ -476,9 +476,9 @@ public class BridgeDbDialog extends javax.swing.JDialog {
 
 //        List<String> idTypes = targetAttributeSelectionTable.getTgtIDTypes();
 //        Set<String> idTypesNR = new HashSet(idTypes);
-//        // TODO: problem when id type and attribute have the same name
+//        // TODO: problem when id type and column have the same name
 //        if (idTypesNR.size()!=idTypes.size()) {
-//            JOptionPane.showMessageDialog(this, "At most one target attribute is allowed for each ID type.");
+//            JOptionPane.showMessageDialog(this, "At most one target column is allowed for each ID type.");
 //            return false;
 //        }
 

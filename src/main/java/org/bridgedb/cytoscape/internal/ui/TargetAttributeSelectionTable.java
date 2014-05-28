@@ -70,7 +70,7 @@ import javax.swing.JScrollPane;
 
 // support different editors for each row in a column
 /**
- * Table for selecting which attribute to use for matching nodes
+ * Table for selecting which column to use for matching nodes
  * 
  * 
  */
@@ -90,8 +90,8 @@ public class TargetAttributeSelectionTable extends JTable {
 	private JButton addBtn;
 
 	private final String headerIDType = "Target ID Type";
-	private final String headerAttrName = "Target New Attribute";
-	private final String headerOneIDOnly = "All target ID(s) or first only?";
+	private final String headerAttrName = "Target Column in Node Table";
+	private final String headerOneIDOnly = "All Target ID(s) or First Only?";
 	private final String headerBtn = " ";
 
 	private final String oneIDOnly = "Keep the first target ID only";
@@ -473,8 +473,7 @@ public class TargetAttributeSelectionTable extends JTable {
 
 		for (int i = 0; i < getColumnModel().getColumnCount(); i++) {
 			TableColumn column = getColumnModel().getColumn(i);
-			column
-					.setPreferredWidth((int) (tableDim.width * (percentages[i] / total)));
+			column.setPreferredWidth((int) (tableDim.width * (percentages[i] / total)));
 		}
 	}
 
@@ -485,7 +484,7 @@ public class TargetAttributeSelectionTable extends JTable {
 
 		@Override
 		public int getColumnCount() {
-			return 4; // select; network; attribute; id types
+			return 4; // select; network; column; id types
 		}
 
 		@Override
