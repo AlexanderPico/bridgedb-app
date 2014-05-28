@@ -38,14 +38,12 @@ package org.bridgedb.cytoscape.internal.ui;
 import org.bridgedb.cytoscape.internal.IDMapperClient;
 import org.bridgedb.cytoscape.internal.IDMapperClientImpl;
 
-import org.cytoscape.io.CyFileFilter;
 import org.cytoscape.util.swing.FileUtil;
 
 // TODO: I didn't find this class in 3.0, just comment it
 //import org.cytoscape.util.swing.URLUtil;
 
 import org.bridgedb.IDMapperException;
-import org.bridgedb.file.IDMapperText;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -63,6 +61,7 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 import org.cytoscape.util.swing.FileChooserFilter;
+import org.cytoscape.util.swing.OpenBrowser;
 
 /**
  *
@@ -71,9 +70,10 @@ import org.cytoscape.util.swing.FileChooserFilter;
 public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
 
     // add a new client
-    public FileIDMappingClientConfigDialog(java.awt.Dialog parent, FileUtil fileUtil, boolean modal) {
+    public FileIDMappingClientConfigDialog(java.awt.Dialog parent, FileUtil fileUtil, OpenBrowser openBrowser, boolean modal) {
         super(parent, modal);
         this.fileUtil = fileUtil;
+        this.openBrowser = openBrowser;
         initComponents();
         setPreviewTableData();
     }
@@ -127,6 +127,7 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
         javax.swing.JLabel typeLabel = new javax.swing.JLabel();
         localRadioButton = new javax.swing.JRadioButton();
         remoteRadioButton = new javax.swing.JRadioButton();
+        infoButton = new javax.swing.JButton();
         javax.swing.JPanel selectPanel = new javax.swing.JPanel();
         textFileTextField = new javax.swing.JTextField();
         textFileButton = new javax.swing.JButton();
@@ -203,6 +204,14 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
             }
         });
         sourcePanel.add(remoteRadioButton);
+
+        infoButton.setText("Example format");
+        infoButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                infoButtonActionPerformed(evt);
+            }
+        });
+        sourcePanel.add(infoButton);
 
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -621,6 +630,10 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
         
     }//GEN-LAST:event_otherIDTextFieldActionPerformed
 
+    private void infoButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_infoButtonActionPerformed
+        openBrowser.openURL("https://raw.githubusercontent.com/jjgao/bridgedb.cytoscape/master/src/main/resources/yeast_id_mapping_example_file.txt");
+    }//GEN-LAST:event_infoButtonActionPerformed
+
     private boolean verifyInput() {
         String strURL = textFileTextField.getText();
         if (strURL==null || strURL.length()==0) {
@@ -890,6 +903,7 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
 
 
     private FileUtil fileUtil;
+    private OpenBrowser openBrowser;
     private boolean isLocal = true;
     private boolean cancelled = true;
     private int previewLimit = 100;
@@ -904,6 +918,7 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
     private javax.swing.JPanel delemiterTypePanel;
     private javax.swing.JPanel delimitedTextPanel;
     private javax.swing.JPanel delimiterPanel;
+    private javax.swing.JButton infoButton;
     private javax.swing.JRadioButton localRadioButton;
     private javax.swing.JButton okButton;
     private javax.swing.JCheckBox optionCheckBox;

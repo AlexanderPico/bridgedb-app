@@ -554,7 +554,7 @@ class IDMappingSourceSelectionTree extends JTree {
 
 	private void addFile() {
 		FileIDMappingClientConfigDialog dialog = new FileIDMappingClientConfigDialog(
-				parent, fileUtil, true);
+				parent, fileUtil, openBrowser, true);
 		dialog.setLocationRelativeTo(this);
 		dialog.setVisible(true);
 		if (!dialog.isCancelled()) {
