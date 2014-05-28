@@ -170,7 +170,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.LINE_START;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 10, 5, 5);
-        //networkPanel.add(networkComboBox, gridBagConstraints);
+        networkPanel.add(networkComboBox, gridBagConstraints);
         
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -179,7 +179,7 @@ public class BridgeDbDialog extends javax.swing.JDialog {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 0.5;
         gridBagConstraints.insets = new Insets(5, 5, 5, 0);
-        getContentPane().add(networkPanel, gridBagConstraints);
+        //getContentPane().add(networkPanel, gridBagConstraints);
         
         sourcePanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Select source ID types and attributes"));
         sourcePanel.setMinimumSize(new java.awt.Dimension(500, 120));
