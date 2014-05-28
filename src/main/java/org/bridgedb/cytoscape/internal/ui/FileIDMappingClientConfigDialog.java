@@ -59,8 +59,10 @@ import java.io.IOException;
 import java.io.Reader;
 
 import java.net.URL;
+import java.util.Collections;
 
 import javax.swing.JOptionPane;
+import org.cytoscape.util.swing.FileChooserFilter;
 
 /**
  *
@@ -69,8 +71,9 @@ import javax.swing.JOptionPane;
 public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
 
     // add a new client
-    public FileIDMappingClientConfigDialog(java.awt.Dialog parent, boolean modal) {
+    public FileIDMappingClientConfigDialog(java.awt.Dialog parent, FileUtil fileUtil, boolean modal) {
         super(parent, modal);
+        this.fileUtil = fileUtil;
         initComponents();
         setPreviewTableData();
     }
@@ -498,33 +501,35 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
     private void textFileButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textFileButtonActionPerformed
         URL url;
         String strURL;
-//        try {
-//            if (isLocal) {
-//                File source = FileUtil.getFile("Select a ID mapping file", FileUtil.LOAD,
-//                        new CyFileFilter[] {  });
-//                if (source==null) {
-//                    return;
-//                }
-//                url = source.toURI().toURL();
-//                strURL = url.toString();
-//                textFileTextField.setText(strURL);
-//            } else {
-//                strURL =  textFileTextField.getText();
-//                if (strURL==null || strURL.length()==0) {
-//                    return;
-//                }
-//                url = new URL(strURL);
-//            }
-//
+        try {
+            if (isLocal) {
+                FileChooserFilter fileChooserFilter = new FileChooserFilter(
+                    "BridgeDb Derby file", new String[]{"txt"});
+                File source = fileUtil.getFile(this, "Select a ID mapping file", FileUtil.LOAD,
+                        Collections.singleton(fileChooserFilter));
+                if (source==null) {
+                    return;
+                }
+                url = source.toURI().toURL();
+                strURL = url.toString();
+                textFileTextField.setText(strURL);
+            } else {
+                strURL =  textFileTextField.getText();
+                if (strURL==null || strURL.length()==0) {
+                    return;
+                }
+                url = new URL(strURL);
+            }
+
 //            if (URLUtil.getURLConnection(url)==null) {
 //                JOptionPane.showMessageDialog(this, "Error: failed to connect to the file.");
 //                return;
 //            }
-//
-//        } catch(Exception e) {
-//            JOptionPane.showMessageDialog(this, "Error: unable to open the file.");
-//            e.printStackTrace();
-//        }
+
+        } catch(Exception e) {
+            JOptionPane.showMessageDialog(this, "Error: unable to open the file.");
+            e.printStackTrace();
+        }
 
         setPreviewTableData();
 }//GEN-LAST:event_textFileButtonActionPerformed
@@ -787,33 +792,33 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
                 return;
             }
 
-//            InputStream inputStream = URLUtil.getInputStream(url);
-//            Reader fin = new InputStreamReader(inputStream);
-//            BufferedReader bufRd = new BufferedReader(fin);
-//
-//            // add data sources
-//            String line = bufRd.readLine();
-//            if (line==null) {
-//                    previewTableModel.setDataVector((Vector)null, null);
-//                    return;
-//            }
-//
-//            String[] types = line.split(regExDel);
-//            int nCol = types.length;
-//
-//            String[][] data = new String[previewLimit][nCol];
-//
-//            int lineCount = 0;
-//            while ((line=bufRd.readLine())!=null && lineCount<previewLimit) {
-//                String[] strs = line.split(regExDel);
-//                int n = Math.min(strs.length, types.length);
-//                for (int i=0; i<n; i++) {
-//                    data[lineCount][i] = strs[i];
-//                }
-//                lineCount++;
-//            }
-//
-//            previewTableModel.setDataVector(data, types);
+            InputStream inputStream = url.openStream();
+            Reader fin = new InputStreamReader(inputStream);
+            BufferedReader bufRd = new BufferedReader(fin);
+
+            // add data sources
+            String line = bufRd.readLine();
+            if (line==null) {
+                    previewTableModel.setDataVector((Vector)null, null);
+                    return;
+            }
+
+            String[] types = line.split(regExDel);
+            int nCol = types.length;
+
+            String[][] data = new String[previewLimit][nCol];
+
+            int lineCount = 0;
+            while ((line=bufRd.readLine())!=null && lineCount<previewLimit) {
+                String[] strs = line.split(regExDel);
+                int n = Math.min(strs.length, types.length);
+                for (int i=0; i<n; i++) {
+                    data[lineCount][i] = strs[i];
+                }
+                lineCount++;
+            }
+
+            previewTableModel.setDataVector(data, types);
         } catch(IOException ex) {
             previewTableModel.setDataVector((Vector)null, null);
         }
@@ -884,6 +889,7 @@ public class FileIDMappingClientConfigDialog extends javax.swing.JDialog {
 //    }
 
 
+    private FileUtil fileUtil;
     private boolean isLocal = true;
     private boolean cancelled = true;
     private int previewLimit = 100;
