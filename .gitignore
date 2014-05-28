@@ -20,3 +20,4 @@ src/main/java/org/nrnb/avalon/cythesaurus/internal/service/CyThesaurusNamespace.
 src/main/java/org/nrnb/avalon/cythesaurus/internal/service/CyThesaurusNamespace.java
 
 .gitignore
+/org/
