@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.bridgedb</groupId>
 	<artifactId>bridgedb.cytoscape.app</artifactId>
-	<version>1.1.0.2</version>
+	<version>1.1.0.3.snapshot</version>
 	<name>BridgeDb</name>
 	<packaging>bundle</packaging>
         

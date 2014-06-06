@@ -6,6 +6,8 @@
 
 package org.bridgedb.cytoscape.internal.task;
 
+import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import static org.bridgedb.cytoscape.internal.BridgeDbApp.mapSrcAttrIDTypes;
 import org.bridgedb.cytoscape.internal.IDMapperClientManager;
 import org.bridgedb.cytoscape.internal.ui.BridgeDbDialog;
@@ -15,6 +17,7 @@ import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.util.swing.FileUtil;
 import org.cytoscape.util.swing.OpenBrowser;
 import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.ObservableTask;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskMonitor;
 import org.cytoscape.work.Tunable;
@@ -23,7 +26,7 @@ import org.cytoscape.work.Tunable;
  *
  * @author gaoj
  */
-public class OpenMainDialogTask extends AbstractTask {
+public class OpenMainDialogTask extends AbstractTask implements ObservableTask {
     @Tunable(description="Application name (optional) for application-specific ID mapping resources"
             + " -- do not specify if use the globel resources", context="nogui")
     public String appName = null;
@@ -35,6 +38,7 @@ public class OpenMainDialogTask extends AbstractTask {
     private final OpenBrowser openBrowser;
     private final FileUtil fileUtil;
     private BridgeDbDialog dialog;
+    private String error;
 
     public OpenMainDialogTask(CyApplicationManager cyApplicationManager,
             CyNetworkManager cnm, CySwingApplication swingApp,
@@ -46,6 +50,7 @@ public class OpenMainDialogTask extends AbstractTask {
         this.taskManager = taskManager;
         this.openBrowser = openBrowser;
         this.fileUtil = fileUtil;
+        this.error = null;
     }
 
     @Override
@@ -60,6 +65,18 @@ public class OpenMainDialogTask extends AbstractTask {
     public void run(TaskMonitor taskMonitor) throws Exception {
             taskMonitor.setTitle("BridgeDb ID Mapping");
             try {
+                    if (cnm.getNetworkSet().isEmpty()) {
+                        error = "No networks in the session.";
+                        taskMonitor.showMessage(TaskMonitor.Level.ERROR, error);
+                        SwingUtilities.invokeLater(new Runnable() {
+                            public void run() {                                
+                                JOptionPane.showMessageDialog(swingApp.getJFrame(),
+                                        error, "error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        });
+                        
+                        return;
+                    }
                     taskMonitor.setStatusMessage("Initializing...");
                     BridgeDbDialog dialog = new BridgeDbDialog(swingApp.getJFrame(),
                             cyApplicationManager, cnm, taskManager, openBrowser, fileUtil,
@@ -75,6 +92,11 @@ public class OpenMainDialogTask extends AbstractTask {
                     taskMonitor.setProgress(1.00);
                     e.printStackTrace();
             }
+    }
+
+    @Override
+    public String getResults(Class type) {
+        return error;
     }
 
 }
