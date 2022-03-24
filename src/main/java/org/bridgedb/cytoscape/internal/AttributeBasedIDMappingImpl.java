@@ -136,7 +136,7 @@ public class AttributeBasedIDMappingImpl implements AttributeBasedIDMapping{
         setTgtAttribute(table, mapNodeTgtXrefs, mapTgtAttrNameIDType);
 
         if (mapNodeTgtXrefs.isEmpty() && !nodes.isEmpty()) {
-            report = "No IDs were mapped. Please make sure you seleceted the corrected ID mapping resources and source ID types.";
+            report = "No IDs were mapped. Please make sure you selected the corrected ID mapping resources and source ID types.";
             updateTaskMonitor(report, 1.0, true);
         } else {
             report = "Identifiers mapped for "+mapNodeTgtXrefs.size()+" nodes (out of "+nodes.size()+").";
